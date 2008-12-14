@@ -69,6 +69,11 @@ void Colour::applyMaterial(int attribute)
   glMaterialfv(GL_FRONT_AND_BACK, attribute, values);
 }
 
+float Colour::brightness()
+{
+  return sqrtf(r*r + g*g + b*b);
+}
+
 /* ************** *
  * Position class *
  * ************** */
@@ -204,6 +209,14 @@ inline float comRandomBoundedFloat(float min, float max)
 
 Colour comRandomColour()
 {
-  Colour result(comRandomBoundedFloat(
+  Colour result(comRandomBoundedFloat(0.125f, 0.875f),
+                comRandomBoundedFloat(0.125f, 0.875f),
+                comRandomBoundedFloat(0.125f, 0.875f));
+  
+  float brightness = comRandomBoundedFloat(0.25f, 0.75f);
+  brightness /= result.brightness();
+  result = result * brightness;
+  
+  return result;
 }
 

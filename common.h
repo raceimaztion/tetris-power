@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <math.h>
 #include <time.h>
 #include <errno.h>
 // OpenGL includes
@@ -48,6 +49,8 @@ class Colour {
     void apply();
     void applyMaterial();
     void applyMaterial(int attribute);
+    
+    float brightness();
 };
 
 class Position {
