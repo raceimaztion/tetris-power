@@ -7,10 +7,15 @@
 #include <math.h>
 #include <time.h>
 #include <errno.h>
+#include <cstdlib>
 // OpenGL includes
-#include <GL/glut.h>
+//#include <GL/glut.h>
 // STL includes
 #include <vector>
+// SDL includes
+#include "SDL.h"
+#include "SDL_opengl.h"
+#include "SDL_mixer.h"
 
 using namespace std;
 
@@ -20,6 +25,8 @@ using namespace std;
 #define GRID_WIDTH 10
 #define GRID_HEIGHT 20
 #define TIMER_TICK 100
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
 
 /* ************************** *
  * Globally-defined variables *
