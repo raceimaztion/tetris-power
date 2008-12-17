@@ -73,40 +73,64 @@ void handleDisplay()
   SDL_GL_SwapBuffers();
 }
 
-void handleTimer(int delay)
+void gameStep()
 {
-//  glutTimerFunc(TIMER_TICK, handleTimer, 101);
+  static Uint32 lastTime = 0;
+  static float currentTime = 0;
+  if (lastTime == 0)
+    lastTime = SDL_GetTicks();
+  
+  Uint32 curTime = SDL_GetTicks();
+  float dTime = 0.001f*(curTime - lastTime);
+  currentTime += dTime;
+  
+  // Process stuff here
+  
+  lastTime = curTime;
 }
 
-void handleReshape(int width, int height)
+void handleKeyboardEvent(const SDL_keysym& key)
 {
-  win_width = width;
-  win_height = height;
   
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0, win_width, 0, win_height, 0.0001f, 100000);
-  
-  glViewport(0, 0, width, height);
-  
-  //glutPostRedisplay();
 }
 
+/* ******************* *
+ * Main entry function *
+ * ******************* */
 int main(int argc, char **argv)
 {
   // Global initialization
   srand(time(NULL));
-  if (!initVideo())
+  if (!initVideo() && !initVideo(SDL_DOUBLEBUF))
     exit(1);
-  //glutInit(&argc, argv);
+  for (int i=0; i < 323; i++)
+    keys_pressed[i] = 0;
+  num_keys_pressed = 0;
   
-  // Application-specific initialization
-  //glutDisplayFunc(handleDisplay);
-  //glutReshapeFunc(handleReshape);
+  bool running = true;
+  SDL_Event event;
   
-  // Start the timer just before we get to the main loop
-  //glutTimerFunc(TIMER_TICK, handleTimer, 101);
+  // The main game loop
+  while (running)
+  {
+    // Process SDL events
+    while (SDL_PollEvent(&event))
+    {
+      switch (event.type)
+      {
+        case SDL_KEYDOWN:
+        case SDL_KEYUP:
+          handleKeyboardEvent(event.key.keysym);
+          break;
+        
+        case SDL_QUIT:
+          running = false;
+      }
+    }
+    
+    // Wait ten milliseconds and do it all again
+    SDL_Delay(10);
+  }
   
-  //glutMainLoop();
   return 0;
 }

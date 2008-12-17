@@ -38,6 +38,8 @@ using namespace std;
 #endif
 volatile MOD int game_score;
 volatile MOD int win_width, win_height;
+volatile MOD bool keys_pressed[323];
+volatile MOD int num_keys_pressed;
 
 /* ************************ *
  * Globally-defined classes *
