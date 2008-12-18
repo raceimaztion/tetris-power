@@ -102,12 +102,18 @@ Position operator-(const Position& a, const Position& b);
 Position operator*(const Position& p, float s);
 Position operator*(float s, const Position& p);
 Position operator/(const Position& p, float s);
-// Other
+// Drawing-related
 void comDrawCube(float x, float y, float size, float rotation);
 void comDrawSphere(float x, float y, float size, float rotation);
 void comDrawBlock(float x, float y, float size, float rotation);
+// Random-related
 float comRandomFloat();
+float comRandomFloat(float min, float max);
 Colour comRandomColour();
+// File-related
+string comReadLine(FILE* in);
+// String-related
+bool comStartsWith(string& a, string& b);
 
 /* ********************* *
  * User-defined includes *

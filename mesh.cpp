@@ -17,6 +17,13 @@ Polygon::Polygon(vector<int> vertices, vector<int> normals)
   smooth = true;
 }
 
+Polygon::Polygon(vector<int> vertices, vector<int> normals, bool smooth)
+{
+  this->vertices = vertices;
+  this->normals = normals;
+  this->smooth = smooth;
+}
+
 /* ****************** *
  * Mesh class methods *
  * ****************** */
@@ -35,6 +42,48 @@ Mesh::~Mesh()
 Mesh Mesh::loadWavefrontObjectFile(FILE *in)
 {
   Mesh result;
+  bool smooth = false;
+  
+  string line = comReadLine(in);
+  while (!feof(in))
+  {
+    if (line.find_first_of("#") == 0 ||
+        line.find_first_of("//") == 0)
+    {
+      line = comReadLine(in);
+      continue;
+    }
+    else if (line.find_first_of("v ") == 0)
+    {
+      float x, y, z;
+      sscanf(line.c_str(), "%*s %f %f %f", &x, &y, &z);
+      
+      result.addVertex(x, y, z);
+    }
+    else if (line.find_first_of("vn ") == 0)
+    {
+      float x, y, z;
+      sscanf(line.c_str(), "%*s %f %f %f", &x, &y, &z);
+      
+      result.addNormal(x, y, z);
+    }
+    else if (line.find_first_of("s ") == 0)
+    {
+      if (line.find_first_of("off") != string::npos ||
+          line.find_first_of("0") != string::npos)
+        smooth = false;
+      else
+        smooth = true;
+    }
+    else if (line.find_first_of("f ") == 0)
+    {
+      vector<int> vertices, normals;
+      
+      // TODO: add parsing code here
+    }
+    
+    line = comReadLine(in);
+  }
   
   return result;
 }

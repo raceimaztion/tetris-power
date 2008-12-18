@@ -181,7 +181,7 @@ Position operator/(const Position& p, float s)
   return Position(p.x/s, p.y/s, p.z/s);
 }
 
-// Other functions
+// Drawing-related
 void comDrawCube(float x, float y, float scale, float rotation)
 {
   glPushMatrix();
@@ -205,6 +205,7 @@ void comDrawBlock(float x, float y, float scale, float rotation)
   comDrawCube(x, y, scale, rotation);
 }
 
+// Random-related
 inline float comRandomFloat()
 {
   return (float)rand() / RAND_MAX;
@@ -227,4 +228,24 @@ Colour comRandomColour()
   
   return result;
 }
+
+// File-related
+string comReadLine(FILE* in)
+{
+  string result;
+  
+  if (in == NULL)
+    return result;
+  
+  char c = getc(in);
+  while (!feof(in) && c != '\n')
+  {
+    result += c;
+    c = getc(in);
+  }
+  
+  return result;
+}
+
+// String-related
 

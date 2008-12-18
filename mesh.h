@@ -14,6 +14,7 @@ class Polygon {
     
     Polygon(vector<int> vertices);
     Polygon(vector<int> vertices, vector<int> normals);
+    Polygon(vector<int> vertices, vector<int> normals, bool smooth);
 };
 
 /* ************************************************************* *
