@@ -110,5 +110,6 @@ Colour comRandomColour();
  * User-defined includes *
  * ********************* */
 #include "grid.h"
+#include "mesh.h"
 #include "shapes.h"
 

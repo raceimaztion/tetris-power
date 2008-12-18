@@ -1,10 +1,10 @@
 OPTIONS = -Wall -c -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
-HEADERS = common.h grid.h shapes.h
+HEADERS = common.h grid.h shapes.h mesh.h
 
 all: tetris
 
-tetris: main.o common.o grid.o shapes.o $(HEADERS)
-	g++ -o tetris main.o common.o grid.o shapes.o -L/usr/lib -lSDL -lGL -lSDL_mixer
+tetris: main.o common.o grid.o shapes.o mesh.o $(HEADERS)
+	g++ -o tetris main.o common.o grid.o shapes.o mesh.o -L/usr/lib -lSDL -lGL -lSDL_mixer
 
 main.o: main.cpp $(HEADERS)
 	g++ $(OPTIONS) main.cpp
@@ -17,6 +17,9 @@ grid.o: grid.cpp $(HEADERS)
 
 shapes.o: shapes.cpp $(HEADERS)
 	g++ $(OPTIONS) shapes.cpp
+
+mesh.o: mesh.cpp $(HEADERS)
+	g++ $(OPTIONS) mesh.cpp
 
 run: tetris
 	./tetris
