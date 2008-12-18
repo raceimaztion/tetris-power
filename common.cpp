@@ -106,6 +106,14 @@ void Position::applyTranslation(float amount)
   glTranslatef(amount*x, amount*y, amount*z);
 }
 
+Position Position::operator+=(const Position& p)
+{
+  x += p.x;
+  y += p.y;
+  z += p.z;
+  return *this;
+}
+
 /* *********** *
  * Light class *
  * *********** */

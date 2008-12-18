@@ -8,6 +8,7 @@
 #include <time.h>
 #include <errno.h>
 #include <cstdlib>
+#include <string>
 // OpenGL includes
 //#include <GL/glut.h>
 // STL includes
@@ -72,6 +73,8 @@ class Position {
     
     void applyTranslation();
     void applyTranslation(float amount);
+    
+    Position operator+=(const Position& p);
 };
 
 class Light {
