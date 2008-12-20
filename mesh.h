@@ -9,12 +9,12 @@
  * ************************************************ */
 class Polygon {
   public:
-    vector<int> vertices, normals;
+    vector<int> vertices, textures, normals;
     bool smooth;
     
-    Polygon(vector<int> vertices);
-    Polygon(vector<int> vertices, vector<int> normals);
-    Polygon(vector<int> vertices, vector<int> normals, bool smooth);
+    Polygon(vector<int> vertices, vector<int> textures);
+    Polygon(vector<int> vertices, vector<int> textures, vector<int> normals);
+    Polygon(vector<int> vertices, vector<int> textures, vector<int> normals, bool smooth);
 };
 
 /* ************************************************************* *
@@ -22,7 +22,7 @@ class Polygon {
  * ************************************************************* */
 class Mesh {
   private:
-    vector<Position> vertices, normals;
+    vector<Position> vertices, textures, normals;
     vector<Polygon> polygons;
   
   public:
@@ -37,15 +37,19 @@ class Mesh {
     // Methods used during load-time
     void addVertex(const Position& p);
     void addVertex(float x, float y, float z);
+    void addTexture(const Position& t);
+    void addTexture(float u, float v, float w);
     void addNormal(const Position& p);
     void addNormal(float x, float y, float z);
     void addPolygon(const Polygon& p);
-    void addPolygon(const vector<int>& vertices); // flat-shaded polygon
     void addPolygon(const vector<int>& vertices,
+                    const vector<int>& textures); // flat-shaded polygon
+    void addPolygon(const vector<int>& vertices,
+                    const vector<int>& textures,
                     const vector<int>& normals); // smooth-shaded polygon
     
     // Post-load methods
-    void render();
+    void render(bool use_textures=false);
     void translate(const Position& p);
     void translate(float x, float y, float z);
 };

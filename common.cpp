@@ -116,6 +116,11 @@ void Position::applyVertex()
   glVertex3f(x, y, z);
 }
 
+void Position::applyTexCoords()
+{
+  glTexCoord2f(x, y);
+}
+
 Position Position::operator+=(const Position& p)
 {
   x += p.x;
@@ -314,15 +319,6 @@ vector<string> comSplitString(string& a, const string& delim)
     last = next;
   }
   while (next != string::npos);
-  
-  vector<string>::iterator iter = result.begin();
-  while (iter != result.end())
-  {
-    if ((*iter).size() < 1)
-      result.erase(iter);
-    else
-      iter++;
-  }
   
   return result;
 }
