@@ -79,7 +79,23 @@ Mesh Mesh::loadWavefrontObjectFile(FILE *in)
     {
       vector<int> vertices, normals;
       
-      // TODO: add parsing code here
+      vector<string> split = comSplitSpaces(line.substr(2));
+      for (unsigned int i=0; i < split.size(); i++)
+      {
+        if (split[i].find_first_of("//") != string::npos)
+        {
+          vector<string> spliced = comSplitString(split[i], "//");
+          vertices.push_back(atoi(spliced[0].c_str()));
+          normals.push_back(atoi(spliced[1].c_str()));
+        }
+        else
+        {
+          vertices.push_back(atoi(split[i].c_str()));
+          normals.push_back(-1);
+        }
+      }
+      
+      result.addPolygon(Polygon(vertices, normals, smooth));
     }
     
     line = comReadLine(in);

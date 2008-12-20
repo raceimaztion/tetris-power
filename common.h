@@ -13,6 +13,7 @@
 //#include <GL/glut.h>
 // STL includes
 #include <vector>
+#include <sstream>
 // SDL includes
 #include "SDL.h"
 #include "SDL_opengl.h"
@@ -114,6 +115,8 @@ Colour comRandomColour();
 string comReadLine(FILE* in);
 // String-related
 bool comStartsWith(string& a, string& b);
+vector<string> comSplitSpaces(string a);
+vector<string> comSplitString(string& s, const string& delim);
 
 /* ********************* *
  * User-defined includes *

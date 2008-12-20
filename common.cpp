@@ -248,4 +248,72 @@ string comReadLine(FILE* in)
 }
 
 // String-related
+bool comStartsWith(string& a, string& b)
+{
+  return a.find_first_of(b) == 0;
+}
+
+vector<string> comSplitSpaces(string a)
+{
+  vector<string> result;
+  
+  unsigned int last = 0, next = a.find_first_of(" ");
+  
+  do
+  {
+    next = a.find_first_of(" ", last+1);
+    if (next == string::npos)
+    {
+      result.push_back(a.substr(last));
+      break;
+    }
+    result.push_back(a.substr(last, next-last));
+    last = next;
+  }
+  while (next != string::npos);
+  
+  vector<string>::iterator iter = result.begin();
+  while (iter != result.end())
+  {
+    while ((*iter).size() > 0 && (*iter)[0] == ' ')
+      (*iter) = (*iter).substr(1);
+    
+    if ((*iter).size() < 1)
+      result.erase(iter);
+    else
+      iter++;
+  }
+  
+  return result;
+}
+
+vector<string> comSplitString(string& a, const string& delim)
+{
+  vector<string> result;
+  unsigned int last = 0, next = a.find_first_of(delim);
+  
+  do
+  {
+    next = a.find_first_of(delim, last+delim.size());
+    if (next == string::npos)
+    {
+      result.push_back(a.substr(last));
+      break;
+    }
+    result.push_back(a.substr(last, next-last));
+    last = next;
+  }
+  while (next != string::npos);
+  
+  vector<string>::iterator iter = result.begin();
+  while (iter != result.end())
+  {
+    if ((*iter).size() < 1)
+      result.erase(iter);
+    else
+      iter++;
+  }
+  
+  return result;
+}
 
