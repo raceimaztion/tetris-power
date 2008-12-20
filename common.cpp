@@ -106,6 +106,16 @@ void Position::applyTranslation(float amount)
   glTranslatef(amount*x, amount*y, amount*z);
 }
 
+void Position::applyNormal()
+{
+  glNormal3f(x, y, z);
+}
+
+void Position::applyVertex()
+{
+  glVertex3f(x, y, z);
+}
+
 Position Position::operator+=(const Position& p)
 {
   x += p.x;

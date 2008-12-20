@@ -74,6 +74,8 @@ class Position {
     
     void applyTranslation();
     void applyTranslation(float amount);
+    void applyNormal();
+    void applyVertex();
     
     Position operator+=(const Position& p);
 };

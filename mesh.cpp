@@ -157,6 +157,26 @@ void Mesh::addPolygon(const vector<int>& vertices,
 void Mesh::render()
 {
   // TODO: finish this
+  
+  bool smooth;
+  
+  for (unsigned int i=0; i < polygons.size(); i++)
+  {
+    smooth = polygons[i].smooth;
+    if (!smooth)
+    {
+      if (polygons[i].normals[0] >= 0)
+        normals[polygons[i].normals[0]].applyNormal();
+    }
+    
+    for (unsigned int j=0; j < polygons[i].vertices.size(); j++)
+    {
+      if (smooth && polygons[i].normals[j] >= 0)
+        normals[polygons[i].normals[j]].applyNormal();
+      
+      vertices[polygons[i].vertices[j]].applyVertex();
+    }
+  }
 }
 
 void Mesh::translate(const Position& p)
