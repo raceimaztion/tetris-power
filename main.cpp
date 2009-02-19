@@ -6,7 +6,7 @@ SDL_Surface *screen; // This is the backbuffer
 /* **************************** *
  * SDL initialization functions *
  * **************************** */
-bool initVideo(Uint32 flags = SDL_DOUBLEBUF | SDL_OPENGL)
+bool initVideo(Uint32 flags = SDL_OPENGL)
 {
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 {
   // Global initialization
   srand(time(NULL));
-  if (!initVideo() && !initVideo(SDL_DOUBLEBUF))
+  if (!initVideo())
     exit(1);
   for (int i=0; i < 323; i++)
     keys_pressed[i] = 0;

@@ -9,8 +9,6 @@
 #include <errno.h>
 #include <cstdlib>
 #include <string>
-// OpenGL includes
-//#include <GL/glut.h>
 // STL includes
 #include <vector>
 #include <sstream>
