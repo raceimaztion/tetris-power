@@ -72,6 +72,9 @@ class Position {
     
     void applyTranslation();
     void applyTranslation(float amount);
+    void applyNormal();
+    void applyVertex();
+    void applyTexCoords();
     
     Position operator+=(const Position& p);
 };

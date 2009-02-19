@@ -4,22 +4,25 @@
 /* ********************* *
  * Polygon class methods *
  * ********************* */
-Polygon::Polygon(vector<int> vertices)
+Polygon::Polygon(vector<int> vertices, vector<int> textures)
 {
   this->vertices = vertices;
+  this->textures = textures;
   smooth = false;
 }
 
-Polygon::Polygon(vector<int> vertices, vector<int> normals)
+Polygon::Polygon(vector<int> vertices, vector<int> textures, vector<int> normals)
 {
   this->vertices = vertices;
+  this->textures = textures;
   this->normals = normals;
   smooth = true;
 }
 
-Polygon::Polygon(vector<int> vertices, vector<int> normals, bool smooth)
+Polygon::Polygon(vector<int> vertices, vector<int> textures, vector<int> normals, bool smooth)
 {
   this->vertices = vertices;
+  this->textures = textures;
   this->normals = normals;
   this->smooth = smooth;
 }
@@ -60,6 +63,13 @@ Mesh Mesh::loadWavefrontObjectFile(FILE *in)
       
       result.addVertex(x, y, z);
     }
+    else if (line.find_first_of("vt ") == 0)
+    {
+      float u, v, w;
+      sscanf(line.c_str(), "%*s %f %f %f", &u, &v, &w);
+      
+      result.addTexture(u, v, w);
+    }
     else if (line.find_first_of("vn ") == 0)
     {
       float x, y, z;
@@ -77,16 +87,20 @@ Mesh Mesh::loadWavefrontObjectFile(FILE *in)
     }
     else if (line.find_first_of("f ") == 0)
     {
-      vector<int> vertices, normals;
+      vector<int> vertices, textures, normals;
       
       vector<string> split = comSplitSpaces(line.substr(2));
       for (unsigned int i=0; i < split.size(); i++)
       {
-        if (split[i].find_first_of("//") != string::npos)
+        if (split[i].find_first_of("/") != string::npos)
         {
-          vector<string> spliced = comSplitString(split[i], "//");
+          vector<string> spliced = comSplitString(split[i], "/");
           vertices.push_back(atoi(spliced[0].c_str()));
-          normals.push_back(atoi(spliced[1].c_str()));
+          if (spliced[1].size() > 0)
+            textures.push_back(atoi(spliced[1].c_str()));
+          else
+            textures.push_back(-1);
+          normals.push_back(atoi(spliced[2].c_str()));
         }
         else
         {
@@ -95,7 +109,7 @@ Mesh Mesh::loadWavefrontObjectFile(FILE *in)
         }
       }
       
-      result.addPolygon(Polygon(vertices, normals, smooth));
+      result.addPolygon(Polygon(vertices, textures, normals, smooth));
     }
     
     line = comReadLine(in);
@@ -127,6 +141,16 @@ void Mesh::addVertex(float x, float y, float z)
   addVertex(Position(x, y, z));
 }
 
+void Mesh::addTexture(const Position& t)
+{
+  textures.push_back(t);
+}
+
+void Mesh::addTexture(float u, float v, float w)
+{
+  addTexture(Position(u, v, w));
+}
+
 void Mesh::addNormal(const Position& n)
 {
   normals.push_back(n);
@@ -142,21 +166,43 @@ void Mesh::addPolygon(const Polygon& p)
   polygons.push_back(p);
 }
 
-void Mesh::addPolygon(const vector<int>& vertices)
+void Mesh::addPolygon(const vector<int>& vertices, const vector<int>& textures)
 {
-  addPolygon(Polygon(vertices));
+  addPolygon(Polygon(vertices, textures));
 }
 
 void Mesh::addPolygon(const vector<int>& vertices,
+                      const vector<int>& textures,
                       const vector<int>& normals)
 {
-  addPolygon(Polygon(vertices, normals));
+  addPolygon(Polygon(vertices, textures, normals));
 }
 
 // Post-load methods
-void Mesh::render()
+void Mesh::render(bool use_textures)
 {
-  // TODO: finish this
+  bool smooth;
+  
+  for (unsigned int i=0; i < polygons.size(); i++)
+  {
+    smooth = polygons[i].smooth;
+    if (!smooth)
+    {
+      if (polygons[i].normals[0] >= 0)
+        normals[polygons[i].normals[0]].applyNormal();
+    }
+    
+    for (unsigned int j=0; j < polygons[i].vertices.size(); j++)
+    {
+      if (smooth && polygons[i].normals[j] >= 0)
+        normals[polygons[i].normals[j]].applyNormal();
+      
+      if (use_textures && polygons[i].textures[j] >= 0)
+        textures[polygons[i].textures[j]].applyTexCoords();
+      
+      vertices[polygons[i].vertices[j]].applyVertex();
+    }
+  }
 }
 
 void Mesh::translate(const Position& p)
