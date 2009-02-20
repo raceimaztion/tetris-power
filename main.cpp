@@ -68,23 +68,6 @@ bool initAudio()
  * ***************************************** */
 
 
-
-/* ********************************** *
- * Screen-related classes and methods *
- * ********************************** */
-class Screen {
-  private:
-    // Private variables
-  
-  public:
-    // Useful methods
-    
-    // Virtual methods:
-    virtual void timerTick(); // Called for each tick of the game system timer
-    virtual void prepareForShow(); // Called every time this screen becomes visible
-    virtual void prepareForHide(); // Called every time this screen becomes hidden
-};
-
 /* ********* *
  * Callbacks *
  * ********* */

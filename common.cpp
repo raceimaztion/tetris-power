@@ -156,6 +156,126 @@ void Light::disable(int number)
   glDisable(number);
 }
 
+/* ******************************** *
+ * Screen class and related methods *
+ * ******************************** */
+Screen::Screen(int id)
+{
+  needRepaint = false;
+  visible = false;
+  this->id = id;
+}
+
+Screen::~Screen()
+{
+}
+
+void Screen::end()
+{
+  // TODO: finish this
+}
+
+void Screen::replaceWith(const int screenID)
+{
+  // TODO: finish this
+}
+
+void Screen::call(const int screenID)
+{
+  // TODO: finish this
+}
+
+void Screen::markRepaint()
+{
+  needRepaint = true;
+}
+
+void Screen::clearRepaint()
+{
+  needRepaint = false;
+}
+
+bool Screen::needsRepaint()
+{
+  return needRepaint;
+}
+
+void Screen::setVisible(bool visible)
+{
+  this->visible = visible;
+}
+
+bool Screen::isVisible()
+{
+  return visible;
+}
+
+bool Screen::operator==(const Screen &s)
+{
+  return this->id == s.id;
+}
+
+// Screen-related variables
+map<int,Screen*> screenMap;
+vector<Screen*> screenStack;
+
+// Screen-related methods
+
+bool screenAddNew(Screen &next, int screenID)
+{
+  if (screenMap.find(screenID) == screenMap.end())
+    return false;
+  
+  screenMap[screenID] = &next;
+  
+  return true;
+}
+
+bool screenActivate(int screenID)
+{
+  if (screenMap.find(screenID) == screenMap.end())
+    return false;
+  
+  if (screenMap[screenID]->isVisible())
+    return false;
+  
+  screenStack.push_back(screenMap[screenID]);
+  screenStack.back()->setVisible(true);
+  screenStack.back()->prepareForShow();
+  
+  return true;
+}
+
+void screenPop()
+{
+  if (screenStack.empty())
+    return;
+  
+  screenStack.back()->setVisible(false);
+  screenStack.back()->prepareForHide();
+  screenStack.pop_back();
+}
+
+void screenTimerTick()
+{
+  if (!screenStack.empty())
+    screenStack.back()->timerTick();
+}
+
+void _screenRecursivePaint(int cur)
+{
+  if ((cur < 0) || (screenStack.at(cur)->isOpaque()))
+    return;
+  
+  _screenRecursivePaint(cur - 1);
+  screenStack.at(cur)->screenPaint();
+}
+
+void screenPaint()
+{
+  _screenRecursivePaint(screenStack.size() - 1);
+}
+
 /* ******************************* *
  * Some generally-useful functions *
  * ******************************* */

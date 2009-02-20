@@ -15,6 +15,8 @@
 // STL includes
 #include <vector>
 #include <sstream>
+#include <map>
+#include <stack>
 // SDL includes
 #include "SDL.h"
 #include "SDL_opengl.h"
@@ -95,6 +97,75 @@ class Light {
     void apply(int number);
     void disable(int number);
 };
+
+/* ********************************** *
+ * Screen-related classes and methods *
+ * ********************************** */
+class Screen {
+  private:
+    // Private variables
+    bool needRepaint;
+    bool visible;
+    int id;
+  
+  public:
+    Screen(int id);
+    ~Screen();
+    
+    // Useful methods
+    void end(); // Ends this screen and returns to the previous screen on the stack
+    void replaceWith(const int screenID); // Replace this screen with another one
+    void call(const int screenID); // Call up another screen on top of this one
+    void markRepaint(); // Indicate that we need to repaint next time around
+    void clearRepaint();
+    bool needsRepaint(); // Returns true if we need a redraw
+    void setVisible(bool visible);
+    bool isVisible();
+    bool operator==(const Screen& s);
+    
+    // Virtual methods:
+    virtual void timerTick(); // Called for each tick of the game system timer
+    virtual void prepareForShow(); // Called every time this screen becomes visible
+    virtual void prepareForHide(); // Called every time this screen becomes hidden
+    virtual void screenPaint(); // Called to redraw this screen. This MUST leave the OpenGL matrices as it found them!
+    virtual void keyboard(const SDLKey &key); // Called whenever a key is pressed or released
+    virtual void mouseButton(const SDL_MouseButtonEvent &mouse);
+    virtual void mouseMotion(const SDL_MouseMotionEvent &mouse);
+    virtual bool isOpaque();
+};
+
+/*
+  Add a new screen with the specified ID
+    Returns false if it didn't work
+*/
+bool screenAddNew(Screen &next, int screenID);
+
+/*
+  Activate a screen with the given ID
+    Returns false if there's no screen by that code
+*/
+bool screenActivate(int screenID);
+
+/*
+  Pop the current screen off the "screen stack"
+    If there are no screens on the stack, nothing happens
+*/
+void screenPop();
+
+// Send a timer tick to the current screen
+void screenTimerTick();
+
+// Send a repaint command to the screen stack
+void screenPaint();
+
+// Send a keyboard event to the current screen
+void screenKeyboard(const SDLKey &key);
+
+// Send a mouse button event to the current screen
+void screenMouseButton(const SDL_MouseButtonEvent &mouse);
+
+// Send a mouse motion event to the current screen
+void screenMouseMotion(const SDL_MouseMotionEvent &mouse);
 
 /* ******************************* *
  * Some generally useful functions *
