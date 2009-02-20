@@ -1,0 +1,9 @@
+  A "screen" system would provide a simple mechanism to show different
+information at different times without needing more global states than
+actually needed.
+
+  Screens are arranged in a "stack" and the screens above overlay on
+the ones below. Some screens which don't need to draw the whole screen
+can let the screen below draw itself first (and so on until we reach
+the end or one that draws the entire screen), but only the topmost
+layer recieves timer ticks and keyboard and mouse events.

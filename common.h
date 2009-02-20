@@ -1,3 +1,6 @@
+#ifndef COMMON_HEADER
+#define COMMON_HEADER
+
 // System library includes
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,6 +80,7 @@ class Position {
     void applyTexCoords();
     
     Position operator+=(const Position& p);
+    Position operator-=(const Position& p);
 };
 
 class Light {
@@ -125,4 +129,7 @@ vector<string> comSplitString(string& s, const string& delim);
 #include "grid.h"
 #include "mesh.h"
 #include "shapes.h"
+#include "fonts.h"
+
+#endif
 

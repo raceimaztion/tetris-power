@@ -2,6 +2,9 @@
  * Font-rendering module *
  * ********************* */
 
+#ifndef FONTS_HEADER
+#define FONTS_HEADER
+
 // The maximum number of characters we store
 #define NUM_FONT_CHARACTERS 128
 
@@ -31,4 +34,6 @@ int fStringWidth(Font *font, const char *s);
 
 // Get a font's height:
 int fFontHeight(Font *font);
+
+#endif
 

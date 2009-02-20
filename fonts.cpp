@@ -47,7 +47,7 @@ int getPixelShade(SDL_Surface *surface, int x, int y)
 
 Font *fParseFont(SDL_Surface* origin)
 {
-  Font* font = calloc(sizeof(Font), 1);
+  Font* font = (Font *)calloc(sizeof(Font), 1);
   int cur_x = 0, cur_char, width, byte_width;
   
   if (origin == NULL)
@@ -88,7 +88,7 @@ Font *fParseFont(SDL_Surface* origin)
     if ((byte_width < 1) || ((width % 8) != 0)) byte_width++;
     
     // Allocate the memory for this character's bitmap
-    font->bitmaps[cur_char] = calloc(byte_width, font->height);
+    font->bitmaps[cur_char] = (unsigned char *)calloc(byte_width, font->height);
     if (font->bitmaps[cur_char] == NULL)
     {
       fFreeFont(font);
