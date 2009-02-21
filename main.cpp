@@ -1,6 +1,8 @@
 #define MAIN_MODULE
 #include "common.h"
 
+#define MESSAGE_REPAINT 201
+
 SDL_Surface *screen; // This is the backbuffer
 
 /* **************************** *
@@ -66,7 +68,16 @@ bool initAudio()
 /* ***************************************** *
  * Functions for doing things from callbacks *
  * ***************************************** */
-
+void triggerRepaint()
+{
+  SDL_Event event;
+  event.type = SDL_USEREVENT;
+  event.user.code = MESSAGE_REPAINT;
+  event.user.data1 = 0;
+  event.user.data2 = 0;
+  
+  SDL_PushEvent(&event);
+}
 
 /* ********* *
  * Callbacks *
@@ -90,14 +101,37 @@ void gameStep()
   currentTime += dTime;
   
   // Process stuff here
+  screenTimerTick();
   
   lastTime = curTime;
 }
 
 void handleKeyboardEvent(const SDL_keysym& key)
 {
-  
+  screenKeyboard(key);
 }
+
+void handleMouseButton(const SDL_MouseButtonEvent &mouse)
+{
+  screenMouseButton(mouse);
+}
+
+void handleMouseMotion(const SDL_MouseMotionEvent &mouse)
+{
+  screenMouseMotion(mouse);
+}
+
+/* *************** *
+ * Thread function *
+ * *************** */
+Uint32 timerHandler(Uint32 interval, void* unused)
+{
+  if (screenTimerTick())
+    triggerRepaint();
+  
+  return interval;
+}
+
 
 /* ******************* *
  * Main entry function *
@@ -106,11 +140,21 @@ int main(int argc, char **argv)
 {
   // Global initialization
   srand(time(NULL));
+  
   if (!initVideo())
     exit(1);
   for (int i=0; i < 323; i++)
     keys_pressed[i] = 0;
   num_keys_pressed = 0;
+  
+  // try to register the splash screen
+  IntroScreen intro;
+  if (!screenAddNew(intro, SPLASH_SCREEN))
+  {
+    printf("Failed to initialize splash screen!\n");
+    exit(-1);
+  }
+  screenActivate(SPLASH_SCREEN);
   
   bool running = true;
   SDL_Event event;
@@ -123,13 +167,31 @@ int main(int argc, char **argv)
     {
       switch (event.type)
       {
+        case SDL_USEREVENT:
+          if (event.user.code == MESSAGE_REPAINT)
+            screenPaint();
+          break;
+        
         case SDL_KEYDOWN:
         case SDL_KEYUP:
           handleKeyboardEvent(event.key.keysym);
           break;
         
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+          handleMouseButton(event.button);
+          break;
+        
+        case SDL_MOUSEMOTION:
+          handleMouseMotion(event.motion);
+        
+        case SDL_VIDEOEXPOSE:
+          screenPaint();
+          break;
+        
         case SDL_QUIT:
           running = false;
+          break;
       }
     }
     

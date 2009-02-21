@@ -106,29 +106,29 @@ class Screen {
     // Private variables
     bool needRepaint;
     bool visible;
-    int id;
   
   public:
-    Screen(int id);
+    Screen();
     ~Screen();
     
     // Useful methods
     void end(); // Ends this screen and returns to the previous screen on the stack
-    void replaceWith(const int screenID); // Replace this screen with another one
-    void call(const int screenID); // Call up another screen on top of this one
+    bool replaceWith(const int screenID); // Replace this screen with another one
+    bool call(const int screenID); // Call up another screen on top of this one
     void markRepaint(); // Indicate that we need to repaint next time around
     void clearRepaint();
     bool needsRepaint(); // Returns true if we need a redraw
     void setVisible(bool visible);
     bool isVisible();
-    bool operator==(const Screen& s);
+    int getWidth();   // Return the size of the window
+    int getHeight();
     
     // Virtual methods:
     virtual void timerTick(); // Called for each tick of the game system timer
     virtual void prepareForShow(); // Called every time this screen becomes visible
     virtual void prepareForHide(); // Called every time this screen becomes hidden
     virtual void screenPaint(); // Called to redraw this screen. This MUST leave the OpenGL matrices as it found them!
-    virtual void keyboard(const SDLKey &key); // Called whenever a key is pressed or released
+    virtual void keyboard(const SDL_keysym &key); // Called whenever a key is pressed or released
     virtual void mouseButton(const SDL_MouseButtonEvent &mouse);
     virtual void mouseMotion(const SDL_MouseMotionEvent &mouse);
     virtual bool isOpaque();
@@ -153,13 +153,13 @@ bool screenActivate(int screenID);
 void screenPop();
 
 // Send a timer tick to the current screen
-void screenTimerTick();
+bool screenTimerTick();
 
 // Send a repaint command to the screen stack
 void screenPaint();
 
 // Send a keyboard event to the current screen
-void screenKeyboard(const SDLKey &key);
+void screenKeyboard(const SDL_keysym &key);
 
 // Send a mouse button event to the current screen
 void screenMouseButton(const SDL_MouseButtonEvent &mouse);
@@ -194,6 +194,12 @@ bool comStartsWith(string& a, string& b);
 vector<string> comSplitSpaces(string a);
 vector<string> comSplitString(string& s, const string& delim);
 
+/*
+  Screen ID codes:
+*/
+#define SPLASH_SCREEN 101
+#define MAIN_MENU_SCREEN 102
+
 /* ********************* *
  * User-defined includes *
  * ********************* */
@@ -201,6 +207,7 @@ vector<string> comSplitString(string& s, const string& delim);
 #include "mesh.h"
 #include "shapes.h"
 #include "fonts.h"
+#include "intro.h"
 
 #endif
 

@@ -159,11 +159,10 @@ void Light::disable(int number)
 /* ******************************** *
  * Screen class and related methods *
  * ******************************** */
-Screen::Screen(int id)
+Screen::Screen()
 {
   needRepaint = false;
   visible = false;
-  this->id = id;
 }
 
 Screen::~Screen()
@@ -172,17 +171,18 @@ Screen::~Screen()
 
 void Screen::end()
 {
-  // TODO: finish this
+  screenPop();
 }
 
-void Screen::replaceWith(const int screenID)
+bool Screen::replaceWith(const int screenID)
 {
-  // TODO: finish this
+  screenPop();
+  return call(screenID);
 }
 
-void Screen::call(const int screenID)
+bool Screen::call(const int screenID)
 {
-  // TODO: finish this
+  return screenActivate(screenID);
 }
 
 void Screen::markRepaint()
@@ -210,10 +210,26 @@ bool Screen::isVisible()
   return visible;
 }
 
-bool Screen::operator==(const Screen &s)
+int Screen::getWidth()
 {
-  return this->id == s.id;
+  return win_width;
 }
+
+int Screen::getHeight()
+{
+  return win_height;
+}
+
+// Screen class stubs:
+void Screen::timerTick() { }
+void Screen::prepareForShow() { }
+void Screen::prepareForHide() { }
+void Screen::screenPaint() { }
+void Screen::keyboard(const SDL_keysym &key) { }
+void Screen::mouseButton(const SDL_MouseButtonEvent &mouse) { }
+void Screen::mouseMotion(const SDL_MouseMotionEvent &mouse) { }
+bool Screen::isOpaque() { return true; }
+
 
 // Screen-related variables
 map<int,Screen*> screenMap;
@@ -223,7 +239,7 @@ vector<Screen*> screenStack;
 
 bool screenAddNew(Screen &next, int screenID)
 {
-  if (screenMap.find(screenID) == screenMap.end())
+  if (screenMap.find(screenID) != screenMap.end())
     return false;
   
   screenMap[screenID] = &next;
@@ -238,6 +254,12 @@ bool screenActivate(int screenID)
   
   if (screenMap[screenID]->isVisible())
     return false;
+  
+  if (!screenStack.empty())
+  {
+    screenStack.back()->setVisible(false);
+    screenStack.back()->prepareForHide();
+  }
   
   screenStack.push_back(screenMap[screenID]);
   screenStack.back()->setVisible(true);
@@ -254,12 +276,23 @@ void screenPop()
   screenStack.back()->setVisible(false);
   screenStack.back()->prepareForHide();
   screenStack.pop_back();
+  
+  if (!screenStack.empty())
+  {
+    screenStack.back()->setVisible(true);
+    screenStack.back()->prepareForShow();
+  }
 }
 
-void screenTimerTick()
+bool screenTimerTick()
 {
   if (!screenStack.empty())
+  {
     screenStack.back()->timerTick();
+    return screenStack.back()->needsRepaint();
+  }
+  
+  return false;
 }
 
 void _screenRecursivePaint(int cur)
@@ -268,12 +301,35 @@ void _screenRecursivePaint(int cur)
     return;
   
   _screenRecursivePaint(cur - 1);
+  
   screenStack.at(cur)->screenPaint();
+  screenStack.at(cur)->clearRepaint();
 }
 
 void screenPaint()
 {
-  _screenRecursivePaint(screenStack.size() - 1);
+  if (screenStack.empty())
+    return;
+  else
+    _screenRecursivePaint(screenStack.size() - 1);
+}
+
+void screenKeyboard(const SDL_keysym &key)
+{
+  if (!screenStack.empty())
+    screenStack.back()->keyboard(key);
+}
+
+void screenMouseButton(const SDL_MouseButtonEvent &mouse)
+{
+  if (!screenStack.empty())
+    screenStack.back()->mouseButton(mouse);
+}
+
+void screenMouseMotion(const SDL_MouseMotionEvent &mouse)
+{
+  if (!screenStack.empty())
+    screenStack.back()->mouseMotion(mouse);
 }
 
 /* ******************************* *
