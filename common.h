@@ -158,6 +158,9 @@ bool screenTimerTick();
 // Send a repaint command to the screen stack
 void screenPaint();
 
+// Check to see if we need to repaint the screen
+bool screenNeedsRepaint();
+
 // Send a keyboard event to the current screen
 void screenKeyboard(const SDL_keysym &key);
 
@@ -173,22 +176,27 @@ void screenMouseMotion(const SDL_MouseMotionEvent &mouse);
 // Colour-related
 Colour operator*(float s, const Colour& c);
 Colour operator*(const Colour& c);
+
 // Position-related
 Position operator+(const Position& a, const Position& b);
 Position operator-(const Position& a, const Position& b);
 Position operator*(const Position& p, float s);
 Position operator*(float s, const Position& p);
 Position operator/(const Position& p, float s);
+
 // Drawing-related
 void comDrawCube(float x, float y, float size, float rotation);
 void comDrawSphere(float x, float y, float size, float rotation);
 void comDrawBlock(float x, float y, float size, float rotation);
+
 // Random-related
 float comRandomFloat();
 float comRandomFloat(float min, float max);
 Colour comRandomColour();
+
 // File-related
 string comReadLine(FILE* in);
+
 // String-related
 bool comStartsWith(string& a, string& b);
 vector<string> comSplitSpaces(string a);

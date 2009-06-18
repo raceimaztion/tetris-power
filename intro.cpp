@@ -32,6 +32,7 @@ void IntroScreen::prepareForHide()
 
 void IntroScreen::screenPaint()
 {
+  printf("Painting intro.\n");
   // Draw some fancy background
   glColor3f(0.5f, 0.4f, 0.2f);
   glBegin(GL_QUADS);

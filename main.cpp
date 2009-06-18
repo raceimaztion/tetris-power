@@ -157,12 +157,14 @@ int main(int argc, char **argv)
   for (int i=0; i < 323; i++)
     keys_pressed[i] = 0;
   num_keys_pressed = 0;
+  win_width = SCREEN_WIDTH;
+  win_height = SCREEN_HEIGHT;
   
   // try to register the splash screen
   IntroScreen intro;
   if (!screenAddNew(intro, SPLASH_SCREEN))
   {
-    printf("Error: Failed to initialize splash screen!\n");
+    fprintf(stderr, "Error: Failed to initialize splash screen!\n");
     exit(-1);
   }
   screenActivate(SPLASH_SCREEN);
@@ -197,6 +199,7 @@ int main(int argc, char **argv)
           handleMouseMotion(event.motion);
         
         case SDL_VIDEOEXPOSE:
+        case SDL_VIDEORESIZE:
           screenPaint();
           break;
         

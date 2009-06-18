@@ -161,7 +161,7 @@ void Light::disable(int number)
  * ******************************** */
 Screen::Screen()
 {
-  needRepaint = false;
+  needRepaint = true;
   visible = false;
 }
 
@@ -240,7 +240,10 @@ vector<Screen*> screenStack;
 bool screenAddNew(Screen &next, int screenID)
 {
   if (screenMap.find(screenID) != screenMap.end())
+  {
+    fprintf(stderr, "Runtime warning: Failed to add a screen with id #%d.\n", screenID);
     return false;
+  }
   
   screenMap[screenID] = &next;
   
@@ -250,10 +253,16 @@ bool screenAddNew(Screen &next, int screenID)
 bool screenActivate(int screenID)
 {
   if (screenMap.find(screenID) == screenMap.end())
+  {
+    fprintf(stderr, "Runtime warning: Failed to activate screen because we don't have a screen with id #%d.\n", screenID);
     return false;
+  }
   
   if (screenMap[screenID]->isVisible())
+  {
+    fprintf(stderr, "Runtime warning: Tried to activate an already-visible screen with id #%d.\n", screenID);
     return false;
+  }
   
   if (!screenStack.empty())
   {
@@ -297,10 +306,11 @@ bool screenTimerTick()
 
 void _screenRecursivePaint(int cur)
 {
-  if ((cur < 0) || (screenStack.at(cur)->isOpaque()))
+  if (cur < 0)
     return;
   
-  _screenRecursivePaint(cur - 1);
+  if (!(screenStack.at(cur)->isOpaque()))
+    _screenRecursivePaint(cur - 1);
   
   screenStack.at(cur)->screenPaint();
   screenStack.at(cur)->clearRepaint();
@@ -311,7 +321,34 @@ void screenPaint()
   if (screenStack.empty())
     return;
   else
+  {
+    if (!screenNeedsRepaint())
+      return;
+    
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, -1, 1);
+    
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
     _screenRecursivePaint(screenStack.size() - 1);
+    SDL_GL_SwapBuffers();
+  }
+}
+
+bool screenNeedsRepaint()
+{
+  for (int i=screenStack.size()-1; i >= 0; i++)
+  {
+    if (screenStack.at(i)->needsRepaint())
+      return true;
+    else if (screenStack.at(i)->isOpaque())
+      return false;
+  }
+  return false;
 }
 
 void screenKeyboard(const SDL_keysym &key)
