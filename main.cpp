@@ -28,8 +28,11 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   
+  // TODO: Figure out how to fall back if we don't have this
+  /* These don't appear to work on some computers:
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+  */
   
   // Now set the video mode
   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
