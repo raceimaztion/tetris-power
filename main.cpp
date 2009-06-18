@@ -12,7 +12,7 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
 {
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
-    fprintf(stderr, "Could not initialize SDL video! Error was:\n%s\n", SDL_GetError());
+    fprintf(stderr, "Error: Could not initialize SDL video! Error was:\n%s\n", SDL_GetError());
     return false;
   }
   atexit(SDL_Quit);
@@ -29,17 +29,23 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   
   // TODO: Figure out how to fall back if we don't have this
-  /* These don't appear to work on some computers:
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-  */
   
   // Now set the video mode
   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
   if (screen == NULL)
   {
-    fprintf(stderr, "Unable to set video mode! Error was:\n%s\n", SDL_GetError());
-    return false;
+    printf("Warning: Failed to create screen with anti-aliasing, falling back to regular rendering.\n");
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+    
+    screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
+    if (screen == NULL)
+    {
+      fprintf(stderr, "Error: Unable to set video mode! Error was:\n%s\n", SDL_GetError());
+      return false;
+    }
   }
   
   // Set up post-window OpenGL parameters
@@ -141,6 +147,8 @@ Uint32 timerHandler(Uint32 interval, void* unused)
  * ******************* */
 int main(int argc, char **argv)
 {
+  printf("Starting Tetris-Power...\n");
+  
   // Global initialization
   srand(time(NULL));
   
@@ -154,7 +162,7 @@ int main(int argc, char **argv)
   IntroScreen intro;
   if (!screenAddNew(intro, SPLASH_SCREEN))
   {
-    printf("Failed to initialize splash screen!\n");
+    printf("Error: Failed to initialize splash screen!\n");
     exit(-1);
   }
   screenActivate(SPLASH_SCREEN);
