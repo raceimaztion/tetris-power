@@ -161,7 +161,7 @@ int main(int argc, char **argv)
   win_height = SCREEN_HEIGHT;
   
   // try to register the splash screen
-  IntroScreen intro;
+  IntroScreen intro(SPLASH_SCREEN);
   if (!screenAddNew(intro, SPLASH_SCREEN))
   {
     fprintf(stderr, "Error: Failed to initialize splash screen!\n");
@@ -197,10 +197,11 @@ int main(int argc, char **argv)
         
         case SDL_MOUSEMOTION:
           handleMouseMotion(event.motion);
+          break;
         
         case SDL_VIDEOEXPOSE:
         case SDL_VIDEORESIZE:
-          screenPaint();
+          screenPaint(true);
           break;
         
         case SDL_QUIT:
@@ -211,6 +212,15 @@ int main(int argc, char **argv)
     
     // Wait ten milliseconds and do it all again
     SDL_Delay(10);
+    
+    // Repaint things if we need it
+    screenPaint();
+    // If we're out of screens, quit
+    if (screenNumStackedScreens() < 1)
+    {
+      fprintf(stderr, "Runtime warning: No screens left in stack, quitting...\n");
+      running = false;
+    }
   }
   
   return 0;

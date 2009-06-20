@@ -5,9 +5,12 @@
  * The intro or splash screen module *
  * ********************************* */
 
-IntroScreen::IntroScreen()
+IntroScreen::IntroScreen(int screenID) : Screen(screenID)
 {
-  // Nothing to do here
+  // Nothing much to do here
+  
+  // TEMP:
+  mouse_x = mouse_y = 0;
 }
 
 IntroScreen::~IntroScreen()
@@ -32,7 +35,6 @@ void IntroScreen::prepareForHide()
 
 void IntroScreen::screenPaint()
 {
-  printf("Painting intro.\n");
   // Draw some fancy background
   glColor3f(0.5f, 0.4f, 0.2f);
   glBegin(GL_QUADS);
@@ -40,6 +42,15 @@ void IntroScreen::screenPaint()
     glVertex2f(0, getHeight());
     glVertex2f(getWidth(), getHeight());
     glVertex2f(getWidth(), 0);
+  glEnd();
+  
+  // TEMP:
+  glColor3f(0, 0, 0);
+  glBegin(GL_LINES);
+    glVertex2f(mouse_x-5, mouse_y);
+    glVertex2f(mouse_x+5, mouse_y);
+    glVertex2f(mouse_x, mouse_y-5);
+    glVertex2f(mouse_x, mouse_y+5);
   glEnd();
 }
 
@@ -57,7 +68,19 @@ void IntroScreen::mouseButton(const SDL_MouseButtonEvent &mouse)
 
 void IntroScreen::mouseMotion(const SDL_MouseMotionEvent &mouse)
 {
-  // Nothing to do here
+  // Nothing much to do here
+  
+  // TEMP:
+  if (mouse_x != mouse.x)
+  {
+    mouse_x = mouse.x;
+    markRepaint();
+  }
+  if (mouse_y != mouse.y)
+  {
+    mouse_y = mouse.y;
+    markRepaint();
+  }
 }
 
 bool IntroScreen::isOpaque()

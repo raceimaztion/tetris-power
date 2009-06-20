@@ -106,9 +106,10 @@ class Screen {
     // Private variables
     bool needRepaint;
     bool visible;
+    int screenID;
   
   public:
-    Screen();
+    Screen(int screenID);
     ~Screen();
     
     // Useful methods
@@ -122,6 +123,7 @@ class Screen {
     bool isVisible();
     int getWidth();   // Return the size of the window
     int getHeight();
+    int getScreenID();
     
     // Virtual methods:
     virtual void timerTick(); // Called for each tick of the game system timer
@@ -133,6 +135,12 @@ class Screen {
     virtual void mouseMotion(const SDL_MouseMotionEvent &mouse);
     virtual bool isOpaque();
 };
+
+/*
+  Checks to see if a screen has the specified ID
+    Returns true if there is
+*/
+bool screenExists(int screenID);
 
 /*
   Add a new screen with the specified ID
@@ -155,8 +163,11 @@ void screenPop();
 // Send a timer tick to the current screen
 bool screenTimerTick();
 
-// Send a repaint command to the screen stack
+// Send a repaint command to the screen stack if we need a repaint
 void screenPaint();
+
+// Send a repaint command to the screen stack, and force repaint if required
+void screenPaint(bool force);
 
 // Check to see if we need to repaint the screen
 bool screenNeedsRepaint();
@@ -169,6 +180,9 @@ void screenMouseButton(const SDL_MouseButtonEvent &mouse);
 
 // Send a mouse motion event to the current screen
 void screenMouseMotion(const SDL_MouseMotionEvent &mouse);
+
+// Find out how many screens are in the current stack
+int screenNumStackedScreens();
 
 /* ******************************* *
  * Some generally useful functions *

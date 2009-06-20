@@ -4,8 +4,11 @@
 
 #pragma implementation
 class IntroScreen : public Screen {
+  private:
+    int mouse_x, mouse_y;
+    
   public:
-    IntroScreen();
+    IntroScreen(int screenID);
     ~IntroScreen();
     
     void timerTick();

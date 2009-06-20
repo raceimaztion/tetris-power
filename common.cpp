@@ -159,10 +159,11 @@ void Light::disable(int number)
 /* ******************************** *
  * Screen class and related methods *
  * ******************************** */
-Screen::Screen()
+Screen::Screen(int screenID)
 {
   needRepaint = true;
   visible = false;
+  this->screenID = screenID;
 }
 
 Screen::~Screen()
@@ -176,8 +177,19 @@ void Screen::end()
 
 bool Screen::replaceWith(const int screenID)
 {
-  screenPop();
-  return call(screenID);
+  if (screenExists(screenID))
+  {
+    screenPop();
+    bool result = call(screenID);
+    if (!result)
+      screenActivate(getScreenID());
+    return result;
+  }
+  else
+  {
+    fprintf(stderr, "Runtime warning: Failed to activate screen because we don't have a screen with id #%d.\n", screenID);
+    return false;
+  }
 }
 
 bool Screen::call(const int screenID)
@@ -220,6 +232,11 @@ int Screen::getHeight()
   return win_height;
 }
 
+int Screen::getScreenID()
+{
+  return screenID;
+}
+
 // Screen class stubs:
 void Screen::timerTick() { }
 void Screen::prepareForShow() { }
@@ -237,9 +254,14 @@ vector<Screen*> screenStack;
 
 // Screen-related methods
 
+bool screenExists(int screenID)
+{
+  return screenMap.find(screenID) != screenMap.end();
+}
+
 bool screenAddNew(Screen &next, int screenID)
 {
-  if (screenMap.find(screenID) != screenMap.end())
+  if (screenExists(screenID))
   {
     fprintf(stderr, "Runtime warning: Failed to add a screen with id #%d.\n", screenID);
     return false;
@@ -252,7 +274,7 @@ bool screenAddNew(Screen &next, int screenID)
 
 bool screenActivate(int screenID)
 {
-  if (screenMap.find(screenID) == screenMap.end())
+  if (!screenExists(screenID))
   {
     fprintf(stderr, "Runtime warning: Failed to activate screen because we don't have a screen with id #%d.\n", screenID);
     return false;
@@ -280,7 +302,10 @@ bool screenActivate(int screenID)
 void screenPop()
 {
   if (screenStack.empty())
+  {
+    fprintf(stderr, "Runtime warning: Tried to pop a Screen of an empty Screen list.\n");
     return;
+  }
   
   screenStack.back()->setVisible(false);
   screenStack.back()->prepareForHide();
@@ -318,11 +343,19 @@ void _screenRecursivePaint(int cur)
 
 void screenPaint()
 {
+  screenPaint(false);
+}
+
+void screenPaint(bool force)
+{
   if (screenStack.empty())
+  {
+    fprintf(stderr, "Runtime warning: No screens in stack to paint, doing nothing.\n");
     return;
+  }
   else
   {
-    if (!screenNeedsRepaint())
+    if (!(force || screenNeedsRepaint()))
       return;
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -367,6 +400,11 @@ void screenMouseMotion(const SDL_MouseMotionEvent &mouse)
 {
   if (!screenStack.empty())
     screenStack.back()->mouseMotion(mouse);
+}
+
+int screenNumStackedScreens()
+{
+  return screenStack.size();
 }
 
 /* ******************************* *
