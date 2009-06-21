@@ -20,15 +20,17 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   // Set up pre-window OpenGL parameters
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   
+  //8-bits for each Red, Green, Blue, and Alpha plane
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
   
+  //24-bits for the depth buffer and enable double-buffering
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   
-  // TODO: Figure out how to fall back if we don't have this
+  // Try to enable multisampling (anti-aliasing)
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
   
@@ -36,15 +38,22 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
   if (screen == NULL)
   {
-    printf("Warning: Failed to create screen with anti-aliasing, falling back to regular rendering.\n");
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
-    
+    // If we don't get 4 samples, try 2
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
     screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
+    
     if (screen == NULL)
     {
-      fprintf(stderr, "Error: Unable to set video mode! Error was:\n%s\n", SDL_GetError());
-      return false;
+      printf("Warning: Failed to create screen with anti-aliasing, falling back to regular rendering.\n");
+      SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+      SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+    
+      screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
+      if (screen == NULL)
+      {
+        fprintf(stderr, "Error: Unable to set video mode! Error was:\n%s\n", SDL_GetError());
+        return false;
+      }
     }
   }
   
