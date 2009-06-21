@@ -130,7 +130,7 @@ class Screen {
     virtual void prepareForShow(); // Called every time this screen becomes visible
     virtual void prepareForHide(); // Called every time this screen becomes hidden
     virtual void screenPaint(); // Called to redraw this screen. This MUST leave the OpenGL matrices as it found them!
-    virtual void keyboard(const SDL_keysym &key); // Called whenever a key is pressed or released
+    virtual void keyboard(const SDL_KeyboardEvent &key); // Called whenever a key is pressed or released
     virtual void mouseButton(const SDL_MouseButtonEvent &mouse);
     virtual void mouseMotion(const SDL_MouseMotionEvent &mouse);
     virtual bool isOpaque();
@@ -160,7 +160,10 @@ bool screenActivate(int screenID);
 */
 void screenPop();
 
-// Send a timer tick to the current screen
+/*
+  Send a timer tick to the current screen
+    Returns true if the screens need a repaint
+*/
 bool screenTimerTick();
 
 // Send a repaint command to the screen stack if we need a repaint
@@ -173,7 +176,7 @@ void screenPaint(bool force);
 bool screenNeedsRepaint();
 
 // Send a keyboard event to the current screen
-void screenKeyboard(const SDL_keysym &key);
+void screenKeyboard(const SDL_KeyboardEvent &key);
 
 // Send a mouse button event to the current screen
 void screenMouseButton(const SDL_MouseButtonEvent &mouse);

@@ -10,7 +10,8 @@ IntroScreen::IntroScreen(int screenID) : Screen(screenID)
   // Nothing much to do here
   
   // TEMP:
-  mouse_x = mouse_y = 0;
+  progress = 0;
+  done = false;
 }
 
 IntroScreen::~IntroScreen()
@@ -21,6 +22,18 @@ IntroScreen::~IntroScreen()
 void IntroScreen::timerTick()
 {
   // Nothing to do here
+  if (done)  return;
+  
+  float p = progress + 0.005f;
+  if (p >= 1)
+  {
+    progress = 1;
+    done = true;
+  }
+  else
+    progress = p;
+  
+  markRepaint();
 }
 
 void IntroScreen::prepareForShow()
@@ -45,42 +58,65 @@ void IntroScreen::screenPaint()
   glEnd();
   
   // TEMP:
-  glColor3f(0, 0, 0);
-  glBegin(GL_LINES);
-    glVertex2f(mouse_x-5, mouse_y);
-    glVertex2f(mouse_x+5, mouse_y);
-    glVertex2f(mouse_x, mouse_y-5);
-    glVertex2f(mouse_x, mouse_y+5);
-  glEnd();
+  {
+    if (done)
+      glColor3f(0, 0.5, 0);
+    else 
+      glColor3f(0, 0, 0);
+    
+    glBegin(GL_LINE_LOOP);
+      glVertex2i((int)(0.75f*getWidth() + 2), getHeight() - 31);
+      glVertex2i((int)(0.25f*getWidth() - 1), getHeight() - 31);
+      glVertex2i((int)(0.25f*getWidth() - 1), getHeight() - 13);
+      glVertex2i((int)(0.75f*getWidth() + 2), getHeight() - 13);
+    glEnd();
+    
+    glBegin(GL_QUADS);
+      glVertex2f(0.25*getWidth(), getHeight() - 30);
+      glVertex2f(0.25*getWidth(), getHeight() - 15);
+      glVertex2f(0.25*getWidth() + 0.5*getWidth()*progress, getHeight() - 15);
+      glVertex2f(0.25*getWidth() + 0.5*getWidth()*progress, getHeight() - 30);
+    glEnd();
+  }
 }
 
-void IntroScreen::keyboard(const SDL_keysym &key)
+void IntroScreen::keyboard(const SDL_KeyboardEvent &key)
 {
-  if (!replaceWith(MAIN_MENU_SCREEN))
+  if (key.keysym.scancode && !replaceWith(MAIN_MENU_SCREEN))
     end();
+  
+#ifdef DEBUG
+  printf("Intro debug: Keyboard event:\n");
+  if (key.type == SDL_KEYDOWN)
+    printf("Event type: Key down.\n");
+  else if (key.type == SDL_KEYUP)
+    printf("Event type: Key up.\n");
+  else
+    printf("Event type: Unknown.\n");
+  printf("Key scancode: %d\n", key.keysym.scancode);
+#endif
 }
 
 void IntroScreen::mouseButton(const SDL_MouseButtonEvent &mouse)
 {
+#ifdef DEBUG
+  printf("Intro debug: Mouse button event:\n");
+  if (mouse.type == SDL_MOUSEBUTTONDOWN)
+    printf("Event type: Mouse button down.\n");
+  else if (mouse.type == SDL_MOUSEBUTTONUP)
+    printf("Event type: Mouse button up.\n");
+  else
+    printf("Event type: Unknown.\n");
+  printf("Mouse position: %d, %d\n", mouse.x, mouse.y);
+#endif
+  
   if (!replaceWith(MAIN_MENU_SCREEN))
     end();
 }
 
 void IntroScreen::mouseMotion(const SDL_MouseMotionEvent &mouse)
 {
-  // Nothing much to do here
-  
-  // TEMP:
-  if (mouse_x != mouse.x)
-  {
-    mouse_x = mouse.x;
-    markRepaint();
-  }
-  if (mouse_y != mouse.y)
-  {
-    mouse_y = mouse.y;
-    markRepaint();
-  }
+  // Nothing to do here
 }
 
 bool IntroScreen::isOpaque()

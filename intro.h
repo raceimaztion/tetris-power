@@ -5,7 +5,8 @@
 #pragma implementation
 class IntroScreen : public Screen {
   private:
-    int mouse_x, mouse_y;
+    float progress;
+    bool done;
     
   public:
     IntroScreen(int screenID);
@@ -15,7 +16,7 @@ class IntroScreen : public Screen {
     void prepareForShow();
     void prepareForHide();
     void screenPaint();
-    void keyboard(const SDL_keysym &key);
+    void keyboard(const SDL_KeyboardEvent &key);
     void mouseButton(const SDL_MouseButtonEvent &mouse);
     void mouseMotion(const SDL_MouseMotionEvent &mouse);
     bool isOpaque();

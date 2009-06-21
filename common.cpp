@@ -242,7 +242,7 @@ void Screen::timerTick() { }
 void Screen::prepareForShow() { }
 void Screen::prepareForHide() { }
 void Screen::screenPaint() { }
-void Screen::keyboard(const SDL_keysym &key) { }
+void Screen::keyboard(const SDL_KeyboardEvent &key) { }
 void Screen::mouseButton(const SDL_MouseButtonEvent &mouse) { }
 void Screen::mouseMotion(const SDL_MouseMotionEvent &mouse) { }
 bool Screen::isOpaque() { return true; }
@@ -323,7 +323,7 @@ bool screenTimerTick()
   if (!screenStack.empty())
   {
     screenStack.back()->timerTick();
-    return screenStack.back()->needsRepaint();
+    return screenNeedsRepaint();
   }
   
   return false;
@@ -384,7 +384,7 @@ bool screenNeedsRepaint()
   return false;
 }
 
-void screenKeyboard(const SDL_keysym &key)
+void screenKeyboard(const SDL_KeyboardEvent &key)
 {
   if (!screenStack.empty())
     screenStack.back()->keyboard(key);

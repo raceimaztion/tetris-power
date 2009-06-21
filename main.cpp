@@ -115,7 +115,7 @@ void gameStep()
   lastTime = curTime;
 }
 
-void handleKeyboardEvent(const SDL_keysym& key)
+void handleKeyboardEvent(const SDL_KeyboardEvent& key)
 {
   screenKeyboard(key);
 }
@@ -135,8 +135,7 @@ void handleMouseMotion(const SDL_MouseMotionEvent &mouse)
  * *************** */
 Uint32 timerHandler(Uint32 interval, void* unused)
 {
-  if (screenTimerTick())
-    triggerRepaint();
+  screenTimerTick();
   
   return interval;
 }
@@ -154,11 +153,19 @@ int main(int argc, char **argv)
   
   if (!initVideo())
     exit(1);
+  if (SDL_Init(SDL_INIT_TIMER) < 0)
+  {
+    fprintf(stderr, "Error: Failed to initialize SDL timer system.\nError was: %s.\n", SDL_GetError());
+    exit(1);
+  }
+  
   for (int i=0; i < 323; i++)
     keys_pressed[i] = 0;
   num_keys_pressed = 0;
   win_width = SCREEN_WIDTH;
   win_height = SCREEN_HEIGHT;
+  
+  SDL_WM_SetCaption("Tetris Power", "Tetris Power");
   
   // try to register the splash screen
   IntroScreen intro(SPLASH_SCREEN);
@@ -171,6 +178,9 @@ int main(int argc, char **argv)
   
   bool running = true;
   SDL_Event event;
+  
+  // Set up our timer system
+  SDL_AddTimer(TIMER_TICK, timerHandler, NULL);
   
   // The main game loop
   while (running)
@@ -187,7 +197,7 @@ int main(int argc, char **argv)
         
         case SDL_KEYDOWN:
         case SDL_KEYUP:
-          handleKeyboardEvent(event.key.keysym);
+          handleKeyboardEvent(event.key);
           break;
         
         case SDL_MOUSEBUTTONDOWN:
@@ -223,5 +233,6 @@ int main(int argc, char **argv)
     }
   }
   
+  // We're done, quit
   return 0;
 }
