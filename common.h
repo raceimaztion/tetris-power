@@ -20,6 +20,7 @@
 // SDL includes
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include "SDL_image.h"
 #include "SDL_mixer.h"
 
 using namespace std;
@@ -60,11 +61,14 @@ class Colour {
     
     void fillArray(float a[]);
     
-    void apply();
-    void applyMaterial();
-    void applyMaterial(int attribute);
+    void apply() const;
+    void apply(float alpha) const;
+    void applyMaterial() const;
+    void applyMaterial(int attribute) const;
     
-    float brightness();
+    float brightness() const;
+    Colour brighter(float v) const;
+    Colour darker(float v) const;
 };
 
 class Position {
@@ -75,11 +79,11 @@ class Position {
     Position(const Position& p);
     Position(float x, float y, float z);
     
-    void applyTranslation();
-    void applyTranslation(float amount);
-    void applyNormal();
-    void applyVertex();
-    void applyTexCoords();
+    void applyTranslation() const;
+    void applyTranslation(float amount) const;
+    void applyNormal() const;
+    void applyVertex() const;
+    void applyTexCoords() const;
     
     Position operator+=(const Position& p);
     Position operator-=(const Position& p);
@@ -94,8 +98,8 @@ class Light {
   public:
     Light(const Position& p, float w, const Colour& c);
     
-    void apply(int number);
-    void disable(int number);
+    void apply(int number) const;
+    void disable(int number) const;
 };
 
 /* ********************************** *
@@ -121,8 +125,8 @@ class Screen {
     bool needsRepaint(); // Returns true if we need a redraw
     void setVisible(bool visible);
     bool isVisible();
-    int getWidth();   // Return the size of the window
-    int getHeight();
+    static int getWidth();   // Return the size of the window
+    static int getHeight();
     int getScreenID();
     
     // Virtual methods:
@@ -219,11 +223,22 @@ bool comStartsWith(string& a, string& b);
 vector<string> comSplitSpaces(string a);
 vector<string> comSplitString(string& s, const string& delim);
 
+void triggerRepaint();
+
 /*
   Screen ID codes:
 */
 #define SPLASH_SCREEN 101
 #define MAIN_MENU_SCREEN 102
+#define OPTIONS_SCREEN 103
+#define HELP_SCREEN 104
+#define PLAY_SCREEN 105
+
+#ifdef MAIN_MODULE
+#define GLOBAL
+#else
+#define GLOBAL extern
+#endif
 
 /* ********************* *
  * User-defined includes *
@@ -232,7 +247,16 @@ vector<string> comSplitString(string& s, const string& delim);
 #include "mesh.h"
 #include "shapes.h"
 #include "fonts.h"
-#include "intro.h"
+#include "widgets.h"
+
+#include "splash.h"
+#include "mainMenu.h"
+
+/*
+  Global variables
+*/
+
+GLOBAL Font *fallbackFont;
 
 #endif
 

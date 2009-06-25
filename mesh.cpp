@@ -185,6 +185,24 @@ void Mesh::render(bool use_textures)
   
   for (unsigned int i=0; i < polygons.size(); i++)
   {
+    switch(polygons[i].vertices.size())
+    {
+      case 1:
+        glBegin(GL_POINTS);
+        break;
+      case 2:
+        glBegin(GL_LINES);
+        break;
+      case 3:
+        glBegin(GL_TRIANGLES);
+        break;
+      case 4:
+        glBegin(GL_QUADS);
+        break;
+      default:
+        goto again;
+    }
+    
     smooth = polygons[i].smooth;
     if (!smooth)
     {
@@ -202,8 +220,12 @@ void Mesh::render(bool use_textures)
       
       vertices[polygons[i].vertices[j]].applyVertex();
     }
-  }
-}
+    
+    glEnd();
+    
+again: ;
+  } // end for each polygon
+} // end Mesh::render()
 
 void Mesh::translate(const Position& p)
 {

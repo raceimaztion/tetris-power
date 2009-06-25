@@ -5,6 +5,16 @@
 #ifndef FONTS_HEADER
 #define FONTS_HEADER
 
+/*class Font {
+  private:
+    int height;
+    vector<int> widths;
+    vector<unsigned char *> bitmaps;
+  
+  public:
+    
+};*/
+
 // The maximum number of characters we store
 #define NUM_FONT_CHARACTERS 128
 

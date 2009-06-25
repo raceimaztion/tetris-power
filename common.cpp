@@ -46,12 +46,17 @@ void Colour::fillArray(float a[])
   a[3] = this->a;
 }
 
-void Colour::apply()
+void Colour::apply() const
 {
   glColor4f(r, g, b, a);
 }
 
-void Colour::applyMaterial()
+void Colour::apply(float alpha) const
+{
+  glColor4f(r, g, b, alpha);
+}
+
+void Colour::applyMaterial() const
 {
   float values[4] = {r, g, b, a};
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, values);
@@ -59,7 +64,7 @@ void Colour::applyMaterial()
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, values);
 }
 
-void Colour::applyMaterial(int attribute)
+void Colour::applyMaterial(int attribute) const
 {
   float values[4];
   values[0] = r;
@@ -69,9 +74,20 @@ void Colour::applyMaterial(int attribute)
   glMaterialfv(GL_FRONT_AND_BACK, attribute, values);
 }
 
-float Colour::brightness()
+float Colour::brightness() const
 {
   return sqrtf(r*r + g*g + b*b);
+}
+
+Colour Colour::brighter(float v) const
+{
+  // nc = (1-(1-c)*(1-v)) = 1 - ((1-v) - (1-v)*c) = 1 - (1 - v - c + c*v) = v + c - c*v
+  return Colour(v+r-v*r, v+g-v*g, v+b-v*b, a);
+}
+
+Colour Colour::darker(float v) const
+{
+  return Colour(r*(1-v), g*(1-v), b*(1-v), a);
 }
 
 /* ************** *
@@ -96,27 +112,27 @@ Position::Position(float x, float y, float z)
   this->z = z;
 }
 
-void Position::applyTranslation()
+void Position::applyTranslation() const
 {
   glTranslatef(x, y, z);
 }
 
-void Position::applyTranslation(float amount)
+void Position::applyTranslation(float amount) const
 {
   glTranslatef(amount*x, amount*y, amount*z);
 }
 
-void Position::applyNormal()
+void Position::applyNormal() const
 {
   glNormal3f(x, y, z);
 }
 
-void Position::applyVertex()
+void Position::applyVertex() const
 {
   glVertex3f(x, y, z);
 }
 
-void Position::applyTexCoords()
+void Position::applyTexCoords() const
 {
   glTexCoord2f(x, y);
 }
@@ -139,19 +155,19 @@ Light::Light(const Position& p, float w, const Colour& c)
   this->c = c;
 }
 
-void Light::apply(int number)
+void Light::apply(int number) const
 {
   glEnable(GL_LIGHTING);
   glEnable(number);
   float values[] = {pos.x, pos.y, pos.z, w};
   glLightfv(number, GL_POSITION, values);
-  c.fillArray(values);
+//  c.fillArray(values);
   glLightfv(number, GL_AMBIENT, values);
   glLightfv(number, GL_DIFFUSE, values);
   glLightfv(number, GL_SPECULAR, values);
 }
 
-void Light::disable(int number)
+void Light::disable(int number) const
 {
   glDisable(number);
 }

@@ -4,6 +4,7 @@
 #define MESSAGE_REPAINT 201
 
 SDL_Surface *screen; // This is the backbuffer
+bool needsRepaint = false;
 
 /* **************************** *
  * SDL initialization functions *
@@ -53,15 +54,20 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
       {
         fprintf(stderr, "Error: Unable to set video mode! Error was:\n%s\n", SDL_GetError());
         return false;
-      }
-    }
-  }
+      } // end if no samples
+    } // end if try 2 samples
+  } // end if try 4 samples
   
   // Set up post-window OpenGL parameters
   glEnable(GL_MULTISAMPLE);
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
+  glPixelStorei(GL_UNPACK_LSB_FIRST, GL_TRUE);
   
   return true;
 }
@@ -88,6 +94,8 @@ bool initAudio()
  * ***************************************** */
 void triggerRepaint()
 {
+  needsRepaint = true;
+/*
   SDL_Event event;
   event.type = SDL_USEREVENT;
   event.user.code = MESSAGE_REPAINT;
@@ -95,6 +103,7 @@ void triggerRepaint()
   event.user.data2 = 0;
   
   SDL_PushEvent(&event);
+*/
 }
 
 /* ********* *
@@ -139,6 +148,27 @@ void handleMouseMotion(const SDL_MouseMotionEvent &mouse)
   screenMouseMotion(mouse);
 }
 
+void loadFonts()
+{
+  // Try to load the fallback font
+  if (fallbackFont == NULL)
+  {
+    SDL_Surface *fontSurface = IMG_Load("fonts/main_font.png");
+    if (fontSurface == NULL)
+    {
+      fprintf(stderr, "Runtime warning: Failed to load fallback font from 'fonts/main_font.png'. There is a chance that no text will be shown in the main window.\n");
+      return;
+    }
+    fallbackFont = fParseFont(fontSurface);
+    SDL_FreeSurface(fontSurface);
+    if (fallbackFont == NULL)
+    {
+      fprintf(stderr, "Runtime warning: Failed to parse fallback font from 'fonts/main_font.png'. There is a chance that no text will be shown in the main window.\n");
+      return;
+    }
+  }
+}
+
 /* *************** *
  * Thread function *
  * *************** */
@@ -176,14 +206,16 @@ int main(int argc, char **argv)
   
   SDL_WM_SetCaption("Tetris Power", "Tetris Power");
   
-  // try to register the splash screen
-  IntroScreen intro(SPLASH_SCREEN);
-  if (!screenAddNew(intro, SPLASH_SCREEN))
-  {
-    fprintf(stderr, "Error: Failed to initialize splash screen!\n");
-    exit(-1);
-  }
+  loadFonts();
+  
+  // Create the splash screen
+  SplashScreen splash(SPLASH_SCREEN);
+  screenAddNew(splash, SPLASH_SCREEN);
   screenActivate(SPLASH_SCREEN);
+  
+  // Create the main menu
+  MainMenu mainMenu(MAIN_MENU_SCREEN);
+  screenAddNew(mainMenu, MAIN_MENU_SCREEN);
   
   bool running = true;
   SDL_Event event;
@@ -201,7 +233,7 @@ int main(int argc, char **argv)
       {
         case SDL_USEREVENT:
           if (event.user.code == MESSAGE_REPAINT)
-            screenPaint();
+            screenPaint(true);
           break;
         
         case SDL_KEYDOWN:
@@ -233,7 +265,8 @@ int main(int argc, char **argv)
     SDL_Delay(10);
     
     // Repaint things if we need it
-    screenPaint();
+    screenPaint(needsRepaint);
+    needsRepaint = false;
     // If we're out of screens, quit
     if (screenNumStackedScreens() < 1)
     {
@@ -245,3 +278,4 @@ int main(int argc, char **argv)
   // We're done, quit
   return 0;
 }
+

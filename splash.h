@@ -1,16 +1,16 @@
 /*
-  the class definition for the Intro or Splash screen
+  the class definition for the Splash screen
 */
 
 #pragma implementation
-class IntroScreen : public Screen {
+class SplashScreen : public Screen {
   private:
     float progress;
     bool done;
     
   public:
-    IntroScreen(int screenID);
-    ~IntroScreen();
+    SplashScreen(int screenID);
+    ~SplashScreen();
     
     void timerTick();
     void prepareForShow();

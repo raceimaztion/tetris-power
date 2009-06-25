@@ -1,11 +1,11 @@
 #define INTRO_MODULE
 #include "common.h"
 
-/* ********************************* *
- * The intro or splash screen module *
- * ********************************* */
+/* ************************ *
+ * The splash screen module *
+ * ************************ */
 
-IntroScreen::IntroScreen(int screenID) : Screen(screenID)
+SplashScreen::SplashScreen(int screenID) : Screen(screenID)
 {
   // Nothing much to do here
   
@@ -14,17 +14,17 @@ IntroScreen::IntroScreen(int screenID) : Screen(screenID)
   done = false;
 }
 
-IntroScreen::~IntroScreen()
+SplashScreen::~SplashScreen()
 {
   // Nothing to do here
 }
 
-void IntroScreen::timerTick()
+void SplashScreen::timerTick()
 {
   // Nothing to do here
   if (done)  return;
   
-  float p = progress + 0.005f;
+  float p = progress + 0.05f;
   if (p >= 1)
   {
     progress = 1;
@@ -36,17 +36,17 @@ void IntroScreen::timerTick()
   markRepaint();
 }
 
-void IntroScreen::prepareForShow()
+void SplashScreen::prepareForShow()
 {
   // Nothing to do here
 }
 
-void IntroScreen::prepareForHide()
+void SplashScreen::prepareForHide()
 {
   // Nothing to do here
 }
 
-void IntroScreen::screenPaint()
+void SplashScreen::screenPaint()
 {
   // Draw some fancy background
   glColor3f(0.5f, 0.4f, 0.2f);
@@ -80,13 +80,13 @@ void IntroScreen::screenPaint()
   }
 }
 
-void IntroScreen::keyboard(const SDL_KeyboardEvent &key)
+void SplashScreen::keyboard(const SDL_KeyboardEvent &key)
 {
   if (key.keysym.scancode && !replaceWith(MAIN_MENU_SCREEN))
     end();
   
 #ifdef DEBUG
-  printf("Intro debug: Keyboard event:\n");
+  printf("Splash debug: Keyboard event:\n");
   if (key.type == SDL_KEYDOWN)
     printf("Event type: Key down.\n");
   else if (key.type == SDL_KEYUP)
@@ -97,10 +97,10 @@ void IntroScreen::keyboard(const SDL_KeyboardEvent &key)
 #endif
 }
 
-void IntroScreen::mouseButton(const SDL_MouseButtonEvent &mouse)
+void SplashScreen::mouseButton(const SDL_MouseButtonEvent &mouse)
 {
 #ifdef DEBUG
-  printf("Intro debug: Mouse button event:\n");
+  printf("Splash debug: Mouse button event:\n");
   if (mouse.type == SDL_MOUSEBUTTONDOWN)
     printf("Event type: Mouse button down.\n");
   else if (mouse.type == SDL_MOUSEBUTTONUP)
@@ -114,12 +114,12 @@ void IntroScreen::mouseButton(const SDL_MouseButtonEvent &mouse)
     end();
 }
 
-void IntroScreen::mouseMotion(const SDL_MouseMotionEvent &mouse)
+void SplashScreen::mouseMotion(const SDL_MouseMotionEvent &mouse)
 {
   // Nothing to do here
 }
 
-bool IntroScreen::isOpaque()
+bool SplashScreen::isOpaque()
 {
   return true;
 }
