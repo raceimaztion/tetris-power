@@ -233,7 +233,7 @@ void Screen::setVisible(bool visible)
   this->visible = visible;
 }
 
-bool Screen::isVisible()
+bool Screen::isVisible() const
 {
   return visible;
 }
@@ -248,7 +248,7 @@ int Screen::getHeight()
   return win_height;
 }
 
-int Screen::getScreenID()
+int Screen::getScreenID() const
 {
   return screenID;
 }
@@ -257,11 +257,11 @@ int Screen::getScreenID()
 void Screen::timerTick() { }
 void Screen::prepareForShow() { }
 void Screen::prepareForHide() { }
-void Screen::screenPaint() { }
+void Screen::screenPaint() const { }
 void Screen::keyboard(const SDL_KeyboardEvent &key) { }
 void Screen::mouseButton(const SDL_MouseButtonEvent &mouse) { }
 void Screen::mouseMotion(const SDL_MouseMotionEvent &mouse) { }
-bool Screen::isOpaque() { return true; }
+bool Screen::isOpaque() const { return true; }
 
 
 // Screen-related variables
@@ -588,5 +588,26 @@ vector<string> comSplitString(string& a, const string& delim)
   while (next != string::npos);
   
   return result;
+}
+
+// Drawing-related
+void drawRect(int x, int y, int width, int height)
+{
+  glBegin(GL_LINE_LOOP);
+    glVertex2i(x, y);
+    glVertex2i(x, y+height);
+    glVertex2i(x+width, y+height);
+    glVertex2i(x+width, y);
+  glEnd();
+}
+
+void fillRect(int x, int y, int width, int height)
+{
+  glBegin(GL_QUADS);
+    glVertex2i(x, y);
+    glVertex2i(x, y+height);
+    glVertex2i(x+width, y+height);
+    glVertex2i(x+width, y);
+  glEnd();
 }
 

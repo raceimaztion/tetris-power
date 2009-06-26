@@ -24,6 +24,7 @@ class Widget {
     void hide();
     bool isIn(int x, int y) const;
     
+    virtual void setFont(Font* font);
     virtual void paint() const;
     virtual void timerTick();
     virtual void mouse(const SDL_MouseButtonEvent& mouse);
@@ -101,6 +102,8 @@ class Panel : public Widget {
     
     void addChild(Widget *child);
     void removeChild(Widget *child);
+    
+    void setFont(Font* font);
     
     void paint() const;
     void timerTick();

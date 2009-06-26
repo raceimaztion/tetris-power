@@ -15,10 +15,10 @@ class SplashScreen : public Screen {
     void timerTick();
     void prepareForShow();
     void prepareForHide();
-    void screenPaint();
+    void screenPaint() const;
     void keyboard(const SDL_KeyboardEvent &key);
     void mouseButton(const SDL_MouseButtonEvent &mouse);
     void mouseMotion(const SDL_MouseMotionEvent &mouse);
-    bool isOpaque();
+    bool isOpaque() const;
 };
 

@@ -2,14 +2,12 @@
   The class definition for the main menu
 */
 
-#define MAINMENU_TAG_QUIT 0x21
-
 class MainMenu : public Screen, public ButtonCallback {
   private:
     //Mesh cube;
     Panel panel;
-    Button quit;
-    Label label;
+    Label title;
+    Button start, options, quit;
     
   public:
     MainMenu(int screenID);
@@ -17,11 +15,11 @@ class MainMenu : public Screen, public ButtonCallback {
     void timerTick();
     void prepareForShow();
     void prepareForHide();
-    void screenPaint();
+    void screenPaint() const;
     void keyboard(const SDL_KeyboardEvent &key);
     void mouseButton(const SDL_MouseButtonEvent &mouse);
     void mouseMotion(const SDL_MouseMotionEvent &mouse);
-    bool isOpaque();
+    bool isOpaque() const;
     
     void buttonCallback(const Button& b);
 };

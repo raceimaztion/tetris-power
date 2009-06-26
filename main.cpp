@@ -148,24 +148,36 @@ void handleMouseMotion(const SDL_MouseMotionEvent &mouse)
   screenMouseMotion(mouse);
 }
 
+Font *loadFont(const string& fileName)
+{
+  SDL_Surface *fontSurface = IMG_Load(fileName.c_str());
+  if (fontSurface == NULL)
+  {
+    fprintf(stderr, "Runtime warning: Failed to load font from file '%s', you might not get some text in-game!\n", fileName.c_str());
+    return NULL;
+  }
+  Font *font = fParseFont(fontSurface);
+  SDL_FreeSurface(fontSurface);
+  if (font == NULL)
+  {
+    fprintf(stderr, "Runtime warning: Failed to parse font from file '%s', you might not get some text in-game!\n", fileName.c_str());
+    return NULL;
+  }
+  return font;
+}
+
 void loadFonts()
 {
   // Try to load the fallback font
   if (fallbackFont == NULL)
   {
-    SDL_Surface *fontSurface = IMG_Load("fonts/main_font.png");
-    if (fontSurface == NULL)
-    {
-      fprintf(stderr, "Runtime warning: Failed to load fallback font from 'fonts/main_font.png'. There is a chance that no text will be shown in the main window.\n");
-      return;
-    }
-    fallbackFont = fParseFont(fontSurface);
-    SDL_FreeSurface(fontSurface);
-    if (fallbackFont == NULL)
-    {
-      fprintf(stderr, "Runtime warning: Failed to parse fallback font from 'fonts/main_font.png'. There is a chance that no text will be shown in the main window.\n");
-      return;
-    }
+    fallbackFont = loadFont("fonts/main_font.png");
+  }
+  
+  // Try to load the large font
+  if (largeFont == NULL)
+  {
+    largeFont = loadFont("fonts/large_font.png");
   }
 }
 
@@ -216,6 +228,10 @@ int main(int argc, char **argv)
   // Create the main menu
   MainMenu mainMenu(MAIN_MENU_SCREEN);
   screenAddNew(mainMenu, MAIN_MENU_SCREEN);
+  
+  // Create the play screen
+  PlayScreen playScreen(PLAY_SCREEN);
+  screenAddNew(playScreen, PLAY_SCREEN);
   
   bool running = true;
   SDL_Event event;

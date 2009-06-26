@@ -74,6 +74,7 @@ bool Widget::isIn(int px, int py) const
   return true;
 }
 
+void Widget::setFont(Font* font) { }
 void Widget::paint() const { printf("Runtime warning: Using raw Widget::paint() method!\n"); }
 void Widget::timerTick() { }
 void Widget::mouse(const SDL_MouseButtonEvent& mouse) { }
@@ -270,11 +271,12 @@ void Button::mouse(const SDL_MouseButtonEvent& mouse)
   else if (mouse.type == SDL_MOUSEBUTTONUP)
   {
     if (isIn(mouse.x, mouse.y))
-    {
       trigger();
+    if (state != BUTTON_NORMAL)
+    {
+      state = BUTTON_NORMAL;
+      triggerRepaint();
     }
-    state = BUTTON_NORMAL;
-    triggerRepaint();
   }
 }
 
@@ -333,6 +335,12 @@ void Panel::addChild(Widget *child)
 void Panel::removeChild(Widget *child)
 {
   // TODO: remove the child
+}
+
+void Panel::setFont(Font* font)
+{
+  for (unsigned int i=0; i < children.size(); i++)
+    children.at(i)->setFont(font);
 }
 
 void Panel::paint() const

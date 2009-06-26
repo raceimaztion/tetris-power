@@ -46,7 +46,7 @@ void SplashScreen::prepareForHide()
   // Nothing to do here
 }
 
-void SplashScreen::screenPaint()
+void SplashScreen::screenPaint() const
 {
   // Draw some fancy background
   glColor3f(0.5f, 0.4f, 0.2f);
@@ -119,7 +119,7 @@ void SplashScreen::mouseMotion(const SDL_MouseMotionEvent &mouse)
   // Nothing to do here
 }
 
-bool SplashScreen::isOpaque()
+bool SplashScreen::isOpaque() const
 {
   return true;
 }

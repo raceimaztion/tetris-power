@@ -124,20 +124,20 @@ class Screen {
     void clearRepaint();
     bool needsRepaint(); // Returns true if we need a redraw
     void setVisible(bool visible);
-    bool isVisible();
+    bool isVisible() const;
     static int getWidth();   // Return the size of the window
     static int getHeight();
-    int getScreenID();
+    int getScreenID() const;
     
     // Virtual methods:
     virtual void timerTick(); // Called for each tick of the game system timer
     virtual void prepareForShow(); // Called every time this screen becomes visible
     virtual void prepareForHide(); // Called every time this screen becomes hidden
-    virtual void screenPaint(); // Called to redraw this screen. This MUST leave the OpenGL matrices as it found them!
+    virtual void screenPaint() const; // Called to redraw this screen. This MUST leave the OpenGL matrices as it found them!
     virtual void keyboard(const SDL_KeyboardEvent &key); // Called whenever a key is pressed or released
     virtual void mouseButton(const SDL_MouseButtonEvent &mouse);
     virtual void mouseMotion(const SDL_MouseMotionEvent &mouse);
-    virtual bool isOpaque();
+    virtual bool isOpaque() const;
 };
 
 /*
@@ -225,6 +225,10 @@ vector<string> comSplitString(string& s, const string& delim);
 
 void triggerRepaint();
 
+// Drawing-related
+void drawRect(int x, int y, int width, int height);
+void fillRect(int x, int y, int width, int height);
+
 /*
   Screen ID codes:
 */
@@ -251,12 +255,14 @@ void triggerRepaint();
 
 #include "splash.h"
 #include "mainMenu.h"
+#include "play.h"
 
 /*
   Global variables
 */
 
 GLOBAL Font *fallbackFont;
+GLOBAL Font *largeFont;
 
 #endif
 

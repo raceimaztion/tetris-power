@@ -1,11 +1,14 @@
 OPTIONS = -Wall -c -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
-HEADERS = common.h grid.h shapes.h mesh.h fonts.h widgets.h
+HEADERS = common.h grid.h shapes.h mesh.h fonts.h widgets.h play.h
 MAIN_ONLY_HEADERS = splash.h mainMenu.h
 
 all: tetris
 
-tetris: main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o $(HEADERS)
-	g++ -o tetris main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o -L/usr/lib -lSDL -lGL -lSDL_mixer -lSDL_image
+linecount:
+	wc -l *.h *.cpp
+
+tetris: main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o $(HEADERS)
+	g++ -o tetris main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o -L/usr/lib -lSDL -lGL -lSDL_mixer -lSDL_image
 
 main.o: main.cpp $(HEADERS) $(MAIN_ONLY_HEADERS)
 	g++ $(OPTIONS) main.cpp
@@ -33,6 +36,9 @@ mainMenu.o: mainMenu.cpp mainMenu.h $(HEADERS)
 
 widgets.o: widgets.cpp $(HEADERS)
 	g++ $(OPTIONS) widgets.cpp
+
+play.o: play.cpp $(HEADERS)
+	g++ $(OPTIONS) play.cpp
 
 run: tetris
 	./tetris
