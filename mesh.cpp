@@ -36,6 +36,14 @@ Mesh::Mesh()
   // Really don't need to do anything here
 }
 
+Mesh::Mesh(const Mesh& m)
+{
+  vertices = m.vertices;
+  textures = m.textures;
+  normals = m.normals;
+  polygons = m.polygons;
+}
+
 Mesh::~Mesh()
 {
   // Really don't need to do anything here

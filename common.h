@@ -191,6 +191,43 @@ void screenMouseMotion(const SDL_MouseMotionEvent &mouse);
 // Find out how many screens are in the current stack
 int screenNumStackedScreens();
 
+/* ********************** *
+ * Loading-system related *
+ * ********************** */
+class Loadable {
+  private:
+    string name;
+    void (*loadingFunction)();
+    bool done;
+    
+    virtual bool load();
+    
+  public:
+    Loadable(string name);
+    Loadable(string name, void (*loadingFunction)());
+    unsigned int getNumItems() const;
+    
+    string getName() const;
+    bool isDone() const;
+    
+    void loadItems();
+};
+
+// Add a loader to the list
+void loaderAddLoader(Loadable* loader);
+
+/*
+  Start loading stuff
+  Note: This must be called multiple times until loaderDoneLoading() returns true
+*/
+void loaderRunLoader();
+
+// Find out how done we are
+float loaderGetProgress();
+
+// If we're done loading everything
+bool loaderDoneLoading();
+
 /* ******************************* *
  * Some generally useful functions *
  * ******************************* */
@@ -238,12 +275,6 @@ void fillRect(int x, int y, int width, int height);
 #define HELP_SCREEN 104
 #define PLAY_SCREEN 105
 
-#ifdef MAIN_MODULE
-#define GLOBAL
-#else
-#define GLOBAL extern
-#endif
-
 /* ********************* *
  * User-defined includes *
  * ********************* */
@@ -256,6 +287,12 @@ void fillRect(int x, int y, int width, int height);
 #include "splash.h"
 #include "mainMenu.h"
 #include "play.h"
+
+#ifdef MAIN_MODULE
+#define GLOBAL
+#else
+#define GLOBAL extern
+#endif
 
 /*
   Global variables

@@ -9,17 +9,17 @@
 // Main PlayScreen:
 PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                        panel(0, 0, getWidth(), getHeight(), Colour(0)),
-                                       quit(getWidth()-MENU_BUTTON_WIDTH-2, getHeight()-22,
+                                       menu(getWidth()-MENU_BUTTON_WIDTH-2, getHeight()-22,
                                             MENU_BUTTON_WIDTH, 20,
                                             Colour(0.2f, 0.2f, 0.5f), "Menu", fallbackFont, MENU_BUTTON_TAG)
 {
   // Need to load a bunch of stuff here
   
   // Add all the widgets to the panel
-  panel.addChild(&quit);
+  panel.addChild(&menu);
   
   // Register all callbacks
-  quit.addCallback(this);
+  menu.addCallback(this);
 }
 
 PlayScreen::~PlayScreen()

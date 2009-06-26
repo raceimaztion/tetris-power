@@ -6,7 +6,7 @@ class PlayScreen : public Screen, public ButtonCallback {
   private:
     Mesh backdrop;
     Panel panel;
-    Button quit;
+    Button menu;
   
   public:
     PlayScreen(int screenID);

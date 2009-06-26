@@ -423,6 +423,79 @@ int screenNumStackedScreens()
   return screenStack.size();
 }
 
+/* ********************** *
+ * Loading-system related *
+ * ********************** */
+Loadable::Loadable(string name)
+{
+  this->name = name;
+  loadingFunction = NULL;
+  done = false;
+}
+
+Loadable::Loadable(string name, void (*loadingFunction)())
+{
+  this->name = name;
+  this->loadingFunction = loadingFunction;
+  done = false;
+}
+
+string Loadable::getName() const
+{
+  return name;
+}
+
+bool Loadable::isDone() const
+{
+  return done;
+}
+
+void Loadable::loadItems()
+{
+  if (loadingFunction != NULL)
+    loadingFunction();
+  load();
+}
+
+bool Loadable::load()
+{
+  return true;
+}
+
+// Private variables fro the loader
+vector<Loadable*> _loaderList;
+unsigned int _loaderCurrentLoader = 0;
+float _loaderPercentageDone = 0.0f;
+
+// Add a loader class to the loading system
+void loaderAddLoader(Loadable* loader)
+{
+  _loaderList.push_back(loader);
+  
+}
+
+void loaderRunLoader()
+{
+  if (_loaderPercentageDone >= 1.0f)
+    return;
+  
+  if (_loaderCurrentLoader < 0)
+    return;
+  
+  _loaderList.at(_loaderCurrentLoader ++)->loadItems();
+  _loaderPercentageDone = (float)_loaderCurrentLoader / _loaderList.size();
+}
+
+float loaderGetProgress()
+{
+  return _loaderPercentageDone;
+}
+
+bool loaderDoneLoading()
+{
+  return _loaderCurrentLoader > _loaderList.size();
+}
+
 /* ******************************* *
  * Some generally-useful functions *
  * ******************************* */

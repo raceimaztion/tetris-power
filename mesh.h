@@ -28,6 +28,7 @@ class Mesh {
   public:
     // Constructors/destructors
     Mesh();
+    Mesh(const Mesh& m);
     ~Mesh();
     
     // Static methods used for loading a file
