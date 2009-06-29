@@ -110,7 +110,7 @@ void SplashScreen::mouseButton(const SDL_MouseButtonEvent &mouse)
   printf("Mouse position: %d, %d\n", mouse.x, mouse.y);
 #endif
   
-  if (!replaceWith(MAIN_MENU_SCREEN))
+  if (mouse.type == SDL_MOUSEBUTTONUP && !replaceWith(MAIN_MENU_SCREEN))
     end();
 }
 

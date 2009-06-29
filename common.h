@@ -59,12 +59,14 @@ class Colour {
     Colour(float red, float green, float blue);
     Colour(float red, float green, float blue, float alpha);
     
-    void fillArray(float a[]);
+    void fillArray(float a[]) const;
     
     void apply() const;
     void apply(float alpha) const;
     void applyMaterial() const;
     void applyMaterial(int attribute) const;
+    void applyLightAttribute(int number, int attribute) const;
+    void applyLightAttribute(int number, int attribute, float power) const;
     
     float brightness() const;
     Colour brighter(float v) const;
@@ -200,7 +202,7 @@ class Loadable {
     void (*loadingFunction)();
     bool done;
     
-    virtual bool load();
+    virtual void load();
     
   public:
     Loadable(string name);
@@ -227,6 +229,9 @@ float loaderGetProgress();
 
 // If we're done loading everything
 bool loaderDoneLoading();
+
+// Find out how many things we're loading
+int loaderLoaderCount();
 
 /* ******************************* *
  * Some generally useful functions *
@@ -258,13 +263,55 @@ string comReadLine(FILE* in);
 // String-related
 bool comStartsWith(string& a, string& b);
 vector<string> comSplitSpaces(string a);
-vector<string> comSplitString(string& s, const string& delim);
+vector<string> comSplitString(string s, const string& delim);
 
 void triggerRepaint();
 
 // Drawing-related
 void drawRect(int x, int y, int width, int height);
 void fillRect(int x, int y, int width, int height);
+
+// Math-related
+template<class T> inline T max(T a, T b)
+{
+  if (a > b)
+    return a;
+  else
+    return b;
+}
+
+template<class T> inline T min(T a, T b)
+{
+  if (b > a)
+    return a;
+  else
+    return b;
+}
+
+template<class T> inline T abs(T a)
+{
+  if (a > 0)
+    return a;
+  else
+    return -a;
+}
+
+template<class T> inline T maxMag(T a, T b)
+{
+  if (abs(a) > abs(b))
+    return a;
+  else
+    return b;
+}
+
+template<class T> inline T minMag(T a, T b)
+{
+  if (abs(b) > abs(a))
+    return a;
+  else
+    return b;
+}
+
 
 /*
   Screen ID codes:

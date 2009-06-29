@@ -156,9 +156,14 @@ void Label::paint() const
   int lineWidth = fStringWidth(font, label.c_str()), lineHeight = fFontHeight(font);
   float px = x + align_x*(width - lineWidth), py = y + height - align_y*(height - lineHeight);
   
+  bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
+  
   glRasterPos2f(px, py);
   c.apply();
   fDrawString(font, label.c_str());
+  
+  if (usedDepth) glEnable(GL_DEPTH_TEST);
 }
 
 void Label::timerTick() { }
@@ -219,6 +224,9 @@ void Button::paint() const
   if (x < 0) glTranslatef(width, 0, 0);
   if (y < 0) glTranslatef(0, height, 0);
   
+  bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
+  
   c.apply();
   if (state == BUTTON_PRESSED)
     glBegin(GL_POLYGON);
@@ -251,6 +259,8 @@ void Button::paint() const
   glPopMatrix();
   
   Label::paint();
+  
+  if (usedDepth) glEnable(GL_DEPTH_TEST);
 }
 
 void Button::timerTick()

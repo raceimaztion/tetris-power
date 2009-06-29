@@ -2,11 +2,13 @@
   The main play-Screen
 */
 
-class PlayScreen : public Screen, public ButtonCallback {
+class PlayScreen : public Screen, public ButtonCallback, public Loadable {
   private:
     Mesh backdrop;
     Panel panel;
     Button menu;
+    Light lamp;
+    float angle;
   
   public:
     PlayScreen(int screenID);
@@ -20,6 +22,8 @@ class PlayScreen : public Screen, public ButtonCallback {
     void mouseButton(const SDL_MouseButtonEvent& mouse);
     void mouseMotion(const SDL_MouseMotionEvent& mouse);
     bool isOpaque() const;
+    
+    void load();
     
     void buttonCallback(const Button& b);
 };

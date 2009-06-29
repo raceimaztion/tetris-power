@@ -4,14 +4,14 @@
 /* ********************* *
  * Polygon class methods *
  * ********************* */
-Polygon::Polygon(vector<int> vertices, vector<int> textures)
+Polygon::Polygon(vector<int> &vertices, vector<int> &textures)
 {
   this->vertices = vertices;
   this->textures = textures;
   smooth = false;
 }
 
-Polygon::Polygon(vector<int> vertices, vector<int> textures, vector<int> normals)
+Polygon::Polygon(vector<int> &vertices, vector<int> &textures, vector<int> &normals)
 {
   this->vertices = vertices;
   this->textures = textures;
@@ -19,7 +19,7 @@ Polygon::Polygon(vector<int> vertices, vector<int> textures, vector<int> normals
   smooth = true;
 }
 
-Polygon::Polygon(vector<int> vertices, vector<int> textures, vector<int> normals, bool smooth)
+Polygon::Polygon(vector<int> &vertices, vector<int> &textures, vector<int> &normals, bool smooth)
 {
   this->vertices = vertices;
   this->textures = textures;
@@ -53,76 +53,7 @@ Mesh::~Mesh()
 Mesh Mesh::loadWavefrontObjectFile(FILE *in)
 {
   Mesh result;
-  bool smooth = false;
-  
-  string line = comReadLine(in);
-  while (!feof(in))
-  {
-    if (line.find_first_of("#") == 0 ||
-        line.find_first_of("//") == 0)
-    {
-      line = comReadLine(in);
-      continue;
-    }
-    else if (line.find_first_of("v ") == 0)
-    {
-      float x, y, z;
-      sscanf(line.c_str(), "%*s %f %f %f", &x, &y, &z);
-      
-      result.addVertex(x, y, z);
-    }
-    else if (line.find_first_of("vt ") == 0)
-    {
-      float u, v, w;
-      sscanf(line.c_str(), "%*s %f %f %f", &u, &v, &w);
-      
-      result.addTexture(u, v, w);
-    }
-    else if (line.find_first_of("vn ") == 0)
-    {
-      float x, y, z;
-      sscanf(line.c_str(), "%*s %f %f %f", &x, &y, &z);
-      
-      result.addNormal(x, y, z);
-    }
-    else if (line.find_first_of("s ") == 0)
-    {
-      if (line.find_first_of("off") != string::npos ||
-          line.find_first_of("0") != string::npos)
-        smooth = false;
-      else
-        smooth = true;
-    }
-    else if (line.find_first_of("f ") == 0)
-    {
-      vector<int> vertices, textures, normals;
-      
-      vector<string> split = comSplitSpaces(line.substr(2));
-      for (unsigned int i=0; i < split.size(); i++)
-      {
-        if (split[i].find_first_of("/") != string::npos)
-        {
-          vector<string> spliced = comSplitString(split[i], "/");
-          vertices.push_back(atoi(spliced[0].c_str()));
-          if (spliced[1].size() > 0)
-            textures.push_back(atoi(spliced[1].c_str()));
-          else
-            textures.push_back(-1);
-          normals.push_back(atoi(spliced[2].c_str()));
-        }
-        else
-        {
-          vertices.push_back(atoi(split[i].c_str()));
-          normals.push_back(-1);
-        }
-      }
-      
-      result.addPolygon(Polygon(vertices, textures, normals, smooth));
-    }
-    
-    line = comReadLine(in);
-  }
-  
+  loadWavefrontObjectFile(&result, in);
   return result;
 }
 
@@ -130,12 +61,121 @@ Mesh Mesh::loadWavefrontObjectFile(string filename)
 {
   FILE* in = fopen(filename.c_str(), "r");
   if (in == NULL)
-  {
     fprintf(stderr, "Failed to open wavefront object file '%s'.\n", filename.c_str());
-    return Mesh();
+  
+  Mesh result;
+  
+  loadWavefrontObjectFile(&result, in);
+  
+  return result;
+}
+
+void Mesh::loadWavefrontObjectFile(Mesh *mesh, FILE *in)
+{
+  if (mesh == NULL || in == NULL)
+    return;
+  
+  bool smooth = false;
+  int numSmooth = 0;
+  
+  string line = comReadLine(in);
+  while (!feof(in))
+  {
+    if (line.find("#") == 0 ||
+        line.find("//") == 0)
+    {
+      line = comReadLine(in);
+      continue;
+    }
+    else if (line.find("v ") == 0)
+    {
+      float x, y, z;
+      sscanf(line.c_str(), "%*s %f %f %f", &x, &y, &z);
+      
+      mesh->addVertex(x, y, z);
+#ifdef DEBUG
+      printf("v"); fflush(stdout);
+#endif
+    }
+    else if (line.find("vn ") == 0)
+    {
+      float x, y, z;
+      sscanf(line.c_str(), "%*s %f %f %f", &x, &y, &z);
+      
+      mesh->addNormal(x, y, z);
+#ifdef DEBUG
+      printf("n"); fflush(stdout);
+#endif
+    }
+    else if (line.find("vt ") == 0)
+    {
+      float u, v, w;
+      sscanf(line.c_str(), "%*s %f %f %f", &u, &v, &w);
+      
+      mesh->addTexture(u, v, w);
+#ifdef DEBUG
+      printf("t"); fflush(stdout);
+#endif
+    }
+    else if (line.find("s ") == 0)
+    {
+      if (line.find("off") != string::npos ||
+          line.find("0") != string::npos)
+        smooth = false;
+      else
+        smooth = true;
+    }
+    else if (line.find("f ") == 0)
+    {
+      vector<int> vertices, textures, normals;
+      
+      vector<string> split = comSplitSpaces(line.substr(2));
+      for (unsigned int i=0; i < split.size(); i++)
+      {
+        // Does this polygon have normals and/or textures specified?
+        if (split[i].find("/") != string::npos)
+        {
+          vector<string> spliced = comSplitString(split[i], "/");
+          while (spliced.size() < 3) spliced.push_back("");
+          
+          // Grab the vertex number
+          vertices.push_back(atoi(spliced.at(0).c_str()) - 1);
+          // Do we have a texture coordinate for this vertex?
+          if (spliced.at(1).size() > 0)
+            textures.push_back(atoi(spliced.at(1).c_str()) - 1);
+          else
+            textures.push_back(-1);
+          // Do we have a normal for this vertex?
+          if (spliced.at(2).size() > 0)
+            normals.push_back(atoi(spliced.at(2).c_str()) - 1);
+          else
+            normals.push_back(-1);
+        }
+        else
+        {
+          vertices.push_back(atoi(split.at(i).c_str()) - 1);
+          normals.push_back(-1);
+        }
+      }
+      
+      mesh->addPolygon(Polygon(vertices, textures, normals, smooth));
+      if (smooth) numSmooth ++;
+    }
+    
+    line = comReadLine(in);
   }
   
-  return loadWavefrontObjectFile(in);
+  printf("Mesh::loadWavefrontObjectFile(): Finished loading mesh data, parsed %d vertices, %d texture coordinates, %d normals, %d polygons, and %d smooth faces.\n",
+         mesh->vertices.size(), mesh->textures.size(), mesh->normals.size(), mesh->polygons.size(), numSmooth);
+}
+
+void Mesh::loadWavefrontObjectFile(Mesh* mesh, string filename)
+{
+  FILE* in = fopen(filename.c_str(), "r");
+  if (in == NULL)
+    fprintf(stderr, "Failed to open wavefront object file '%s'.\n", filename.c_str());
+  else
+    loadWavefrontObjectFile(mesh, in);
 }
 
 // Methods used during load-time
@@ -174,65 +214,93 @@ void Mesh::addPolygon(const Polygon& p)
   polygons.push_back(p);
 }
 
-void Mesh::addPolygon(const vector<int>& vertices, const vector<int>& textures)
+void Mesh::addPolygon(vector<int>& vertices, vector<int>& textures)
 {
   addPolygon(Polygon(vertices, textures));
 }
 
-void Mesh::addPolygon(const vector<int>& vertices,
-                      const vector<int>& textures,
-                      const vector<int>& normals)
+void Mesh::addPolygon(vector<int>& vertices,
+                      vector<int>& textures,
+                      vector<int>& normals)
 {
   addPolygon(Polygon(vertices, textures, normals));
 }
 
 // Post-load methods
-void Mesh::render(bool use_textures)
+void Mesh::render(bool use_textures) const
 {
   bool smooth;
+  int numNormals = 0;
   
   for (unsigned int i=0; i < polygons.size(); i++)
   {
-    switch(polygons[i].vertices.size())
+#ifdef DEBUG
+    printf("Mesh::render(): Rendering polygon number %d\n", i);
+#endif
+    switch(polygons.at(i).vertices.size())
     {
       case 1:
         glBegin(GL_POINTS);
+#ifdef DEBUG
+        printf("  Mesh::render(): Drawing a single point.\n");
+#endif
         break;
       case 2:
         glBegin(GL_LINES);
+#ifdef DEBUG
+        printf("  Mesh::render(): Drawing a line.\n");
+#endif
         break;
       case 3:
         glBegin(GL_TRIANGLES);
+#ifdef DEBUG
+        printf("Mesh::render(): Drawing a triangle.\n");
+#endif
         break;
       case 4:
         glBegin(GL_QUADS);
+#ifdef DEBUG
+        printf("  Mesh::render(): Drawing a quad.\n");
+#endif
         break;
       default:
+        //continue;
+        printf("  Mesh::render(): Runtime warning: Polygons with %d vertices not supported.\n", polygons.at(i).vertices.size());
         goto again;
     }
     
-    smooth = polygons[i].smooth;
+    smooth = polygons.at(i).smooth;
     if (!smooth)
     {
-      if (polygons[i].normals[0] >= 0)
-        normals[polygons[i].normals[0]].applyNormal();
+      if (polygons.at(i).normals.at(0) >= 0)
+      {
+        normals.at(polygons.at(i).normals.at(0)).applyNormal();
+        numNormals ++;
+      }
     }
     
-    for (unsigned int j=0; j < polygons[i].vertices.size(); j++)
+    for (unsigned int j=0; j < polygons.at(i).vertices.size(); j++)
     {
-      if (smooth && polygons[i].normals[j] >= 0)
-        normals[polygons[i].normals[j]].applyNormal();
+//      if (smooth && polygons.at(i).normals.at(j) >= 0)
+      if (polygons.at(i).normals.at(j) >= 0)
+      {
+        normals.at(polygons.at(i).normals.at(j)).applyNormal();
+        numNormals ++;
+      }
       
-      if (use_textures && polygons[i].textures[j] >= 0)
-        textures[polygons[i].textures[j]].applyTexCoords();
+      if (use_textures && polygons.at(i).textures.at(j) >= 0)
+        textures.at(polygons.at(i).textures.at(j)).applyTexCoords();
       
-      vertices[polygons[i].vertices[j]].applyVertex();
+      vertices.at(polygons.at(i).vertices.at(j)).applyVertex();
     }
     
     glEnd();
     
 again: ;
   } // end for each polygon
+#ifdef DEBUG
+  printf("Applied %d vertex normals.\n", numNormals);
+#endif
 } // end Mesh::render()
 
 void Mesh::translate(const Position& p)
@@ -248,3 +316,23 @@ void Mesh::translate(float x, float y, float z)
   translate(Position(x, y, z));
 }
 
+void Mesh::compileList(bool use_textures)
+{
+  if (compiled)
+    return;
+  
+  listIndex = glGenLists(1);
+  compiled = true;
+  
+  glNewList(listIndex, GL_COMPILE);
+  render(use_textures);
+  glEndList();
+}
+
+void Mesh::renderList() const
+{
+  if (!compiled)
+    render();
+  else
+    glCallList(listIndex);
+}

@@ -38,7 +38,7 @@ Colour::Colour(float red, float green, float blue, float alpha)
   a = alpha;
 }
 
-void Colour::fillArray(float a[])
+void Colour::fillArray(float a[]) const
 {
   a[0] = r;
   a[1] = g;
@@ -66,12 +66,20 @@ void Colour::applyMaterial() const
 
 void Colour::applyMaterial(int attribute) const
 {
-  float values[4];
-  values[0] = r;
-  values[1] = g;
-  values[2] = b;
-  values[3] = a;
+  float values[4] = {r, g, b, a};
   glMaterialfv(GL_FRONT_AND_BACK, attribute, values);
+}
+
+void Colour::applyLightAttribute(int number, int attribute) const
+{
+  float values[4] = {r, g, b, a};
+  glLightfv(number, attribute, values);
+}
+
+void Colour::applyLightAttribute(int number, int attribute, float power) const
+{
+  float values[4] = {r*power, g*power, b*power, a};
+  glLightfv(number, attribute, values);
 }
 
 float Colour::brightness() const
@@ -161,10 +169,9 @@ void Light::apply(int number) const
   glEnable(number);
   float values[] = {pos.x, pos.y, pos.z, w};
   glLightfv(number, GL_POSITION, values);
-//  c.fillArray(values);
-  glLightfv(number, GL_AMBIENT, values);
-  glLightfv(number, GL_DIFFUSE, values);
-  glLightfv(number, GL_SPECULAR, values);
+  c.applyLightAttribute(number, GL_AMBIENT);
+  c.applyLightAttribute(number, GL_DIFFUSE);
+  c.applyLightAttribute(number, GL_SPECULAR);
 }
 
 void Light::disable(int number) const
@@ -457,10 +464,7 @@ void Loadable::loadItems()
   load();
 }
 
-bool Loadable::load()
-{
-  return true;
-}
+void Loadable::load() { }
 
 // Private variables fro the loader
 vector<Loadable*> _loaderList;
@@ -479,7 +483,7 @@ void loaderRunLoader()
   if (_loaderPercentageDone >= 1.0f)
     return;
   
-  if (_loaderCurrentLoader < 0)
+  if (_loaderCurrentLoader >= _loaderList.size())
     return;
   
   _loaderList.at(_loaderCurrentLoader ++)->loadItems();
@@ -493,7 +497,7 @@ float loaderGetProgress()
 
 bool loaderDoneLoading()
 {
-  return _loaderCurrentLoader > _loaderList.size();
+  return _loaderCurrentLoader >= _loaderList.size();
 }
 
 /* ******************************* *
@@ -642,25 +646,21 @@ vector<string> comSplitSpaces(string a)
   return result;
 }
 
-vector<string> comSplitString(string& a, const string& delim)
+vector<string> comSplitString(string str, const string& delim)
 {
-  vector<string> result;
-  unsigned int last = 0, next = a.find_first_of(delim);
+  vector<string> results;
   
-  do
+  unsigned int cut;
+  while ((cut = str.find_first_of(delim)) != string::npos)
   {
-    next = a.find_first_of(delim, last+delim.size());
-    if (next == string::npos)
-    {
-      result.push_back(a.substr(last));
-      break;
-    }
-    result.push_back(a.substr(last, next-last));
-    last = next;
+//    if (cut > 0)
+      results.push_back(str.substr(0, cut));
+    str = str.substr(cut+1);
   }
-  while (next != string::npos);
+  if (str.length() > 0)
+    results.push_back(str);
   
-  return result;
+  return results;
 }
 
 // Drawing-related
@@ -684,3 +684,44 @@ void fillRect(int x, int y, int width, int height)
   glEnd();
 }
 
+/*
+template<class T> inline T max(T a, T b)
+{
+  if (a > b)
+    return a;
+  else
+    return b;
+}
+
+template<class T> inline T min(T a, T b)
+{
+  if (b > a)
+    return a;
+  else
+    return b;
+}
+
+template<class T> inline T abs(T a)
+{
+  if (a > 0)
+    return a;
+  else
+    return -a;
+}
+
+template<class T> inline T maxMag(T a, T b)
+{
+  if (abs(a) > abs(b))
+    return a;
+  else
+    return b;
+}
+
+template<class T> inline T minMag(T a, T b)
+{
+  if (abs(b) > abs(a))
+    return a;
+  else
+    return b;
+}
+*/

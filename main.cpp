@@ -188,6 +188,13 @@ Uint32 timerHandler(Uint32 interval, void* unused)
 {
   screenTimerTick();
   
+  // Check to see if we need to load anything
+  if (!loaderDoneLoading())
+  {
+    printf("main.cpp: timerHandler: Running loader.\n");
+    loaderRunLoader();
+  }
+  
   return interval;
 }
 

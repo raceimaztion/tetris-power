@@ -8,7 +8,7 @@ linecount:
 	wc -l *.h *.cpp
 
 tetris: main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o $(HEADERS)
-	g++ -o tetris main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o -L/usr/lib -lSDL -lGL -lSDL_mixer -lSDL_image
+	g++ -o tetris main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o -L/usr/lib -lSDL -lGL -lSDL_mixer -lSDL_image -lGLU
 
 main.o: main.cpp $(HEADERS) $(MAIN_ONLY_HEADERS)
 	g++ $(OPTIONS) main.cpp
