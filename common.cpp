@@ -1,6 +1,9 @@
 #define COMMON_MODULE
 #include "common.h"
 
+// Variables private to the Common module
+Mesh cube;
+
 /* ************ *
  * Colour class *
  * ************ */
@@ -545,7 +548,10 @@ void comDrawCube(float x, float y, float scale, float rotation)
 {
   glPushMatrix();
   
-  
+  glTranslatef(x + 0.5f, 0.0f, y + 0.5f);
+  glScalef(scale, scale, scale);
+  glRotatef(rotation, 0, 1, 0);
+  cube.render();
   
   glPopMatrix();
 }
@@ -554,7 +560,10 @@ void comDrawSphere(float x, float y, float scale, float rotation)
 {
   glPushMatrix();
   
+  glTranslatef(x + 0.5f, 0.0f, y + 0.5f);
+  glScalef(scale, scale, scale);
   
+  // TODO: Add code here to draw an appropriate sphere
   
   glPopMatrix();
 }
@@ -684,44 +693,15 @@ void fillRect(int x, int y, int width, int height)
   glEnd();
 }
 
-/*
-template<class T> inline T max(T a, T b)
+void comLoader()
 {
-  if (a > b)
-    return a;
-  else
-    return b;
+  Mesh::loadWavefrontObjectFile(&cube, "objects/block.obj");
 }
 
-template<class T> inline T min(T a, T b)
+void comInit()
 {
-  if (b > a)
-    return a;
-  else
-    return b;
+  static Loadable cload("Common files", comLoader);
+  loaderAddLoader(&cload);
 }
 
-template<class T> inline T abs(T a)
-{
-  if (a > 0)
-    return a;
-  else
-    return -a;
-}
 
-template<class T> inline T maxMag(T a, T b)
-{
-  if (abs(a) > abs(b))
-    return a;
-  else
-    return b;
-}
-
-template<class T> inline T minMag(T a, T b)
-{
-  if (abs(b) > abs(a))
-    return a;
-  else
-    return b;
-}
-*/

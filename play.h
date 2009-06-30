@@ -2,7 +2,7 @@
   The main play-Screen
 */
 
-class PlayScreen : public Screen, public ButtonCallback, public Loadable {
+class PlayScreen : public Screen, public ButtonCallback {
   private:
     Mesh backdrop;
     Panel panel;

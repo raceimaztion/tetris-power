@@ -50,5 +50,6 @@ class Shape {
     void draw() const;
 };
 
+// Initialization function for the Shapes module
 void shInit();
 

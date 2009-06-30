@@ -225,7 +225,10 @@ int main(int argc, char **argv)
   
   SDL_WM_SetCaption("Tetris Power", "Tetris Power");
   
+  // Start the internal loaders
   loadFonts();
+  comInit();
+  shInit();
   
   // Create the splash screen
   SplashScreen splash(SPLASH_SCREEN);

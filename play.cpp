@@ -11,7 +11,6 @@ const Colour BLOCK_COLOUR(0.5f, 0.4f, 0.3f);
 
 // Main PlayScreen:
 PlayScreen::PlayScreen(int screenID) : Screen(screenID),
-                                       Loadable("Object data"),
                                        panel(0, 0, getWidth(), getHeight(), Colour(0)),
                                        menu(getWidth()-MENU_BUTTON_WIDTH-2, getHeight()-MENU_BUTTON_HEIGHT-2,
                                             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
@@ -20,7 +19,6 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
 {
   // Need to load a bunch of stuff here
   angle = 0.0f;
-  loaderAddLoader(this);
   
   // Add all the widgets to the panel
   panel.addChild(&menu);
@@ -76,12 +74,9 @@ void PlayScreen::screenPaint() const
   
   lamp.apply(GL_LIGHT0);
   BLOCK_COLOUR.applyMaterial();
-  glRotatef(angle, 0, 0, 1);
-  backdrop.renderList();
-  glTranslatef(0, 2, 0);
-  backdrop.renderList();
-  glTranslatef(2, -2, 0);
-  backdrop.renderList();
+  
+  comDrawCube(0, 0, 1.0f, angle);
+  
   glDisable(GL_LIGHTING);
   
   glPopMatrix();
@@ -97,12 +92,6 @@ void PlayScreen::screenPaint() const
 
 void PlayScreen::timerTick()
 {
-/*  static int count=0;
-  
-  if (++count < 5)
-    return;
-  count = 0;
-  angle += 5.0f;*/
   angle += 1.0f;
   if (angle >= 360.0f)
     angle -= 360.0f;
@@ -129,16 +118,6 @@ void PlayScreen::mouseMotion(const SDL_MouseMotionEvent& mouse)
 bool PlayScreen::isOpaque() const
 {
   return true;
-}
-
-void PlayScreen::load()
-{
-//  Mesh::loadWavefrontObjectFile(&backdrop, "objects/block.obj");
-  Mesh::loadWavefrontObjectFile(&backdrop, "objects/block6.obj");
-  printf("PlayScreen::load(): Finished loading data.\n");
-  backdrop.compileList(false);
-  
-  markRepaint();
 }
 
 void PlayScreen::buttonCallback(const Button& b)

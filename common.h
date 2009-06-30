@@ -271,6 +271,8 @@ void triggerRepaint();
 void drawRect(int x, int y, int width, int height);
 void fillRect(int x, int y, int width, int height);
 
+void comInit();
+
 // Math-related
 template<class T> inline T max(T a, T b)
 {
@@ -325,12 +327,14 @@ template<class T> inline T minMag(T a, T b)
 /* ********************* *
  * User-defined includes *
  * ********************* */
-#include "grid.h"
+// Universal headers
 #include "mesh.h"
-#include "shapes.h"
 #include "fonts.h"
 #include "widgets.h"
-
+// Order-dependent headers
+#include "grid.h"
+#include "shapes.h"
+// Screen headers
 #include "splash.h"
 #include "mainMenu.h"
 #include "play.h"

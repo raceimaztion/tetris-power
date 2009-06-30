@@ -3,6 +3,10 @@
 
 #define SMALL 0.0000001f
 
+// Variables private to the Shapes module:
+Mesh block;
+
+
 /* *********** *
  * Point class *
  * *********** */
@@ -108,5 +112,11 @@ bool Shape::animate(float dTime, float curTime)
   }
   
   return false;
+}
+
+// Init function for the Shapes module
+void shInit()
+{
+  
 }
 
