@@ -268,13 +268,13 @@ vector<string> comSplitString(string s, const string& delim);
 void triggerRepaint();
 
 // Drawing-related
-void drawRect(int x, int y, int width, int height);
-void fillRect(int x, int y, int width, int height);
+void comDrawRect(int x, int y, int width, int height);
+void comFillRect(int x, int y, int width, int height);
 
 void comInit();
 
 // Math-related
-template<class T> inline T max(T a, T b)
+/*template<class T> inline T max(T a, T b)
 {
   if (a > b)
     return a;
@@ -288,7 +288,7 @@ template<class T> inline T min(T a, T b)
     return a;
   else
     return b;
-}
+}*/
 
 template<class T> inline T abs(T a)
 {

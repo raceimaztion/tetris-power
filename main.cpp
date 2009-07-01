@@ -191,7 +191,7 @@ Uint32 timerHandler(Uint32 interval, void* unused)
   // Check to see if we need to load anything
   if (!loaderDoneLoading())
   {
-    printf("main.cpp: timerHandler: Running loader.\n");
+//    printf("main.cpp: timerHandler: Running loader.\n");
     loaderRunLoader();
   }
   
@@ -290,14 +290,16 @@ int main(int argc, char **argv)
     // Wait ten milliseconds and do it all again
     SDL_Delay(10);
     
-    // Repaint things if we need it
-    screenPaint(needsRepaint);
-    needsRepaint = false;
     // If we're out of screens, quit
     if (screenNumStackedScreens() < 1)
     {
       fprintf(stderr, "Runtime warning: No screens left in stack, quitting...\n");
       running = false;
+    }
+    else
+    { // Repaint things if we need it
+      screenPaint(needsRepaint);
+      needsRepaint = false;
     }
   }
   

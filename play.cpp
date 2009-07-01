@@ -53,7 +53,7 @@ void PlayScreen::screenPaint() const
   // Draw background
   glDisable(GL_DEPTH_TEST);
   glColor3f(0.1f, 0.1f, 0.2f);
-  fillRect(0, 0, getWidth(), getHeight());
+  comFillRect(0, 0, getWidth(), getHeight());
   glEnable(GL_DEPTH_TEST);
   
   // TEMP: Draw a block in the middle of the screen:

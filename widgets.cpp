@@ -1,5 +1,60 @@
 #include "common.h"
 
+// Bevel controls:
+//#define BEVEL_TOP_LEFT
+#define BEVEL_TOP_RIGHT
+//#define BEVEL_BOTTOM_RIGHT
+#define BEVEL_BOTTOM_LEFT
+#define BEVEL_MAX 20
+
+void _wDrawRect(int x, int y, int width, int height)
+{
+  int bevel = min(min(width, height), BEVEL_MAX) / 2;
+  
+#ifdef BEVEL_TOP_LEFT
+  glVertex2i(x + bevel, y);
+  glVertex2i(x, y + bevel);
+#else
+  glVertex2i(x, y);
+#endif
+
+#ifdef BEVEL_BOTTOM_LEFT
+  glVertex2i(x, y+height-bevel-1);
+  glVertex2i(x+bevel, y+height-1);
+#else
+  glVertex2i(x, y+height-1);
+#endif
+
+#ifdef BEVEL_BOTTOM_RIGHT
+  glVertex2i(x+width-bevel-1, y+height-1);
+  glVertex2i(x+width-1, y+height-bevel-1);
+#else
+  glVertex2i(x+width-1, y+height-1);
+#endif
+
+#ifdef BEVEL_TOP_RIGHT
+  glVertex2i(x+width-1, y+bevel);
+  glVertex2i(x+width-bevel-1, y);
+#else
+  glVertex2i(x+width-1, y);
+#endif
+}
+
+// Handy rectangle-drawing functions
+void wDrawRect(int x, int y, int width, int height)
+{
+  glBegin(GL_LINE_LOOP);
+  _wDrawRect(x, y, width, height);
+  glEnd();
+}
+
+void wFillRect(int x, int y, int width, int height)
+{
+  glBegin(GL_POLYGON);
+  _wDrawRect(x, y, width, height);
+  glEnd();
+}
+
 // Widget base class
 Widget::Widget(int x, int y, int width, int height, Colour c)
 {
@@ -229,36 +284,22 @@ void Button::paint() const
   
   c.apply();
   if (state == BUTTON_PRESSED)
-    glBegin(GL_POLYGON);
-  else
-    glBegin(GL_LINE_LOOP);
-  
-    glVertex2f(x, y);
-    glVertex2f(x, y + 0.5f*height);
-    glVertex2f(x + 0.5f*height, y+height);
-    glVertex2f(x+width, y+height);
-    glVertex2f(x+width, y + 0.5f*height);
-    glVertex2f(x + width - 0.5f*height, y);
-  glEnd();
-  
-  if (state == BUTTON_HOVERED)
   {
-    glBegin(GL_POLYGON);
-      glVertex2f(x+1, y+1);
-      glVertex2f(x+1, y + 0.5f*height - 1);
-      glVertex2f(x + 0.5f*height + 1, y+height - 2);
-      glVertex2f(x+width - 2, y+height - 2);
-      glVertex2f(x+width - 2, y + 0.5f*height + 1);
-      glVertex2f(x + width - 0.5f*height - 1, y+1);
-    glEnd();
+    wFillRect(x, y, width, height);
+    glColor3f(0, 0, 0);
+  }
+  else
+  {
+    wDrawRect(x, y, width, height);
+    if (state == BUTTON_HOVERED)
+    {
+      wFillRect(x+1, y+1, width-3, height-3);
+      glColor3f(0, 0, 0);
+    }
   }
   
-  if (state == BUTTON_HOVERED || state == BUTTON_PRESSED)
-    glColor3f(0, 0, 0);
-  
-  glPopMatrix();
-  
   Label::paint();
+  glPopMatrix();
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
 }
@@ -378,5 +419,47 @@ void Panel::mouse(const SDL_MouseMotionEvent& mouse)
 {
   for (unsigned int i=0; i < children.size(); i++)
     children.at(i)->mouse(mouse);
+}
+
+// ProgressMeter widget class
+ProgressMeter::ProgressMeter(int x, int y, int width, int height, Colour c, float percentage) :
+                                                    Widget(x, y, width, height, c)
+{
+  this->percentage = percentage;
+}
+
+ProgressMeter::ProgressMeter(const ProgressMeter& pm) : Widget(pm)
+{
+  percentage = pm.percentage;
+}
+
+float ProgressMeter::getPercentage() const
+{
+  return percentage;
+}
+
+void ProgressMeter::setPercentage(float percentage)
+{
+  this->percentage = percentage;
+}
+
+void ProgressMeter::paint() const
+{
+  bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
+  c.apply();
+  
+  // Draw the outline
+  wDrawRect(x, y, width, height);
+  // Draw the progress
+  wFillRect(x+1, y+1, (int)((width-3)*min(1.0f, percentage)), height-3);
+  
+  if (usedDepth) glEnable(GL_DEPTH_TEST);
+}
+
+void ProgressMeter::timerTick()
+{
+  // Not using this yet
+  // Maybe use it to change a stipple pattern used on the fill meter?
 }
 

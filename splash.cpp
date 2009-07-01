@@ -5,13 +5,16 @@
  * The splash screen module *
  * ************************ */
 
-SplashScreen::SplashScreen(int screenID) : Screen(screenID)
+#define PROGRESS_HEIGHT 30
+
+SplashScreen::SplashScreen(int screenID) : Screen(screenID),
+                                           panel(0, 0, getWidth(), getHeight(), Colour(0)),
+                                           progress(getWidth()/4, getHeight() - 2*PROGRESS_HEIGHT,
+                                                    getWidth()/2, PROGRESS_HEIGHT,
+                                                    Colour(0.2f, 0.6f, 0.2f))
 {
   // Nothing much to do here
-  
-  // TEMP:
-  progress = 0;
-  done = false;
+  panel.addChild(&progress);
 }
 
 SplashScreen::~SplashScreen()
@@ -22,23 +25,17 @@ SplashScreen::~SplashScreen()
 void SplashScreen::timerTick()
 {
   // Nothing to do here
-  if (done)  return;
-  
-  float p = progress + 0.05f;
-  if (p >= 1)
+  if (!loaderDoneLoading() || (progress.getPercentage() < 1.0f))
   {
-    progress = 1;
-    done = true;
+    progress.setPercentage(loaderGetProgress());
+    markRepaint();
   }
-  else
-    progress = p;
-  
-  markRepaint();
 }
 
 void SplashScreen::prepareForShow()
 {
-  // Nothing to do here
+  // Nothing much to do here
+  glDisable(GL_DEPTH_TEST);
 }
 
 void SplashScreen::prepareForHide()
@@ -57,27 +54,7 @@ void SplashScreen::screenPaint() const
     glVertex2f(getWidth(), 0);
   glEnd();
   
-  // TEMP:
-  {
-    if (done)
-      glColor3f(0, 0.5, 0);
-    else 
-      glColor3f(0, 0, 0);
-    
-    glBegin(GL_LINE_LOOP);
-      glVertex2i((int)(0.75f*getWidth() + 2), getHeight() - 31);
-      glVertex2i((int)(0.25f*getWidth() - 1), getHeight() - 31);
-      glVertex2i((int)(0.25f*getWidth() - 1), getHeight() - 13);
-      glVertex2i((int)(0.75f*getWidth() + 2), getHeight() - 13);
-    glEnd();
-    
-    glBegin(GL_QUADS);
-      glVertex2f(0.25*getWidth(), getHeight() - 30);
-      glVertex2f(0.25*getWidth(), getHeight() - 15);
-      glVertex2f(0.25*getWidth() + 0.5*getWidth()*progress, getHeight() - 15);
-      glVertex2f(0.25*getWidth() + 0.5*getWidth()*progress, getHeight() - 30);
-    glEnd();
-  }
+  panel.paint();
 }
 
 void SplashScreen::keyboard(const SDL_KeyboardEvent &key)

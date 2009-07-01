@@ -673,7 +673,7 @@ vector<string> comSplitString(string str, const string& delim)
 }
 
 // Drawing-related
-void drawRect(int x, int y, int width, int height)
+void comDrawRect(int x, int y, int width, int height)
 {
   glBegin(GL_LINE_LOOP);
     glVertex2i(x, y);
@@ -683,7 +683,7 @@ void drawRect(int x, int y, int width, int height)
   glEnd();
 }
 
-void fillRect(int x, int y, int width, int height)
+void comFillRect(int x, int y, int width, int height)
 {
   glBegin(GL_QUADS);
     glVertex2i(x, y);

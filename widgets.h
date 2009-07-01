@@ -111,3 +111,17 @@ class Panel : public Widget {
     void mouse(const SDL_MouseMotionEvent& mouse);
 };
 
+class ProgressMeter : public Widget {
+  private:
+    float percentage;
+    
+  public:
+    ProgressMeter(int x, int y, int width, int height, Colour c, float percentage=0.0f);
+    ProgressMeter(const ProgressMeter& pm);
+    
+    float getPercentage() const;
+    void setPercentage(float percentage);
+    void paint() const;
+    void timerTick();
+};
+

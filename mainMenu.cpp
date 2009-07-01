@@ -101,7 +101,7 @@ void MainMenu::buttonCallback(const Button& b)
 void MainMenu::screenPaint() const
 {
   glColor3f(0.1f,0.3f,0.1f);
-  fillRect(0, 0, getWidth(), getHeight());
+  comFillRect(0, 0, getWidth(), getHeight());
   
   panel.paint();
 }

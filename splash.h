@@ -5,8 +5,8 @@
 #pragma implementation
 class SplashScreen : public Screen {
   private:
-    float progress;
-    bool done;
+    Panel panel;
+    ProgressMeter progress;
     
   public:
     SplashScreen(int screenID);

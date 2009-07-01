@@ -111,6 +111,16 @@ bool Shape::animate(float dTime, float curTime)
     result = true;
   }
   
+  if (abs(offset_y) < SMALL)
+    distGone_y = 0.0f;
+  else
+  {
+    float delta = minMag(distGone_y + 0.001f, offset_y);
+    offset_y -= delta;
+    distGone_y -= delta;
+    result = true;
+  }
+  
   return false;
 }
 
