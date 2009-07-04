@@ -25,6 +25,16 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
   
   // Register all callbacks
   menu.addCallback(this);
+  
+  // TEMP:
+  {
+    FILE* in = fopen("block-shapes", "r");
+    if (in == NULL)
+      return;
+    
+    shape = Shape(in);
+    fclose(in);
+  }
 }
 
 PlayScreen::~PlayScreen()
@@ -70,12 +80,13 @@ void PlayScreen::screenPaint() const
             0, 0, 0,
             0, 0, 1);
   
-  glEnable(GL_COLOR_MATERIAL);
+//  glEnable(GL_COLOR_MATERIAL);
   
   lamp.apply(GL_LIGHT0);
-  BLOCK_COLOUR.applyMaterial();
+//  BLOCK_COLOUR.applyMaterial();
+  shape.draw();
   
-  comDrawCube(0, 0, 1.0f, angle);
+//  comDrawCube(0, 0, 1.0f, angle);
   
   glDisable(GL_LIGHTING);
   
@@ -86,6 +97,8 @@ void PlayScreen::screenPaint() const
   
   // Draw grid
   // Draw block
+//  shape.draw();
+  
   // Draw widgets
   panel.paint();
 }

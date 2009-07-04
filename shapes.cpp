@@ -32,16 +32,12 @@ Point::Point(int x, int y)
  * *********** */
 Shape::Shape()
 {
-  type = SHAPE_TYPE_NOT_READY;
-  offset_x = offset_y = 0.0f;
-  distGone_x = distGone_y = 0.0f;
+  init();
 }
 
 
 Shape::Shape(FILE *in)
 {
-  type = SHAPE_TYPE_NOT_READY;
-  
   if (in == NULL || feof(in))
     return;
   
@@ -53,14 +49,45 @@ Shape::Shape(FILE *in)
     1 2
     2 2
   */
+  init();
   int count, x, y;
   fscanf(in, "%d %d\n", &size, &count);
   
   for (int i=0; i < count; i++)
   {
     fscanf(in, "%d %d\n", &x, &y);
-    the_bits.push_back(ABit(x, y));
+    addBit(ABit(x, y));
   }
+}
+
+Shape::Shape(const Shape& s)
+{
+  type = s.type;
+  size = s.size;
+  c = s.c;
+  pos = s.pos;
+  
+}
+
+void Shape::init()
+{
+  type = SHAPE_TYPE_NOT_READY;
+  pos.x = pos.y = 0;
+  c = comRandomColour();
+  
+  offset_x = offset_y = 0.0f;
+  distGone_x = distGone_y = 0.0f;
+}
+
+void Shape::addBit(ABit bit)
+{
+  the_bits.push_back(bit);
+}
+
+void Shape::prep()
+{
+  pos.x = (GRID_WIDTH - size) / 2;
+  pos.y = GRID_HEIGHT;
 }
 
 bool Shape::collides() const
@@ -82,8 +109,8 @@ bool Shape::move(int dx, int dy)
     return false;
   }
   
-  offset_x -= dx;
-  offset_y -= dy;
+//  offset_x -= dx;
+//  offset_y -= dy;
   
   return true;
 }
@@ -100,7 +127,7 @@ bool Shape::rotateLeft()
 
 bool Shape::animate(float dTime, float curTime)
 {
-  bool result = false;
+/*  bool result = false;
   if (abs(offset_x) < SMALL)
     distGone_x = 0.0f;
   else
@@ -121,7 +148,22 @@ bool Shape::animate(float dTime, float curTime)
     result = true;
   }
   
+  return result;*/
   return false;
+}
+
+void Shape::draw() const
+{
+  glPushMatrix();
+  
+  //glTranslate(x, 0, y);
+  c.applyMaterial();
+  for (int i=the_bits.size()-1; i >= 0; i--) 
+  {
+    comDrawCube(the_bits.at(i).pos.x, the_bits.at(i).pos.y, 0.5f, 0);
+  }
+  
+  glPopMatrix();
 }
 
 // Init function for the Shapes module

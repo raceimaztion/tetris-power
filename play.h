@@ -9,6 +9,7 @@ class PlayScreen : public Screen, public ButtonCallback {
     Button menu;
     Light lamp;
     float angle;
+    Shape shape;
   
   public:
     PlayScreen(int screenID);

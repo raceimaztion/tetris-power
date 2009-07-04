@@ -31,11 +31,18 @@ class Shape {
     // Interpolation stuff
     float offset_x, offset_y;
     float distGone_x, distGone_y;
+    // Private useful methods
+    void init();
   
   public:
     Shape();
     Shape(FILE* in);
+    Shape(const Shape& s);
     
+    // Add ABit to the shape
+    void addBit(ABit bit);
+    // Prepare the shape to be used
+    void prep();
     // Returns true if this shape collides with anything in the grid
     bool collides() const;
     // Try to move this shape. Returns true if we could move it, false otherwise
