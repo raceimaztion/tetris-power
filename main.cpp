@@ -128,7 +128,7 @@ void gameStep()
   currentTime += dTime;
   
   // Process stuff here
-  screenTimerTick();
+  screenTimerTick(dTime);
   
   lastTime = curTime;
 }
@@ -186,12 +186,15 @@ void loadFonts()
  * *************** */
 Uint32 timerHandler(Uint32 interval, void* unused)
 {
-  screenTimerTick();
+//  screenTimerTick();
+  gameStep();
   
   // Check to see if we need to load anything
   if (!loaderDoneLoading())
   {
-//    printf("main.cpp: timerHandler: Running loader.\n");
+#ifdef DEBUG
+    printf("main.cpp: timerHandler: Running loader.\n");
+#endif
     loaderRunLoader();
   }
   

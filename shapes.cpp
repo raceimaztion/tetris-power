@@ -156,7 +156,7 @@ void Shape::draw() const
 {
   glPushMatrix();
   
-  //glTranslate(x, 0, y);
+  glTranslatef(pos.x, 0, pos.y);
   c.applyMaterial();
   for (int i=the_bits.size()-1; i >= 0; i--) 
   {

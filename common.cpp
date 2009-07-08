@@ -182,6 +182,72 @@ void Light::disable(int number) const
   glDisable(number);
 }
 
+/* ************ *
+ * Camera class *
+ * ************ */
+Camera::Camera()
+{
+  Camera(Position(0, -5, 0), Position(0, 0, 0));
+}
+
+Camera::Camera(Position pos)
+{
+  Camera(pos, Position(0, 0, 0));
+}
+
+Camera::Camera(Position pos, Position rot)
+{
+  this->pos = pos;
+  this->rotation = rot;
+}
+
+Camera::Camera(const Camera& c)
+{
+  pos = c.pos;
+  rotation = c.rotation;
+}
+
+void Camera::apply() const
+{
+  gluLookAt(0, 0, 0,  // Start at 0,0,0
+            0, 1, 0,  // Look at 0,1,0
+            0, 0, 1); // Up is 0,0,1
+  
+  pos.applyTranslation();
+//  glRotatef(rotation.z, 0, 0, 1);
+//  glRotatef(rotation.y, 0, 1, 0);
+//  glRotatef(rotation.x, 1, 0, 0);
+}
+
+void Camera::move(float dx, float dy, float dz)
+{
+  pos.x += dx;
+  pos.y += dy;
+  pos.z += dz;
+}
+
+void Camera::move(Position dp)
+{
+  pos += dp;
+}
+
+void Camera::rotate(float dx, float dy, float dz)
+{
+  rotation.x += dx;
+  rotation.y += dy;
+  rotation.z += dz;
+}
+
+void Camera::rotate(Position dr)
+{
+  rotation += dr;
+}
+
+void Camera::animate(float dTime)
+{
+  // TODO: Fill this in
+}
+
 /* ******************************** *
  * Screen class and related methods *
  * ******************************** */
@@ -264,7 +330,7 @@ int Screen::getScreenID() const
 }
 
 // Screen class stubs:
-void Screen::timerTick() { }
+void Screen::timerTick(float dTime) { }
 void Screen::prepareForShow() { }
 void Screen::prepareForHide() { }
 void Screen::screenPaint() const { }
@@ -344,11 +410,11 @@ void screenPop()
   }
 }
 
-bool screenTimerTick()
+bool screenTimerTick(float dTime)
 {
   if (!screenStack.empty())
   {
-    screenStack.back()->timerTick();
+    screenStack.back()->timerTick(dTime);
     return screenNeedsRepaint();
   }
   

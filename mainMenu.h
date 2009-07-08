@@ -12,7 +12,7 @@ class MainMenu : public Screen, public ButtonCallback {
   public:
     MainMenu(int screenID);
     
-    void timerTick();
+    void timerTick(float dTime);
     void prepareForShow();
     void prepareForHide();
     void screenPaint() const;

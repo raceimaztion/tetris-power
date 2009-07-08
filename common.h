@@ -104,6 +104,24 @@ class Light {
     void disable(int number) const;
 };
 
+class Camera {
+  private:
+    Position pos, rotation;
+  
+  public:
+    Camera();
+    Camera(Position pos);
+    Camera(Position pos, Position rot);
+    Camera(const Camera& c);
+    
+    void apply() const;
+    void move(float dx, float dy, float dz);
+    void move(const Position dp);
+    void rotate(float rx, float ry, float rz);
+    void rotate(const Position dr);
+    void animate(float dTime);
+};
+
 /* ********************************** *
  * Screen-related classes and methods *
  * ********************************** */
@@ -132,7 +150,7 @@ class Screen {
     int getScreenID() const;
     
     // Virtual methods:
-    virtual void timerTick(); // Called for each tick of the game system timer
+    virtual void timerTick(float dTime); // Called for each tick of the game system timer
     virtual void prepareForShow(); // Called every time this screen becomes visible
     virtual void prepareForHide(); // Called every time this screen becomes hidden
     virtual void screenPaint() const; // Called to redraw this screen. This MUST leave the OpenGL matrices as it found them!
@@ -170,7 +188,7 @@ void screenPop();
   Send a timer tick to the current screen
     Returns true if the screens need a repaint
 */
-bool screenTimerTick();
+bool screenTimerTick(float dTime);
 
 // Send a repaint command to the screen stack if we need a repaint
 void screenPaint();
@@ -238,7 +256,7 @@ int loaderLoaderCount();
  * ******************************* */
 // Colour-related
 Colour operator*(float s, const Colour& c);
-Colour operator*(const Colour& c);
+Colour operator*(const Colour& c, float s);
 
 // Position-related
 Position operator+(const Position& a, const Position& b);

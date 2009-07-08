@@ -12,7 +12,7 @@ class SplashScreen : public Screen {
     SplashScreen(int screenID);
     ~SplashScreen();
     
-    void timerTick();
+    void timerTick(float dTime);
     void prepareForShow();
     void prepareForHide();
     void screenPaint() const;

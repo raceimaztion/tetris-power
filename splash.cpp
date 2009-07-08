@@ -22,13 +22,18 @@ SplashScreen::~SplashScreen()
   // Nothing to do here
 }
 
-void SplashScreen::timerTick()
+void SplashScreen::timerTick(float dTime)
 {
   // Nothing to do here
   if (!loaderDoneLoading() || (progress.getPercentage() < 1.0f))
   {
     progress.setPercentage(loaderGetProgress());
     markRepaint();
+  }
+  else // TEMP:
+  {
+    if (!replaceWith(MAIN_MENU_SCREEN))
+      end();
   }
 }
 

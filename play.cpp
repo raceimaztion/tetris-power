@@ -15,10 +15,10 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                        menu(getWidth()-MENU_BUTTON_WIDTH-2, getHeight()-MENU_BUTTON_HEIGHT-2,
                                             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
                                             Colour(0.2f, 0.2f, 0.5f), "Menu", fallbackFont, MENU_BUTTON_TAG),
-                                       lamp(Position(5, -5, 5), 1, Colour(0.5f))
+                                       lamp(Position(5, -5, 5), 1, Colour(0.5f)),
+                                       camera(Position(0, 15, 0), Position(0, 0, 0))
 {
   // Need to load a bunch of stuff here
-  angle = 0.0f;
   
   // Add all the widgets to the panel
   panel.addChild(&menu);
@@ -70,15 +70,16 @@ void PlayScreen::screenPaint() const
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  gluPerspective(50, (float)getWidth()/getHeight(), 0.1f, 500.0f);
+  gluPerspective(50, (float)getWidth()/getHeight(), 0.01f, 500.0f);
   
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
   
-  gluLookAt(0, -5, 3,
-            0, 0, 0,
-            0, 0, 1);
+/*  gluLookAt(0, 0, 0,
+            0, 1, 0,
+            0, 0, 1);*/
+  camera.apply();
   
 //  glEnable(GL_COLOR_MATERIAL);
   
@@ -103,17 +104,20 @@ void PlayScreen::screenPaint() const
   panel.paint();
 }
 
-void PlayScreen::timerTick()
+void PlayScreen::timerTick(float dTime)
 {
-  angle += 1.0f;
-  if (angle >= 360.0f)
-    angle -= 360.0f;
+  if (controls.holdingLeft() && shape.move(-1, 0))  markRepaint();
+  if (controls.holdingRight() && shape.move(1, 0))  markRepaint();
+  if (controls.holdingUp() && shape.move(0, 1))  markRepaint();
+  if (controls.holdingDown() && shape.move(0, -1)) markRepaint();
   
-  triggerRepaint();
+  if (shape.animate(dTime, 0.0f))
+    markRepaint();
 }
 
 void PlayScreen::keyboard(const SDL_KeyboardEvent& key)
 {
+  controls.key(key);
   if (key.type == SDL_KEYUP && key.keysym.sym == SDLK_ESCAPE)
     end();
 }
@@ -141,5 +145,166 @@ void PlayScreen::buttonCallback(const Button& b)
       end();
       break;
   }
+}
+
+/*
+  Controls class
+*/
+Controls::Controls()
+{
+  moveLeft = holdLeft = false;
+  moveRight = holdRight = false;
+  moveUp = holdUp = false;
+  moveDown = holdDown = false;
+  moveDrop = holdDrop = false;
+  moveSpinLeft = holdSpinLeft = false;
+  moveSpinRight = holdSpinRight = false;
+}
+
+void Controls::key(const SDL_KeyboardEvent& key)
+{
+  if (key.type == SDL_KEYDOWN)
+  {
+    switch (key.keysym.sym)
+    {
+      case SDLK_w:
+        // Hold the block from falling (W)
+        moveUp = holdUp = true;
+        break;
+      
+      case SDLK_s:
+      case SDLK_DOWN:
+        // Move the block down faster (Down & S)
+        moveDown = holdDown = true;
+        break;
+      
+      case SDLK_a:
+      case SDLK_LEFT:
+        // Move block to the left (Left & A)
+        moveLeft = holdLeft = true;
+        break;
+      
+      case SDLK_d:
+      case SDLK_RIGHT:
+        // Move block to the right (Right & D)
+        moveRight = holdRight = true;
+        break;
+      
+      case SDLK_SPACE:
+        // Drop block to the bottom (Spacebar)
+        moveDrop = holdDrop = true;
+        break;
+      
+      case SDLK_q:
+        // Spin block to the left (Q)
+        moveSpinLeft = holdSpinLeft = true;
+        break;
+      
+      case SDLK_e:
+      case SDLK_UP:
+        // Spin block to the right (E)
+        moveSpinRight = holdSpinRight = true;
+        break;
+      
+      default:
+        break;
+    }
+  }
+  else if (key.type == SDL_KEYUP)
+  {
+    switch (key.keysym.sym)
+    {
+      case SDLK_w:
+        // Hold the block from falling (W)
+        holdUp = false;
+        break;
+      
+      case SDLK_s:
+      case SDLK_DOWN:
+        // Move the block down faster (Down & S)
+        holdDown = false;
+        break;
+      
+      case SDLK_a:
+      case SDLK_LEFT:
+        // Move block to the left (Left & A)
+        holdLeft = false;
+        break;
+      
+      case SDLK_d:
+      case SDLK_RIGHT:
+        // Move block to the right (Right & D)
+        holdRight = false;
+        break;
+      
+      case SDLK_SPACE:
+        // Drop block to the bottom (Spacebar)
+        holdDrop = false;
+        break;
+      
+      case SDLK_q:
+        // Spin block to the left (Q)
+        holdSpinLeft = false;
+        break;
+      
+      case SDLK_e:
+      case SDLK_UP:
+        // Spin block to the right (E)
+        holdSpinRight = false;
+        break;
+      
+      default:
+        break;
+    }
+  }
+} // end key()
+
+bool Controls::holdingLeft()
+{
+  bool result = moveLeft || holdLeft;
+  moveLeft = false;
+  return result;
+}
+
+bool Controls::holdingRight()
+{
+  bool result = moveRight || holdRight;
+  moveRight = false;
+  return result;
+}
+
+bool Controls::holdingUp()
+{
+  bool result = moveUp || holdUp;
+  moveUp = false;
+  return result;
+}
+
+bool Controls::holdingDown()
+{
+  bool result = moveDown || holdDown;
+  moveDown = false;
+  return result;
+}
+
+bool Controls::holdingDrop()
+{
+  bool result = moveDrop || holdDrop;
+  moveDrop = false;
+  return result;
+}
+
+bool Controls::holdingSpinLeft()
+{
+  bool result = moveSpinLeft || holdSpinLeft;
+  moveSpinLeft = false;
+  return result;
+}
+
+bool Controls::holdingSpinRight()
+{
+  bool result = moveSpinRight || holdSpinRight;
+  moveSpinRight = false;
+  return result;
 }
 

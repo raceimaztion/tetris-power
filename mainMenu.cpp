@@ -36,7 +36,7 @@ MainMenu::MainMenu(int screenID) : Screen(screenID),
   quit.addCallback(this);
 }
 
-void MainMenu::timerTick()
+void MainMenu::timerTick(float dTime)
 {
   panel.timerTick();
   if (quit.getFont() == NULL && fallbackFont != NULL)
