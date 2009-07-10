@@ -1,7 +1,8 @@
 #define SHAPE_MODULE
 #include "common.h"
 
-#define SMALL 0.0000001f
+#define SMALL 0.001f
+#define SHAPE_SPEED 2.0f
 
 // Variables private to the Shapes module:
 Mesh block;
@@ -76,7 +77,7 @@ void Shape::init()
   c = comRandomColour();
   
   offset_x = offset_y = 0.0f;
-  distGone_x = distGone_y = 0.0f;
+  start_x = start_y = 0.0f;
 }
 
 void Shape::addBit(ABit bit)
@@ -109,8 +110,10 @@ bool Shape::move(int dx, int dy)
     return false;
   }
   
-//  offset_x -= dx;
-//  offset_y -= dy;
+  offset_x -= dx;
+  offset_y -= dy;
+  start_x -= dx;
+  start_y -= dy;
   
   return true;
 }
@@ -127,29 +130,35 @@ bool Shape::rotateLeft()
 
 bool Shape::animate(float dTime, float curTime)
 {
-/*  bool result = false;
+  bool result = false;
   if (abs(offset_x) < SMALL)
-    distGone_x = 0.0f;
+    start_x = 0.0f;
   else
   {
-    float delta = minMag(distGone_x + 0.001f, offset_x);
-    offset_x -= delta;
-    distGone_x -= delta;
+    float sx = maxMag(0.001f, start_x);
+    float delta = max(dTime, dTime*SHAPE_SPEED*abs((offset_x - sx)/sx));
+    offset_x -= delta*offset_x;
+//    offset_x -= offset_x*dTime;
+    
     result = true;
   }
   
   if (abs(offset_y) < SMALL)
-    distGone_y = 0.0f;
+    start_y = 0.0f;
   else
   {
-    float delta = minMag(distGone_y + 0.001f, offset_y);
-    offset_y -= delta;
-    distGone_y -= delta;
+    float delta = max(1.0f, SHAPE_SPEED*abs((offset_y - start_y)/start_y));
+    offset_y -= delta*offset_y*dTime;
+//    offset_y -= offset_y*dTime;
+    
     result = true;
   }
   
-  return result;*/
-  return false;
+  if (isnan(offset_x)) offset_x = 0.0f;
+  if (isnan(offset_y)) offset_y = 0.0f;
+  
+  return result;
+//  return false;
 }
 
 void Shape::draw() const
@@ -157,6 +166,7 @@ void Shape::draw() const
   glPushMatrix();
   
   glTranslatef(pos.x, 0, pos.y);
+  glTranslatef(offset_x, 0, offset_y);
   c.applyMaterial();
   for (int i=the_bits.size()-1; i >= 0; i--) 
   {

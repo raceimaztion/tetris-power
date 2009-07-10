@@ -429,8 +429,8 @@ void _screenRecursivePaint(int cur)
   if (!(screenStack.at(cur)->isOpaque()))
     _screenRecursivePaint(cur - 1);
   
-  screenStack.at(cur)->screenPaint();
   screenStack.at(cur)->clearRepaint();
+  screenStack.at(cur)->screenPaint();
 }
 
 void screenPaint()

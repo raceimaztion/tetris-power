@@ -30,7 +30,7 @@ class Shape {
     Point pos;
     // Interpolation stuff
     float offset_x, offset_y;
-    float distGone_x, distGone_y;
+    float start_x, start_y;
     // Private useful methods
     void init();
   

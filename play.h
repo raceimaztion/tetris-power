@@ -2,6 +2,24 @@
   The main play-Screen
 */
 
+class Control {
+  private:
+  bool keyHeld,      // keyHeld indicates if the key is currently being pressed,
+       keyPressed;   // keyPressed indicates if the key has been pressed since the last request
+  float repeatTime,  // The amount of time between repeats
+        timeLeft;    // The amount of time left until the next "press"
+  
+  public:
+    Control(); // Default constructor with no time between keypresses
+    Control(float repeatTime); // Constructor that specifies the amount of time between keypresses
+    
+    void keyEvent(bool pressed); // Called when the key gets pressed or released
+    bool isPressed(); // Returns true if the key should be considered pressed
+    void timerTick(float dTime); // Advances the current idea of time
+    float getRepeatTime() const; // Find out how much time between key presses
+    void setRepeatTime(float time); // Set the time between key presses
+};
+
 class Controls {
   private:
     bool moveLeft, holdLeft;

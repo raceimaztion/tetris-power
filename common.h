@@ -30,7 +30,7 @@ using namespace std;
  * **************** */
 #define GRID_WIDTH 10
 #define GRID_HEIGHT 20
-#define TIMER_TICK 100
+#define TIMER_TICK 50
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 

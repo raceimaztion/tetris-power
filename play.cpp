@@ -118,8 +118,8 @@ void PlayScreen::timerTick(float dTime)
 void PlayScreen::keyboard(const SDL_KeyboardEvent& key)
 {
   controls.key(key);
-  if (key.type == SDL_KEYUP && key.keysym.sym == SDLK_ESCAPE)
-    end();
+/*  if (key.type == SDL_KEYUP && key.keysym.sym == SDLK_ESCAPE)
+    end();*/
 }
 
 void PlayScreen::mouseButton(const SDL_MouseButtonEvent& mouse)
