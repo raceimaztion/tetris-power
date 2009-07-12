@@ -4,10 +4,10 @@
 
 class Control {
   private:
-  bool keyHeld,      // keyHeld indicates if the key is currently being pressed,
-       keyPressed;   // keyPressed indicates if the key has been pressed since the last request
-  float repeatTime,  // The amount of time between repeats
-        timeLeft;    // The amount of time left until the next "press"
+    bool keyHeld,      // keyHeld indicates if the key is currently being pressed,
+         keyPressed;   // keyPressed indicates if the key has been pressed since the last request
+    float repeatTime,  // The amount of time between repeats
+          timeLeft;    // The amount of time left until the next "press"
   
   public:
     Control(); // Default constructor with no time between keypresses

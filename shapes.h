@@ -29,8 +29,8 @@ class Shape {
     Colour c;
     Point pos;
     // Interpolation stuff
-    float offset_x, offset_y;
-    float start_x, start_y;
+    Bezier offsetX, offsetY;
+    float timeX, timeY;
     // Private useful methods
     void init();
   
@@ -59,4 +59,7 @@ class Shape {
 
 // Initialization function for the Shapes module
 void shInit();
+
+// Get a random shape
+Shape shRandomShape();
 

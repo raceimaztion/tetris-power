@@ -248,6 +248,78 @@ void Camera::animate(float dTime)
   // TODO: Fill this in
 }
 
+/* ****************** *
+ * Bezier curve class *
+ * ****************** */
+Bezier::Bezier()
+{
+  a = b = c = d = 0.0f;
+  type = 0;
+}
+
+Bezier::Bezier(const Bezier& curve)
+{
+  a = curve.a;
+  b = curve.b;
+  c = curve.c;
+  d = curve.d;
+  type = curve.type;
+}
+
+Bezier::Bezier(float startV, float endV, float dStart, float dEnd)
+{
+  a = startV;
+  b = dStart;
+  c = 3*(endV - startV) - (dEnd + 2*dStart);
+  d = 2*(startV - endV) + (dStart + dEnd);
+  
+  type = (a == 0.0f ? 0 : 0x01) |
+         (b == 0.0f ? 0 : 0x02) |
+         (c == 0.0f ? 0 : 0x04) |
+         (d == 0.0f ? 0 : 0x08);
+}
+
+float Bezier::f(float t) const
+{
+  // TODO: Use 'type' to choose an equation to use for a slight speed-up
+  //return a + t*(b + t*(c + t*d));
+  return a + b*t + c*t*t + d*t*t*t;
+}
+
+float Bezier::df(float t) const
+{
+  return b + t*(2*c + 3*t*d);
+}
+
+bool Bezier::isFlat() const
+{
+  return type == 0;
+}
+
+void Bezier::changeCurve(float startV, float endV, float dStart, float dEnd)
+{
+  a = startV;
+  b = dStart;
+  c = 3*(endV - startV) - (dEnd + 2*dStart);
+  d = 2*(startV - endV) + (dStart + dEnd);
+  
+  type = (a == 0.0f ? 0x01 : 0) |
+         (b == 0.0f ? 0x02 : 0) |
+         (c == 0.0f ? 0x04 : 0) |
+         (d == 0.0f ? 0x08 : 0);
+}
+
+Bezier& Bezier::operator=(const Bezier& curve)
+{
+  a = curve.a;
+  b = curve.b;
+  c = curve.c;
+  d = curve.d;
+  type = curve.type;
+  
+  return *this;
+}
+
 /* ******************************** *
  * Screen class and related methods *
  * ******************************** */

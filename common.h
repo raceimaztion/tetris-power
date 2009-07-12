@@ -122,6 +122,29 @@ class Camera {
     void animate(float dTime);
 };
 
+/* *************************** *
+ * Interpolation-related class *
+ * *************************** */
+
+class Bezier {
+  private:
+    float a, b, c, d;
+    int type;
+  
+  public:
+    Bezier(); // Creates a default equation that stays at zero
+    Bezier(const Bezier& curve); // Copy constructor
+    Bezier(float startV, float endV,  // The starting and ending values (f(0) = startV, f(1) = endV)
+           float dStart, float dEnd); // The derivatives at the start and end (df(0) = dStart, df(1) = dEnd)
+    
+    float f(float t) const; // Evaluate the function at a point
+    float df(float t) const; // Find the derivative at a point
+    bool isFlat() const; // Returns true if this is a "flat" curve (one that always remains at zero)
+    
+    void changeCurve(float startV, float endV, float dStart, float dEnd);
+    Bezier& operator=(const Bezier& curve);
+};
+
 /* ********************************** *
  * Screen-related classes and methods *
  * ********************************** */

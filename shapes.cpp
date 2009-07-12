@@ -3,6 +3,8 @@
 
 #define SMALL 0.001f
 #define SHAPE_SPEED 2.0f
+#define SHAPE_MOVE_TIME 0.5f
+#define CURVE_END_SLOPE 0.0f
 
 // Variables private to the Shapes module:
 Mesh block;
@@ -76,8 +78,8 @@ void Shape::init()
   pos.x = pos.y = 0;
   c = comRandomColour();
   
-  offset_x = offset_y = 0.0f;
-  start_x = start_y = 0.0f;
+//  offset_x = offset_y = 0.0f;
+//  start_x = start_y = 0.0f;
 }
 
 void Shape::addBit(ABit bit)
@@ -110,10 +112,22 @@ bool Shape::move(int dx, int dy)
     return false;
   }
   
-  offset_x -= dx;
-  offset_y -= dy;
-  start_x -= dx;
-  start_y -= dy;
+#ifdef DEBUG
+  printf("Shape (x,y): (%d, %d)\n", pos.x, pos.y);
+#endif
+  
+  if (dx != 0)
+  {
+    Bezier tempX(offsetX.f(timeX) - dx, 0.0f, offsetX.df(timeX), CURVE_END_SLOPE);
+    offsetX = tempX;
+    timeX = 0.0f;
+  }
+  if (dy != 0)
+  {
+    Bezier tempY(offsetY.f(timeY) - dy, 0.0f, offsetY.df(timeY), CURVE_END_SLOPE);
+    offsetY = tempY;
+    timeY = 0.0f;
+  }
   
   return true;
 }
@@ -131,34 +145,44 @@ bool Shape::rotateLeft()
 bool Shape::animate(float dTime, float curTime)
 {
   bool result = false;
-  if (abs(offset_x) < SMALL)
-    start_x = 0.0f;
-  else
+  
+  if (!offsetX.isFlat())
   {
-    float sx = maxMag(0.001f, start_x);
-    float delta = max(dTime, dTime*SHAPE_SPEED*abs((offset_x - sx)/sx));
-    offset_x -= delta*offset_x;
-//    offset_x -= offset_x*dTime;
+    timeX += dTime/SHAPE_MOVE_TIME;
+    if (timeX > 1.0f)
+    {
+#ifdef DEBUG
+      printf("End X curve.\n");
+#endif
+      offsetX = Bezier();
+    }
+#ifdef DEBUG
+    else
+      printf("Continuing X curve.\n");
+#endif
     
     result = true;
   }
   
-  if (abs(offset_y) < SMALL)
-    start_y = 0.0f;
-  else
+  if (!offsetY.isFlat())
   {
-    float delta = max(1.0f, SHAPE_SPEED*abs((offset_y - start_y)/start_y));
-    offset_y -= delta*offset_y*dTime;
-//    offset_y -= offset_y*dTime;
+    timeY += dTime/SHAPE_MOVE_TIME;
+    if (timeY > 1.0f)
+    {
+#ifdef DEBUG
+      printf("End Y curve.\n");
+#endif
+      offsetY = Bezier();
+    }
+#ifdef DEBUG
+    else
+      printf("Continuing Y curve.\n");
+#endif
     
     result = true;
   }
-  
-  if (isnan(offset_x)) offset_x = 0.0f;
-  if (isnan(offset_y)) offset_y = 0.0f;
   
   return result;
-//  return false;
 }
 
 void Shape::draw() const
@@ -166,7 +190,8 @@ void Shape::draw() const
   glPushMatrix();
   
   glTranslatef(pos.x, 0, pos.y);
-  glTranslatef(offset_x, 0, offset_y);
+//  glTranslatef(offset_x, 0, offset_y);
+  glTranslatef(offsetX.f(timeX), 0, offsetY.f(timeY));
   c.applyMaterial();
   for (int i=the_bits.size()-1; i >= 0; i--) 
   {
