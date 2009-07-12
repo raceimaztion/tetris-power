@@ -55,7 +55,9 @@ void wFillRect(int x, int y, int width, int height)
   glEnd();
 }
 
-// Widget base class
+/* ***************** *
+ * base Widget class *
+ * ***************** */
 Widget::Widget(int x, int y, int width, int height, Colour c)
 {
   this->x = x;
@@ -135,7 +137,9 @@ void Widget::timerTick() { }
 void Widget::mouse(const SDL_MouseButtonEvent& mouse) { }
 void Widget::mouse(const SDL_MouseMotionEvent& mouse) { }
 
-// Label widget class
+/* ****************** *
+ * Label widget class *
+ * ****************** */
 Label::Label(int x, int y, int width, int height, Colour c, const string& label, Font* font) : Widget(x, y, width, height, c)
 {
   this->label = label;
@@ -208,6 +212,10 @@ void Label::paint() const
   if (!visible)
     return;
   
+  glPushMatrix();
+  if (x < 0) glTranslatef(getWidth(), 0, 0);
+  if (y < 0) glTranslatef(0, getHeight(), 0);
+  
   int lineWidth = fStringWidth(font, label.c_str()), lineHeight = fFontHeight(font);
   float px = x + align_x*(width - lineWidth), py = y + height - align_y*(height - lineHeight);
   
@@ -216,14 +224,18 @@ void Label::paint() const
   
   glRasterPos2f(px, py);
   c.apply();
+  
   fDrawString(font, label.c_str());
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
+  glPopMatrix();
 }
 
 void Label::timerTick() { }
 
-// Button widget
+/* ******************* *
+ * Button widget class *
+ * ******************* */
 Button::Button(int x, int y, int width, int height, Colour c,
                const string& label, Font* font, int tag)
                : Label(x, y, width, height, c, label, font)
@@ -298,8 +310,8 @@ void Button::paint() const
     }
   }
   
-  Label::paint();
   glPopMatrix();
+  Label::paint();
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
 }
@@ -372,7 +384,9 @@ void Button::mouse(const SDL_MouseMotionEvent& mouse)
 // Button callback class:
 void ButtonCallback::buttonCallback(const Button& b) { }
 
-// Panel widget class:
+/* ****************** *
+ * Panel widget class *
+ * ****************** */
 Panel::Panel(int x, int y, int width, int height, Colour c) : Widget(x, y, width, height, c)
 {
   // Nothing much to do here
@@ -399,8 +413,13 @@ void Panel::paint() const
 #ifdef DEBUG
   printf("Panel::paint(): Drawing panel and %d %s.\n", children.size(), (children.size()==1 ? "child": "children"));
 #endif
+  bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
+  
   for (unsigned int i=0; i < children.size(); i++)
     children.at(i)->paint();
+  
+  if (usedDepth) glEnable(GL_DEPTH_TEST);
 }
 
 void Panel::timerTick()
@@ -421,7 +440,9 @@ void Panel::mouse(const SDL_MouseMotionEvent& mouse)
     children.at(i)->mouse(mouse);
 }
 
-// ProgressMeter widget class
+/* ************************** *
+ * ProgressMeter widget class *
+ * ************************** */
 ProgressMeter::ProgressMeter(int x, int y, int width, int height, Colour c, float percentage) :
                                                     Widget(x, y, width, height, c)
 {

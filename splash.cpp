@@ -30,11 +30,11 @@ void SplashScreen::timerTick(float dTime)
     progress.setPercentage(loaderGetProgress());
     markRepaint();
   }
-  else // TEMP:
+/*  else // TEMP:
   {
     if (!replaceWith(MAIN_MENU_SCREEN))
       end();
-  }
+  }*/
 }
 
 void SplashScreen::prepareForShow()

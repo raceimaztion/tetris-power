@@ -60,13 +60,13 @@ void PlayScreen::screenPaint() const
 #endif
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
-  // Draw background
+  // Draw sky
   glDisable(GL_DEPTH_TEST);
   glColor3f(0.1f, 0.1f, 0.2f);
   comFillRect(0, 0, getWidth(), getHeight());
   glEnable(GL_DEPTH_TEST);
   
-  // TEMP: Draw a block in the middle of the screen:
+  // Set up the viewport for 3D
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
@@ -76,29 +76,22 @@ void PlayScreen::screenPaint() const
   glPushMatrix();
   glLoadIdentity();
   
-/*  gluLookAt(0, 0, 0,
-            0, 1, 0,
-            0, 0, 1);*/
   camera.apply();
   
-//  glEnable(GL_COLOR_MATERIAL);
-  
   lamp.apply(GL_LIGHT0);
-//  BLOCK_COLOUR.applyMaterial();
+  
+  // Draw grid
+  // Draw block
   shape.draw();
+  // Draw background object(s)
   
-//  comDrawCube(0, 0, 1.0f, angle);
-  
+  // Return viewport to 2D mode
   glDisable(GL_LIGHTING);
   
   glPopMatrix();
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
-  
-  // Draw grid
-  // Draw block
-//  shape.draw();
   
   // Draw widgets
   panel.paint();

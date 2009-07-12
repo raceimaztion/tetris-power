@@ -10,11 +10,12 @@
 #define BUTTON_SPACING 40
 #define BUTTON_TOP (getHeight() - 2*BUTTON_SPACING - 3*BUTTON_HEIGHT)/2
 
-const Colour MENU_BUTTON_COLOUR(0.5f, 0.6f, 0.5f);
+const Colour MENU_BUTTON_COLOUR(0.5f, 0.65f, 0.5f),
+             TITLE_LABEL_COLOUR(0.6f);
 
 MainMenu::MainMenu(int screenID) : Screen(screenID),
                                    panel(0, 0, getWidth(), getHeight(), Colour(0)),
-                                   title(5, 40, getWidth()-10, 20, Colour(0.6f), "Power-Tetris", largeFont),
+                                   title(5, 40, getWidth()-10, 20, TITLE_LABEL_COLOUR, "Power-Tetris", largeFont),
                                    start((getWidth()-BUTTON_WIDTH)/2, BUTTON_TOP,
                                          BUTTON_WIDTH, BUTTON_HEIGHT,
                                          MENU_BUTTON_COLOUR, "Start", largeFont, MENU_TAG_START),
@@ -26,10 +27,11 @@ MainMenu::MainMenu(int screenID) : Screen(screenID),
                                         MENU_BUTTON_COLOUR, "Quit", largeFont, MENU_TAG_QUIT)
 {
   // Nothing much to do here
-  panel.addChild(&title);
   panel.addChild(&start);
   panel.addChild(&options);
   panel.addChild(&quit);
+  
+  panel.addChild(&title);
   
   start.addCallback(this);
   options.addCallback(this);
