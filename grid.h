@@ -6,19 +6,23 @@ class Grid;
 
 class GridBit : public ABit {
   private:
-    Bezier offsetX, offsetY;
+    float offsetX, speedX;
     Grid* grid;
+    Colour c;
   
   public:
-    GridBit(const ABit& bit, int offsetX, int offsetY, Grid *grid);
+    GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, Grid *grid);
     
-    void timerTick(float dTime);
+    bool timerTick(float dTime);
     void render() const;
+    bool drop();
+    bool drop(int distance);
 };
 
 class Grid {
   private:
     int width, height;
+    list<GridBit> gridBits;
   
   public:
     Grid(int width, int height);
@@ -26,7 +30,7 @@ class Grid {
     int getWidth() const;
     int getHeight() const;
     bool isCellOccupied(int x, int y) const;
-    void placeBit(const ABit& bit, int x, int y);
-    void timerTick(float dTime);
+    void placeBit(const ABit& bit, Colour c, int x, int y);
+    bool timerTick(float dTime);
     void render() const;
 };

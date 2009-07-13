@@ -17,9 +17,11 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                             Colour(0.2f, 0.2f, 0.5f), "Menu", fallbackFont, MENU_BUTTON_TAG),
                                        lamp(Position(5, -5, 5), 1, Colour(0.5f)),
                                        camera(Position(0, 15, 0), Position(0, 0, 0)),
-                                       controls(0.5f)
+                                       controls(0.5f),
+                                       grid(GRID_WIDTH, GRID_HEIGHT)
 {
   // Need to load a bunch of stuff here
+  state = PLAYING;
   
   // Add all the widgets to the panel
   panel.addChild(&menu);
@@ -82,6 +84,7 @@ void PlayScreen::screenPaint() const
   lamp.apply(GL_LIGHT0);
   
   // Draw grid
+  grid.render();
   // Draw block
   shape.draw();
   // Draw background object(s)
@@ -100,13 +103,19 @@ void PlayScreen::screenPaint() const
 
 void PlayScreen::timerTick(float dTime)
 {
-  if (controls.holdingLeft() && shape.move(-1, 0))  markRepaint();
-  if (controls.holdingRight() && shape.move(1, 0))  markRepaint();
-  if (controls.holdingUp() && shape.move(0, 1))  markRepaint();
-  if (controls.holdingDown() && shape.move(0, -1)) markRepaint();
-  
-  if (shape.animate(dTime, 0.0f))
-    markRepaint();
+  if (state == PLAYING)
+  {
+    // Player controls
+    if (controls.holdingLeft() && shape.move(-1, 0))  markRepaint();
+    if (controls.holdingRight() && shape.move(1, 0))  markRepaint();
+    if (controls.holdingUp() && shape.move(0, 1))  markRepaint();
+    if (controls.holdingDown() && shape.move(0, -1))  markRepaint();
+    if (controls.holdingSpinLeft() && shape.rotateLeft())  markRepaint();
+    if (controls.holdingSpinRight() && shape.rotateRight())  markRepaint();
+    
+    if (shape.animate(dTime, 0.0f))
+      markRepaint();
+  }
   
   controls.timerTick(dTime);
 }

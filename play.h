@@ -44,6 +44,8 @@ class Controls {
     void setRepeatTime(float repeatTime);
 };
 
+enum PlayState { PLAYING, DROPPING_BLOCK, WAITING };
+
 class PlayScreen : public Screen, public ButtonCallback {
   private:
     Mesh backdrop;
@@ -53,6 +55,8 @@ class PlayScreen : public Screen, public ButtonCallback {
     Camera camera;
     Shape shape;
     Controls controls;
+    Grid grid;
+    PlayState state;
   
   public:
     PlayScreen(int screenID);

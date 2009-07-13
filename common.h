@@ -14,6 +14,7 @@
 #include <string>
 // STL includes
 #include <vector>
+#include <list>
 #include <sstream>
 #include <map>
 #include <stack>
@@ -33,6 +34,8 @@ using namespace std;
 #define TIMER_TICK 50
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
+
+#define BLOCK_MOTION_SPEED 1.0f
 
 /* ************************** *
  * Globally-defined variables *

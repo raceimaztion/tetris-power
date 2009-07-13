@@ -6,10 +6,6 @@
 #define SHAPE_MOVE_TIME 0.5f
 #define CURVE_END_SLOPE 0.0f
 
-// Variables private to the Shapes module:
-Mesh block;
-
-
 /* *********** *
  * Point class *
  * *********** */
@@ -28,6 +24,11 @@ Point::Point(int x, int y)
 {
   this->x = x;
   this->y = y;
+}
+
+bool Point::operator==(const Point& p)
+{
+  return x == p.x && y == p.y;
 }
 
 /* *********** *
@@ -77,9 +78,7 @@ void Shape::init()
   type = SHAPE_TYPE_NOT_READY;
   pos.x = pos.y = 0;
   c = comRandomColour();
-  
-//  offset_x = offset_y = 0.0f;
-//  start_x = start_y = 0.0f;
+  grid = NULL;
 }
 
 void Shape::addBit(ABit bit)
@@ -95,8 +94,15 @@ void Shape::prep()
 
 bool Shape::collides() const
 {
-  // TODO: Add stuff to the grid module
-  return false;
+  if (grid == NULL)
+    return false;
+  else
+  {
+    for (int i=the_bits.size()-1; i >= 0; i--)
+      if (grid->isCellOccupied(pos.x+the_bits.at(i).pos.x, pos.y+the_bits.at(i).pos.y))
+        return true;
+    return false;
+  }
 }
 
 bool Shape::move(int dx, int dy)
@@ -134,11 +140,13 @@ bool Shape::move(int dx, int dy)
 
 bool Shape::rotateRight()
 {
+  // TODO: Fill this in
   return false;
 }
 
 bool Shape::rotateLeft()
 {
+  // TODO: Fill this in
   return false;
 }
 
@@ -199,6 +207,16 @@ void Shape::draw() const
   }
   
   glPopMatrix();
+}
+
+Grid* Shape::getGrid() const
+{
+  return grid;
+}
+
+void Shape::setGrid(Grid* grid)
+{
+  this->grid = grid;
 }
 
 // Init function for the Shapes module

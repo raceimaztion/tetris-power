@@ -4,6 +4,8 @@
 #define SHAPE_TYPE_SOFT 5002
 #define SHAPE_TYPE_BRITTLE 5004
 
+class Grid;
+
 class Point {
   public:
     int x, y;
@@ -11,15 +13,19 @@ class Point {
     Point();
     Point(const Point& p);
     Point(int x, int y);
+    
+    bool operator==(const Point& p);
 };
 
-class ABit { public:
-  Point pos;
-  // TODO: Add something about which power-up this has
-  ABit(int x, int y)
-  {
-    pos = Point(x, y);
-  }
+class ABit {
+  public:
+    Point pos;
+    
+    // TODO: Add something about which power-up this has
+    ABit(int x, int y)
+    {
+      pos = Point(x, y);
+    }
 };
 
 class Shape {
@@ -28,6 +34,7 @@ class Shape {
     int type, size;
     Colour c;
     Point pos;
+    Grid *grid;
     // Interpolation stuff
     Bezier offsetX, offsetY;
     float timeX, timeY;
@@ -55,6 +62,8 @@ class Shape {
     bool animate(float dTime, float curTime);
     // Draw the shape
     void draw() const;
+    Grid* getGrid() const;
+    void setGrid(Grid* grid);
 };
 
 // Initialization function for the Shapes module
