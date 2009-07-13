@@ -283,7 +283,41 @@ float Bezier::f(float t) const
 {
   // TODO: Use 'type' to choose an equation to use for a slight speed-up
   //return a + t*(b + t*(c + t*d));
-  return a + b*t + c*t*t + d*t*t*t;
+  switch (type)
+  {
+    case 0:
+      return 0.0f;
+    case 1:
+      return a;
+    case 2:
+      return b*t;
+    case 3:
+      return a + b*t;
+    case 4:
+      return c*t*t;
+    case 5:
+      return a + c*t*t;
+    case 6:
+      return b*t + c*t*t;
+    case 7:
+      return a + b*t + c*t*t;
+    case 8:
+      return d*t*t*t;
+    case 9:
+      return a + d*t*t*t;
+    case 10:
+      return b*t + d*t*t*t;
+    case 11:
+      return a + b*t + d*t*t*t;
+    case 12:
+      return c*t*t + d*t*t*t;
+    case 13:
+      return a + c*t*t + d*t*t*t;
+    case 14:
+      return b*t + c*t*t + d*t*t*t;
+    default:
+      return a + b*t + c*t*t + d*t*t*t;
+  }
 }
 
 float Bezier::df(float t) const

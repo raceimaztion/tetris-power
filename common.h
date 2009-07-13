@@ -373,8 +373,8 @@ template<class T> inline T minMag(T a, T b)
 #include "fonts.h"
 #include "widgets.h"
 // Order-dependent headers
-#include "grid.h"
 #include "shapes.h"
+#include "grid.h"
 // Screen headers
 #include "splash.h"
 #include "mainMenu.h"

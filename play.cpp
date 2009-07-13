@@ -16,7 +16,8 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
                                             Colour(0.2f, 0.2f, 0.5f), "Menu", fallbackFont, MENU_BUTTON_TAG),
                                        lamp(Position(5, -5, 5), 1, Colour(0.5f)),
-                                       camera(Position(0, 15, 0), Position(0, 0, 0))
+                                       camera(Position(0, 15, 0), Position(0, 0, 0)),
+                                       controls(0.5f)
 {
   // Need to load a bunch of stuff here
   
@@ -106,11 +107,13 @@ void PlayScreen::timerTick(float dTime)
   
   if (shape.animate(dTime, 0.0f))
     markRepaint();
+  
+  controls.timerTick(dTime);
 }
 
 void PlayScreen::keyboard(const SDL_KeyboardEvent& key)
 {
-  controls.key(key);
+  controls.keyEvent(key);
 /*  if (key.type == SDL_KEYUP && key.keysym.sym == SDLK_ESCAPE)
     end();*/
 }
@@ -141,163 +144,197 @@ void PlayScreen::buttonCallback(const Button& b)
 }
 
 /*
+  Single Control class
+*/
+Control::Control()
+{
+  keyHeld = keyPressed = false;
+  repeatTime = timeLeft = 0.0f;
+}
+
+Control::Control(float repeatTime)
+{
+  keyHeld = keyPressed = false;
+  this->repeatTime = repeatTime;
+  timeLeft = 0.0f;
+}
+
+void Control::keyEvent(bool pressed)
+{
+  keyHeld = pressed;
+  keyPressed |= pressed;
+  if (pressed)
+    timeLeft = 0.0f;
+}
+
+bool Control::isPressed()
+{
+  if (timeLeft > 0.0f)
+    return false;
+  
+  bool result = keyHeld | keyPressed;
+  timeLeft = repeatTime;
+  keyPressed = false;
+  return result;
+}
+
+void Control::timerTick(float dTime)
+{
+  timeLeft -= dTime;
+  if (timeLeft < 0.0f)  timeLeft = 0.0f;
+}
+
+float Control::getRepeatTime() const
+{
+  return repeatTime;
+}
+
+void Control::setRepeatTime(float repeatTime)
+{
+  this->repeatTime = repeatTime;
+}
+
+/*
   Controls class
 */
 Controls::Controls()
 {
-  moveLeft = holdLeft = false;
-  moveRight = holdRight = false;
-  moveUp = holdUp = false;
-  moveDown = holdDown = false;
-  moveDrop = holdDrop = false;
-  moveSpinLeft = holdSpinLeft = false;
-  moveSpinRight = holdSpinRight = false;
+  // Nothing much to do here
+  numPressed = 0;
 }
 
-void Controls::key(const SDL_KeyboardEvent& key)
+Controls::Controls(float repeatTime) : left(repeatTime), right(repeatTime),
+                                       up(repeatTime), down(repeatTime),
+                                       drop(repeatTime), spinLeft(repeatTime),
+                                       spinRight(repeatTime)
 {
-  if (key.type == SDL_KEYDOWN)
+  // Nothing much to do here
+  numPressed = 0;
+}
+
+void Controls::keyEvent(const SDL_KeyboardEvent& key)
+{
+  if (key.type != SDL_KEYUP && key.type != SDL_KEYDOWN)
+    return;
+  
+  bool pressed = (key.type == SDL_KEYDOWN);
+  int dir = (pressed ? 1 : -1);
+  numPressed += dir;
+  
+  switch (key.keysym.sym)
   {
-    switch (key.keysym.sym)
-    {
-      case SDLK_w:
-        // Hold the block from falling (W)
-        moveUp = holdUp = true;
-        break;
+    case SDLK_w:
+      // Hold the block from falling (W)
+      up.keyEvent(pressed);
+      break;
       
-      case SDLK_s:
-      case SDLK_DOWN:
-        // Move the block down faster (Down & S)
-        moveDown = holdDown = true;
-        break;
-      
-      case SDLK_a:
-      case SDLK_LEFT:
-        // Move block to the left (Left & A)
-        moveLeft = holdLeft = true;
-        break;
-      
-      case SDLK_d:
-      case SDLK_RIGHT:
-        // Move block to the right (Right & D)
-        moveRight = holdRight = true;
-        break;
-      
-      case SDLK_SPACE:
-        // Drop block to the bottom (Spacebar)
-        moveDrop = holdDrop = true;
-        break;
-      
-      case SDLK_q:
-        // Spin block to the left (Q)
-        moveSpinLeft = holdSpinLeft = true;
-        break;
-      
-      case SDLK_e:
-      case SDLK_UP:
-        // Spin block to the right (E)
-        moveSpinRight = holdSpinRight = true;
-        break;
-      
-      default:
-        break;
-    }
+    case SDLK_s:
+    case SDLK_DOWN:
+      // Move the block down faster (Down & S)
+      down.keyEvent(pressed);
+      break;
+    
+    case SDLK_a:
+    case SDLK_LEFT:
+      // Move block to the left (Left & A)
+      left.keyEvent(pressed);
+      break;
+    
+    case SDLK_d:
+    case SDLK_RIGHT:
+      // Move block to the right (Right & D)
+      right.keyEvent(pressed);
+      break;
+    
+    case SDLK_SPACE:
+      // Drop block to the bottom (Spacebar)
+      drop.keyEvent(pressed);
+      break;
+    
+    case SDLK_q:
+      // Spin block to the left (Q)
+      spinLeft.keyEvent(pressed);
+      break;
+    
+    case SDLK_e:
+    case SDLK_UP:
+      // Spin block to the right (E)
+      spinRight.keyEvent(pressed);
+      break;
+    
+    default:
+      numPressed -= dir;
+      break;
   }
-  else if (key.type == SDL_KEYUP)
-  {
-    switch (key.keysym.sym)
-    {
-      case SDLK_w:
-        // Hold the block from falling (W)
-        holdUp = false;
-        break;
-      
-      case SDLK_s:
-      case SDLK_DOWN:
-        // Move the block down faster (Down & S)
-        holdDown = false;
-        break;
-      
-      case SDLK_a:
-      case SDLK_LEFT:
-        // Move block to the left (Left & A)
-        holdLeft = false;
-        break;
-      
-      case SDLK_d:
-      case SDLK_RIGHT:
-        // Move block to the right (Right & D)
-        holdRight = false;
-        break;
-      
-      case SDLK_SPACE:
-        // Drop block to the bottom (Spacebar)
-        holdDrop = false;
-        break;
-      
-      case SDLK_q:
-        // Spin block to the left (Q)
-        holdSpinLeft = false;
-        break;
-      
-      case SDLK_e:
-      case SDLK_UP:
-        // Spin block to the right (E)
-        holdSpinRight = false;
-        break;
-      
-      default:
-        break;
-    }
-  }
-} // end key()
+  
+  if (numPressed < 0)
+    numPressed = 0;
+} // end keyEvent()
 
 bool Controls::holdingLeft()
 {
-  bool result = moveLeft || holdLeft;
-  moveLeft = false;
-  return result;
+  return left.isPressed();
 }
 
 bool Controls::holdingRight()
 {
-  bool result = moveRight || holdRight;
-  moveRight = false;
-  return result;
+  return right.isPressed();
 }
 
 bool Controls::holdingUp()
 {
-  bool result = moveUp || holdUp;
-  moveUp = false;
-  return result;
+  return up.isPressed();
 }
 
 bool Controls::holdingDown()
 {
-  bool result = moveDown || holdDown;
-  moveDown = false;
-  return result;
+  return down.isPressed();
 }
 
 bool Controls::holdingDrop()
 {
-  bool result = moveDrop || holdDrop;
-  moveDrop = false;
-  return result;
+  return drop.isPressed();
 }
 
 bool Controls::holdingSpinLeft()
 {
-  bool result = moveSpinLeft || holdSpinLeft;
-  moveSpinLeft = false;
-  return result;
+  return spinLeft.isPressed();
 }
 
 bool Controls::holdingSpinRight()
 {
-  bool result = moveSpinRight || holdSpinRight;
-  moveSpinRight = false;
-  return result;
+  return spinRight.isPressed();
+}
+
+bool Controls::anyKeyPressed()
+{
+  return numPressed != 0;
+}
+
+void Controls::timerTick(float dTime)
+{
+  left.timerTick(dTime);
+  right.timerTick(dTime);
+  up.timerTick(dTime);
+  down.timerTick(dTime);
+  drop.timerTick(dTime);
+  spinLeft.timerTick(dTime);
+  spinRight.timerTick(dTime);
+}
+
+float Controls::getRepeatTime() const
+{
+  return up.getRepeatTime();
+}
+
+void Controls::setRepeatTime(float repeatTime)
+{
+  left.setRepeatTime(repeatTime);
+  right.setRepeatTime(repeatTime);
+  up.setRepeatTime(repeatTime);
+  down.setRepeatTime(repeatTime);
+  drop.setRepeatTime(repeatTime);
+  spinLeft.setRepeatTime(repeatTime);
+  spinRight.setRepeatTime(repeatTime);
 }
 

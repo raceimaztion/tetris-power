@@ -59,15 +59,24 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   } // end if try 4 samples
   
   // Set up post-window OpenGL parameters
+  // enable multisampling
   glEnable(GL_MULTISAMPLE);
+  // set the background colour
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  // set the viewport to fill the window
   glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+  // clear the screen
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  // enable alpha blending
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  // set things up for our font engine
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
   glPixelStorei(GL_UNPACK_LSB_FIRST, GL_TRUE);
+  // Cull backfaces
+  glCullFace(GL_BACK);
+  glEnable(GL_CULL_FACE);
   
   return true;
 }
@@ -95,44 +104,11 @@ bool initAudio()
 void triggerRepaint()
 {
   needsRepaint = true;
-/*
-  SDL_Event event;
-  event.type = SDL_USEREVENT;
-  event.user.code = MESSAGE_REPAINT;
-  event.user.data1 = 0;
-  event.user.data2 = 0;
-  
-  SDL_PushEvent(&event);
-*/
 }
 
 /* ********* *
  * Callbacks *
  * ********* */
-void handleDisplay()
-{
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-  SDL_GL_SwapBuffers();
-}
-
-void gameStep()
-{
-  static Uint32 lastTime = 0;
-  static float currentTime = 0;
-  if (lastTime == 0)
-    lastTime = SDL_GetTicks();
-  
-  Uint32 curTime = SDL_GetTicks();
-  float dTime = 0.001f*(curTime - lastTime);
-  currentTime += dTime;
-  
-  // Process stuff here
-  screenTimerTick(dTime);
-  
-  lastTime = curTime;
-}
-
 void handleKeyboardEvent(const SDL_KeyboardEvent& key)
 {
   screenKeyboard(key);
@@ -186,8 +162,17 @@ void loadFonts()
  * *************** */
 Uint32 timerHandler(Uint32 interval, void* unused)
 {
-//  screenTimerTick();
-  gameStep();
+  static Uint32 lastTime = 0;
+  static float currentTime = 0;
+  if (lastTime == 0)
+    lastTime = SDL_GetTicks();
+  
+  Uint32 curTime = SDL_GetTicks();
+  float dTime = 0.001f*(curTime - lastTime);
+  currentTime += dTime;
+  
+  // Process stuff here
+  screenTimerTick(dTime);
   
   // Check to see if we need to load anything
   if (!loaderDoneLoading())
@@ -198,9 +183,10 @@ Uint32 timerHandler(Uint32 interval, void* unused)
     loaderRunLoader();
   }
   
+  lastTime = curTime;
+  
   return interval;
 }
-
 
 /* ******************* *
  * Main entry function *

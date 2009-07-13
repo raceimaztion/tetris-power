@@ -13,7 +13,7 @@ class Point {
     Point(int x, int y);
 };
 
-struct ABit {
+class ABit { public:
   Point pos;
   // TODO: Add something about which power-up this has
   ABit(int x, int y)

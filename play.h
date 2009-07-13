@@ -22,18 +22,14 @@ class Control {
 
 class Controls {
   private:
-    bool moveLeft, holdLeft;
-    bool moveRight, holdRight;
-    bool moveUp, holdUp;
-    bool moveDown, holdDown;
-    bool moveDrop, holdDrop;
-    bool moveSpinLeft, holdSpinLeft;
-    bool moveSpinRight, holdSpinRight;
+    Control left, right, up, down, drop, spinLeft, spinRight;
+    int numPressed;
   
   public:
     Controls();
+    Controls(float repeatTime);
     
-    void key(const SDL_KeyboardEvent& key);
+    void keyEvent(const SDL_KeyboardEvent& key);
     bool holdingLeft();
     bool holdingRight();
     bool holdingUp();
@@ -41,6 +37,11 @@ class Controls {
     bool holdingDrop();
     bool holdingSpinLeft();
     bool holdingSpinRight();
+    bool anyKeyPressed();
+    
+    void timerTick(float dTime);
+    float getRepeatTime() const;
+    void setRepeatTime(float repeatTime);
 };
 
 class PlayScreen : public Screen, public ButtonCallback {
