@@ -62,8 +62,12 @@ class Shape {
     bool animate(float dTime, float curTime);
     // Draw the shape
     void draw() const;
+    // Get the grid this shape is in
     Grid* getGrid() const;
+    // Set the grid this shape is in
     void setGrid(Grid* grid);
+    // Put the bits of this shape into the grid
+    void putInGrid();
 };
 
 // Initialization function for the Shapes module

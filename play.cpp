@@ -16,7 +16,7 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
                                             Colour(0.2f, 0.2f, 0.5f), "Menu", fallbackFont, MENU_BUTTON_TAG),
                                        lamp(Position(5, -5, 5), 1, Colour(0.5f)),
-                                       camera(Position(0, 15, 0), Position(0, 0, 0)),
+                                       camera(Position(0, 25, 0), Position(0, 0, 0)),
                                        controls(0.5f),
                                        grid(GRID_WIDTH, GRID_HEIGHT)
 {
@@ -38,6 +38,7 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
     shape = Shape(in);
     fclose(in);
   }
+  shape.setGrid(&grid);
 }
 
 PlayScreen::~PlayScreen()
@@ -83,10 +84,14 @@ void PlayScreen::screenPaint() const
   
   lamp.apply(GL_LIGHT0);
   
+  // Move to the right place
+  glTranslatef(-0.5f*grid.getWidth(), 0.0f, -0.5f*grid.getHeight());
+  
   // Draw grid
   grid.render();
   // Draw block
-  shape.draw();
+  if (state == PLAYING)
+    shape.draw();
   // Draw background object(s)
   
   // Return viewport to 2D mode
@@ -112,9 +117,35 @@ void PlayScreen::timerTick(float dTime)
     if (controls.holdingDown() && shape.move(0, -1))  markRepaint();
     if (controls.holdingSpinLeft() && shape.rotateLeft())  markRepaint();
     if (controls.holdingSpinRight() && shape.rotateRight())  markRepaint();
-    
-    if (shape.animate(dTime, 0.0f))
+    if (controls.holdingDrop())
+    {
+      shape.putInGrid();
+      state = DROPPING_BLOCK;
+      shape.prep();
       markRepaint();
+    }
+    else
+    {
+      if (shape.animate(dTime, 0.0f))
+        markRepaint();
+      if (grid.timerTick(dTime))
+        markRepaint();
+    }
+  }
+  else if (state == DROPPING_BLOCK)
+  {
+    if (!grid.timerTick(dTime))
+    {
+      if (controls.holdingDrop())
+        state = WAITING;
+      else
+        state = PLAYING;
+    }
+  }
+  else if (state == WAITING)
+  {
+    if (!controls.holdingDrop())
+      state = PLAYING;
   }
   
   controls.timerTick(dTime);

@@ -15,7 +15,7 @@ GridBit::GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, Grid *grid
 
 bool GridBit::timerTick(float dTime)
 {
-  if (offsetX < 0.0f)
+/*  if (offsetX < 0.0f)
   {
     speedX += ACCELERATION*dTime;
     offsetX += speedX*dTime;
@@ -24,7 +24,7 @@ bool GridBit::timerTick(float dTime)
     
     return true;
   }
-  else
+  else*/
     return false;
 }
 
@@ -72,6 +72,9 @@ int Grid::getHeight() const
 
 bool Grid::isCellOccupied(int x, int y) const
 {
+  if (x < 0 || y < 0 || x >= width || y >= height)
+    return true;
+  
   Point p(x, y);
   for (list<GridBit>::const_iterator cur = gridBits.begin();
        cur != gridBits.end();

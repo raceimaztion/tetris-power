@@ -88,8 +88,16 @@ void Shape::addBit(ABit bit)
 
 void Shape::prep()
 {
-  pos.x = (GRID_WIDTH - size) / 2;
-  pos.y = GRID_HEIGHT;
+  if (grid == NULL)
+  {
+    pos.x = (GRID_WIDTH - size) / 2;
+    pos.y = GRID_HEIGHT;
+  }
+  else
+  {
+    pos.x = (grid->getWidth() - size) / 2;
+    pos.y = grid->getHeight()-size;
+  }
 }
 
 bool Shape::collides() const
@@ -217,6 +225,18 @@ Grid* Shape::getGrid() const
 void Shape::setGrid(Grid* grid)
 {
   this->grid = grid;
+}
+
+void Shape::putInGrid()
+{
+  if (grid == NULL)
+  {
+    printf("Runtime warning: Shape::putInGrid(): Can't put the shape into the grid if the grid pointer is NULL.\n");
+    return;
+  }
+  
+  for (int i=the_bits.size()-1; i >= 0; i--)
+    grid->placeBit(the_bits.at(i), c, pos.x, pos.y);
 }
 
 // Init function for the Shapes module
