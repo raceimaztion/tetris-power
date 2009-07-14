@@ -198,8 +198,6 @@ int main(int argc, char **argv)
   // Global initialization
   printf("Initializing random-number generator.\n");
   srand(time(NULL));
-//  printf("Random number: %.5f\n", comRandomFloat(0.125f, 0.875f));
-  printf("%s\n", comRandomColour().toString().c_str());
   
   if (!initVideo())
     exit(1);

@@ -7,10 +7,12 @@
 // Button tags
 #define MENU_BUTTON_TAG 0x31
 
-const Colour BLOCK_COLOUR(0.5f, 0.4f, 0.3f);
+const Colour BLOCK_COLOUR(0.5f, 0.4f, 0.3f),
+             BACKDROP_COLOUR(0.4f, 0.4f, 0.5f);
 
 // Main PlayScreen:
 PlayScreen::PlayScreen(int screenID) : Screen(screenID),
+                                       Loadable("Backdrop"),
                                        panel(0, 0, getWidth(), getHeight(), Colour(0)),
                                        menu(getWidth()-MENU_BUTTON_WIDTH-2, getHeight()-MENU_BUTTON_HEIGHT-2,
                                             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
@@ -21,6 +23,7 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                        grid(GRID_WIDTH, GRID_HEIGHT)
 {
   // Need to load a bunch of stuff here
+  loaderAddLoader(this);
   state = PLAYING;
   
   // Add all the widgets to the panel
@@ -38,7 +41,9 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
     shape = Shape(in);
     fclose(in);
   }
+  
   shape.setGrid(&grid);
+  shape.prep();
 }
 
 PlayScreen::~PlayScreen()
@@ -83,6 +88,9 @@ void PlayScreen::screenPaint() const
   camera.apply();
   
   lamp.apply(GL_LIGHT0);
+  
+  BACKDROP_COLOUR.applyMaterial();
+  backdrop.render();
   
   // Move to the right place
   glTranslatef(-0.5f*grid.getWidth(), 0.0f, -0.5f*grid.getHeight());
@@ -182,6 +190,12 @@ void PlayScreen::buttonCallback(const Button& b)
       end();
       break;
   }
+}
+
+void PlayScreen::load()
+{
+  // Load the backdrop
+  Mesh::loadWavefrontObjectFile(&backdrop, "objects/backdrop.obj");
 }
 
 /*

@@ -46,7 +46,7 @@ class Controls {
 
 enum PlayState { PLAYING, DROPPING_BLOCK, WAITING };
 
-class PlayScreen : public Screen, public ButtonCallback {
+class PlayScreen : public Screen, public ButtonCallback, public Loadable {
   private:
     Mesh backdrop;
     Panel panel;
