@@ -121,6 +121,7 @@ void PlayScreen::timerTick(float dTime)
     {
       shape.putInGrid();
       state = DROPPING_BLOCK;
+      // TODO: change the block here
       shape.prep();
       markRepaint();
     }

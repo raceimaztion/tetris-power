@@ -101,6 +101,15 @@ Colour Colour::darker(float v) const
   return Colour(r*(1-v), g*(1-v), b*(1-v), a);
 }
 
+string Colour::toString() const
+{
+  ostringstream result;
+  result.width(6);
+  result << "Colour: " << r << ", " << g << ", " << b;
+  
+  return result.str();
+}
+
 /* ************** *
  * Position class *
  * ************** */
@@ -746,25 +755,27 @@ void comDrawBlock(float x, float y, float scale, float rotation)
 }
 
 // Random-related
-inline float comRandomFloat()
+float comRandomFloat()
 {
   return (float)rand() / RAND_MAX;
 }
 
-inline float comRandomBoundedFloat(float min, float max)
+float comRandomFloat(float min, float max)
 {
   return (max - min)*comRandomFloat() + min;
 }
 
 Colour comRandomColour()
 {
-  Colour result(comRandomBoundedFloat(0.125f, 0.875f),
-                comRandomBoundedFloat(0.125f, 0.875f),
-                comRandomBoundedFloat(0.125f, 0.875f));
+  printf("Creating random colour.\n");
+  float r = comRandomFloat(0.125f, 0.875f),
+        g = comRandomFloat(0.125f, 0.875f),
+        b = comRandomFloat(0.125f, 0.875f);
+  Colour result(r, g, b);
   
-  float brightness = comRandomBoundedFloat(0.25f, 0.75f);
+/*  float brightness = comRandomFloat(0.25f, 0.75f);
   brightness /= result.brightness();
-  result = result * brightness;
+  result = result * brightness;*/
   
   return result;
 }

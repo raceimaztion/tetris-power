@@ -242,6 +242,6 @@ void Shape::putInGrid()
 // Init function for the Shapes module
 void shInit()
 {
-  
+  srand(time(NULL));
 }
 

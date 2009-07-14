@@ -74,6 +74,7 @@ class Colour {
     float brightness() const;
     Colour brighter(float v) const;
     Colour darker(float v) const;
+    string toString() const;
 };
 
 class Position {
