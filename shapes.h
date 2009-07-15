@@ -36,10 +36,12 @@ class Shape {
     Point pos;
     Grid *grid;
     // Interpolation stuff
-    Bezier offsetX, offsetY;
-    float timeX, timeY;
+    Bezier offsetX, offsetY, offsetRot;
+    float timeX, timeY, timeRot;
     // Private useful methods
     void init();
+    void rotLeft();
+    void rotRight();
   
   public:
     Shape();

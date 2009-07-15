@@ -4,6 +4,7 @@
 #define SMALL 0.001f
 #define SHAPE_SPEED 2.0f
 #define SHAPE_MOVE_TIME 0.5f
+#define SHAPE_ROT_TIME 0.5f
 #define CURVE_END_SLOPE 0.0f
 
 /* *********** *
@@ -38,7 +39,6 @@ Shape::Shape()
 {
   init();
 }
-
 
 Shape::Shape(FILE *in)
 {
@@ -79,6 +79,27 @@ void Shape::init()
   pos.x = pos.y = 0;
   c = comRandomColour();
   grid = NULL;
+  timeX = timeY = timeRot = 0.0f;
+}
+
+void Shape::rotLeft()
+{
+  for (int i=the_bits.size()-1; i >= 0; i--)
+  {
+    int temp = the_bits.at(i).pos.y + 1;
+    the_bits.at(i).pos.y = the_bits.at(i).pos.x;
+    the_bits.at(i).pos.x = size - temp;
+  }
+}
+
+void Shape::rotRight()
+{
+  for (int i=the_bits.size()-1; i >= 0; i--)
+  {
+    int temp = the_bits.at(i).pos.x + 1;
+    the_bits.at(i).pos.x = the_bits.at(i).pos.y;
+    the_bits.at(i).pos.y = size - temp;
+  }
 }
 
 void Shape::addBit(ABit bit)
@@ -149,12 +170,34 @@ bool Shape::move(int dx, int dy)
 bool Shape::rotateRight()
 {
   // TODO: Fill this in
+  rotRight();
+  if (collides())
+  {
+    rotLeft();
+    return false;
+  }
+  
+  Bezier tempRot(offsetRot.f(timeRot) - 90, 0.0f, offsetRot.df(timeRot), CURVE_END_SLOPE);
+  offsetRot = tempRot;
+  timeRot = 0.0f;
+  
   return false;
 }
 
 bool Shape::rotateLeft()
 {
   // TODO: Fill this in
+  rotLeft();
+  if (collides())
+  {
+    rotRight();
+    return false;
+  }
+  
+  Bezier tempRot(offsetRot.f(timeRot) + 90, 0.0f, offsetRot.df(timeRot), CURVE_END_SLOPE);
+  offsetRot = tempRot;
+  timeRot = 0.0f;
+  
   return false;
 }
 
@@ -166,16 +209,7 @@ bool Shape::animate(float dTime, float curTime)
   {
     timeX += dTime/SHAPE_MOVE_TIME;
     if (timeX > 1.0f)
-    {
-#ifdef DEBUG
-      printf("End X curve.\n");
-#endif
       offsetX = Bezier();
-    }
-#ifdef DEBUG
-    else
-      printf("Continuing X curve.\n");
-#endif
     
     result = true;
   }
@@ -184,16 +218,16 @@ bool Shape::animate(float dTime, float curTime)
   {
     timeY += dTime/SHAPE_MOVE_TIME;
     if (timeY > 1.0f)
-    {
-#ifdef DEBUG
-      printf("End Y curve.\n");
-#endif
       offsetY = Bezier();
-    }
-#ifdef DEBUG
-    else
-      printf("Continuing Y curve.\n");
-#endif
+    
+    result = true;
+  }
+  
+  if (!offsetRot.isFlat())
+  {
+    timeRot += dTime/SHAPE_ROT_TIME;
+    if (timeRot > 1.0f)
+      offsetRot = Bezier();
     
     result = true;
   }
@@ -206,8 +240,12 @@ void Shape::draw() const
   glPushMatrix();
   
   glTranslatef(pos.x, 0, pos.y);
-//  glTranslatef(offset_x, 0, offset_y);
   glTranslatef(offsetX.f(timeX), 0, offsetY.f(timeY));
+  
+  glTranslatef(0.5f*size, 0.0f, 0.5f*size);
+  glRotatef(offsetRot.f(timeRot), 0, 1, 0);
+  glTranslatef(-0.5f*size, 0.0f, -0.5f*size);
+  
   c.applyMaterial();
   for (int i=the_bits.size()-1; i >= 0; i--) 
   {

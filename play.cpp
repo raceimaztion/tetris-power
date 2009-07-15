@@ -7,8 +7,12 @@
 // Button tags
 #define MENU_BUTTON_TAG 0x31
 
+// Timing
+#define ROW_DROP_TIME 1.0f
+#define ROW_FASTER_FACTOR 2.0f
+
 const Colour BLOCK_COLOUR(0.5f, 0.4f, 0.3f),
-             BACKDROP_COLOUR(0.4f, 0.4f, 0.5f);
+             BACKDROP_COLOUR(0.3f, 0.3f, 0.3f);
 
 // Main PlayScreen:
 PlayScreen::PlayScreen(int screenID) : Screen(screenID),
@@ -19,12 +23,13 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                             Colour(0.2f, 0.2f, 0.5f), "Menu", fallbackFont, MENU_BUTTON_TAG),
                                        lamp(Position(5, -5, 5), 1, Colour(0.5f)),
                                        camera(Position(0, 25, 0), Position(0, 0, 0)),
-                                       controls(0.5f),
-                                       grid(GRID_WIDTH, GRID_HEIGHT)
+                                       grid(GRID_WIDTH, GRID_HEIGHT),
+                                       controls(0.25f)
 {
   // Need to load a bunch of stuff here
   loaderAddLoader(this);
   state = PLAYING;
+  dropTime = ROW_DROP_TIME;
   
   // Add all the widgets to the panel
   panel.addChild(&menu);
@@ -119,20 +124,30 @@ void PlayScreen::timerTick(float dTime)
   if (state == PLAYING)
   {
     // Player controls
+    // left and right
     if (controls.holdingLeft() && shape.move(-1, 0))  markRepaint();
     if (controls.holdingRight() && shape.move(1, 0))  markRepaint();
-    if (controls.holdingUp() && shape.move(0, 1))  markRepaint();
-    if (controls.holdingDown() && shape.move(0, -1))  markRepaint();
+    // up (hold) and down (faster)
+    if (!controls.holdingUp())
+    {
+      if (controls.holdingDown())
+        dropTime -= ROW_FASTER_FACTOR * dTime;
+      else
+        dropTime -= dTime;
+      
+      if (dropTime < 0.0f)
+      {
+        dropTime = ROW_DROP_TIME;
+        if (!shape.move(0, -1))
+          putShapeInGrid();
+      }
+    }
+    // spin left and right
     if (controls.holdingSpinLeft() && shape.rotateLeft())  markRepaint();
     if (controls.holdingSpinRight() && shape.rotateRight())  markRepaint();
+    // drop shape
     if (controls.holdingDrop())
-    {
-      shape.putInGrid();
-      state = DROPPING_BLOCK;
-      // TODO: change the block here
-      shape.prep();
-      markRepaint();
-    }
+      dropShape();
     else
     {
       if (shape.animate(dTime, 0.0f))
@@ -190,6 +205,24 @@ void PlayScreen::buttonCallback(const Button& b)
       end();
       break;
   }
+}
+
+void PlayScreen::dropShape()
+{
+  while (shape.move(0, -1)) ;
+  putShapeInGrid();
+}
+
+void PlayScreen::putShapeInGrid()
+{
+  shape.putInGrid();
+  state = DROPPING_BLOCK;
+  dropTime = 2 * ROW_DROP_TIME;
+  
+  // TODO: change the block here
+  
+  shape.prep();
+  markRepaint();
 }
 
 void PlayScreen::load()
@@ -259,8 +292,8 @@ Controls::Controls()
 }
 
 Controls::Controls(float repeatTime) : left(repeatTime), right(repeatTime),
-                                       up(repeatTime), down(repeatTime),
-                                       drop(repeatTime), spinLeft(repeatTime),
+                                       up(0.0f), down(0.0f),
+                                       drop(0.0f), spinLeft(repeatTime),
                                        spinRight(repeatTime)
 {
   // Nothing much to do here

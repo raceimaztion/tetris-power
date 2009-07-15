@@ -773,9 +773,9 @@ Colour comRandomColour()
         b = comRandomFloat(0.125f, 0.875f);
   Colour result(r, g, b);
   
-/*  float brightness = comRandomFloat(0.25f, 0.75f);
+  float brightness = comRandomFloat(0.25f, 0.75f);
   brightness /= result.brightness();
-  result = result * brightness;*/
+  result = result * brightness;
   
   return result;
 }
@@ -878,7 +878,7 @@ void comFillRect(int x, int y, int width, int height)
 
 void comLoader()
 {
-  Mesh::loadWavefrontObjectFile(&cube, "objects/block.obj");
+  Mesh::loadWavefrontObjectFile(&cube, "objects/block7.obj");
 }
 
 void comInit()

@@ -196,7 +196,6 @@ int main(int argc, char **argv)
   printf("Starting Tetris-Power...\n");
   
   // Global initialization
-  printf("Initializing random-number generator.\n");
   srand(time(NULL));
   
   if (!initVideo())

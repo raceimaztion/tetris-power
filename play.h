@@ -48,15 +48,21 @@ enum PlayState { PLAYING, DROPPING_BLOCK, WAITING };
 
 class PlayScreen : public Screen, public ButtonCallback, public Loadable {
   private:
-    Mesh backdrop;
+    // Widgets
     Panel panel;
     Button menu;
+    // 3D view-related
     Light lamp;
     Camera camera;
-    Shape shape;
-    Controls controls;
+    // Playing-area related
+    Mesh backdrop;
     Grid grid;
+    // Block-related:
+    Shape shape;
+    float dropTime;
     PlayState state;
+    // Input-related
+    Controls controls;
   
   public:
     PlayScreen(int screenID);
@@ -70,6 +76,9 @@ class PlayScreen : public Screen, public ButtonCallback, public Loadable {
     void mouseButton(const SDL_MouseButtonEvent& mouse);
     void mouseMotion(const SDL_MouseMotionEvent& mouse);
     bool isOpaque() const;
+    
+    void dropShape();
+    void putShapeInGrid();
     
     void load();
     
