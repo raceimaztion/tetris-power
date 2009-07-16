@@ -780,6 +780,11 @@ Colour comRandomColour()
   return result;
 }
 
+int comRandomInt(int count)
+{
+  return (int)((count-1)*comRandomFloat() + 0.5f);
+}
+
 // File-related
 string comReadLine(FILE* in)
 {

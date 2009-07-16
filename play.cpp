@@ -24,6 +24,7 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                        lamp(Position(5, -5, 5), 1, Colour(0.5f)),
                                        camera(Position(0, 25, 0), Position(0, 0, 0)),
                                        grid(GRID_WIDTH, GRID_HEIGHT),
+                                       shape(shRandomShape()),
                                        controls(0.25f)
 {
   // Need to load a bunch of stuff here
@@ -36,16 +37,6 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
   
   // Register all callbacks
   menu.addCallback(this);
-  
-  // TEMP:
-  {
-    FILE* in = fopen("block-shapes", "r");
-    if (in == NULL)
-      return;
-    
-    shape = Shape(in);
-    fclose(in);
-  }
   
   shape.setGrid(&grid);
   shape.prep();
@@ -164,12 +155,16 @@ void PlayScreen::timerTick(float dTime)
         state = WAITING;
       else
         state = PLAYING;
+      markRepaint();
     }
   }
   else if (state == WAITING)
   {
     if (!controls.holdingDrop())
+    {
       state = PLAYING;
+      markRepaint();
+    }
   }
   
   controls.timerTick(dTime);
@@ -220,7 +215,9 @@ void PlayScreen::putShapeInGrid()
   dropTime = 2 * ROW_DROP_TIME;
   
   // TODO: change the block here
+  shape = shRandomShape();
   
+  shape.setGrid(&grid);
   shape.prep();
   markRepaint();
 }

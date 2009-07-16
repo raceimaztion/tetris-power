@@ -7,6 +7,9 @@
 #define SHAPE_ROT_TIME 0.5f
 #define CURVE_END_SLOPE 0.0f
 
+// Variables private to this module
+vector<Shape> allShapes;
+
 /* *********** *
  * Point class *
  * *********** */
@@ -55,22 +58,23 @@ Shape::Shape(FILE *in)
   */
   init();
   int count, x, y;
-  fscanf(in, "%d %d\n", &size, &count);
+  fscanf(in, "%d %d", &size, &count);
   
   for (int i=0; i < count; i++)
   {
-    fscanf(in, "%d %d\n", &x, &y);
+    fscanf(in, "%d %d", &x, &y);
     addBit(ABit(x, y));
   }
+  
+  fscanf(in, "\n");
 }
 
-Shape::Shape(const Shape& s)
+Shape::Shape(const Shape& s) : the_bits(s.the_bits)
 {
   type = s.type;
   size = s.size;
   c = s.c;
   pos = s.pos;
-  
 }
 
 void Shape::init()
@@ -169,7 +173,6 @@ bool Shape::move(int dx, int dy)
 
 bool Shape::rotateRight()
 {
-  // TODO: Fill this in
   rotRight();
   if (collides())
   {
@@ -186,7 +189,6 @@ bool Shape::rotateRight()
 
 bool Shape::rotateLeft()
 {
-  // TODO: Fill this in
   rotLeft();
   if (collides())
   {
@@ -278,8 +280,36 @@ void Shape::putInGrid()
 }
 
 // Init function for the Shapes module
-void shInit()
+bool shInit()
 {
+  // Seed our RNG
   srand(time(NULL));
+  
+  // Load our list of shapes
+  FILE* in = fopen("block-shapes", "r");
+  if (in == NULL)
+  {
+    printf("Runtime error: Failed to open 'block-shapes' file! Quitting...\n");
+    return false;
+  }
+  else
+  {
+    while (!feof(in))
+    {
+      allShapes.push_back(Shape(in));
+      sched_yield();
+    }
+    
+    fclose(in);
+  }
+  
+  return true;
+}
+
+Shape shRandomShape()
+{
+  int index = comRandomInt(allShapes.size());
+  Shape newShape(allShapes.at(index));
+  return newShape;
 }
 

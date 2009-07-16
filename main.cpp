@@ -217,7 +217,8 @@ int main(int argc, char **argv)
   // Start the internal loaders
   loadFonts();
   comInit();
-  shInit();
+  if (!shInit())
+    exit(1);
   
   // Create the splash screen
   SplashScreen splash(SPLASH_SCREEN);

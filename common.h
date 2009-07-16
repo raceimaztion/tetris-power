@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <cstdlib>
 #include <string>
+#include <sched.h>
 // STL includes
 #include <vector>
 #include <list>
@@ -301,6 +302,7 @@ void comDrawBlock(float x, float y, float size, float rotation);
 float comRandomFloat();
 float comRandomFloat(float min, float max);
 Colour comRandomColour();
+int comRandomInt(int count);
 
 // File-related
 string comReadLine(FILE* in);

@@ -72,8 +72,8 @@ class Shape {
     void putInGrid();
 };
 
-// Initialization function for the Shapes module
-void shInit();
+// Initialization function for the Shapes module. Returns false if setup failed
+bool shInit();
 
 // Get a random shape
 Shape shRandomShape();
