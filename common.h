@@ -297,6 +297,7 @@ Position operator/(const Position& p, float s);
 void comDrawCube(float x, float y, float size, float rotation);
 void comDrawSphere(float x, float y, float size, float rotation);
 void comDrawBlock(float x, float y, float size, float rotation);
+void comDrawTexturedCube(float x, float y, float size, float rotation);
 
 // Random-related
 float comRandomFloat();
@@ -312,6 +313,7 @@ bool comStartsWith(string& a, string& b);
 vector<string> comSplitSpaces(string a);
 vector<string> comSplitString(string s, const string& delim);
 
+void toggleFullscreen();
 void triggerRepaint();
 
 // Drawing-related
@@ -378,6 +380,7 @@ template<class T> inline T minMag(T a, T b)
 #include "mesh.h"
 #include "fonts.h"
 #include "widgets.h"
+#include "texture.h"
 // Order-dependent headers
 #include "shapes.h"
 #include "grid.h"

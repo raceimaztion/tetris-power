@@ -22,7 +22,7 @@ class GridBit : public ABit {
 class Grid {
   private:
     int width, height;
-    list<GridBit> gridBits;
+    list<GridBit>* gridBits;
   
   public:
     Grid(int width, int height);

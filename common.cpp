@@ -3,6 +3,7 @@
 
 // Variables private to the Common module
 Mesh cube;
+Texture cubeTex;
 
 /* ************ *
  * Colour class *
@@ -593,6 +594,11 @@ bool screenNeedsRepaint()
 
 void screenKeyboard(const SDL_KeyboardEvent &key)
 {
+  // Global key commands
+  if (key.type == SDL_KEYDOWN && key.keysym.sym == SDLK_F11)
+    toggleFullscreen();
+  
+  // Send events to the current screen
   if (!screenStack.empty())
     screenStack.back()->keyboard(key);
 }
@@ -754,6 +760,21 @@ void comDrawBlock(float x, float y, float scale, float rotation)
   comDrawCube(x, y, scale, rotation);
 }
 
+void comDrawTexturedCube(float x, float y, float scale, float rotation)
+{
+  glPushMatrix();
+  
+  glTranslatef(x + 0.5f, 0.0f, y + 0.5f);
+  glScalef(scale, scale, scale);
+  glRotatef(rotation, 0, 1, 0);
+  cubeTex.applyTexture();
+  cube.render(true);
+//  cube.renderList();
+//  Texture::cancelTextures();
+  
+  glPopMatrix();
+}
+
 // Random-related
 float comRandomFloat()
 {
@@ -767,13 +788,16 @@ float comRandomFloat(float min, float max)
 
 Colour comRandomColour()
 {
+#ifdef DEBUG
   printf("Creating random colour.\n");
+#endif
+  
   float r = comRandomFloat(0.125f, 0.875f),
         g = comRandomFloat(0.125f, 0.875f),
         b = comRandomFloat(0.125f, 0.875f);
   Colour result(r, g, b);
   
-  float brightness = comRandomFloat(0.25f, 0.75f);
+  float brightness = comRandomFloat(0.5f, 0.75f);
   brightness /= result.brightness();
   result = result * brightness;
   
@@ -883,7 +907,24 @@ void comFillRect(int x, int y, int width, int height)
 
 void comLoader()
 {
-  Mesh::loadWavefrontObjectFile(&cube, "objects/block7.obj");
+  Mesh::loadWavefrontObjectFile(&cube, "objects/block8.obj");
+  cube.compileList(true);
+  {
+    SDL_Surface* surface = IMG_Load("textures/block-normals.png");
+//    SDL_Surface* surface = IMG_Load("textures/checkerboard.png");
+    if (surface == NULL)
+      printf("Runtime warning: Failed to load cube texture from 'textures/block-normals.png'.\n");
+    else
+    {
+      cubeTex = Texture(surface);
+      printf("Common texture number: %d\n", cubeTex.getTextureIndex());
+      if (cubeTex.isValid())
+        printf("Common texture is valid.\n");
+      else
+        printf("Common texture is invalid!\n");
+      SDL_FreeSurface(surface);
+    }
+  }
 }
 
 void comInit()

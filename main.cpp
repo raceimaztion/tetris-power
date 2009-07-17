@@ -77,6 +77,9 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   // Cull backfaces
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
+  // Make sure our specular highlights are visible
+//  glLightModel (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
+  glEnable(GL_TEXTURE_2D);
   
   return true;
 }
@@ -96,6 +99,11 @@ bool initAudio()
   }
   
   return true;
+}
+
+void toggleFullscreen()
+{
+  SDL_WM_ToggleFullScreen(screen);
 }
 
 /* ***************************************** *

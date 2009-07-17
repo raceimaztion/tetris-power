@@ -109,7 +109,7 @@ void Mesh::loadWavefrontObjectFile(Mesh *mesh, FILE *in)
     }
     else if (line.find("vt ") == 0)
     {
-      float u, v, w;
+      float u, v=0.0f, w=0.0f;
       sscanf(line.c_str(), "%*s %f %f %f", &u, &v, &w);
       
       mesh->addTexture(u, v, w);
@@ -230,7 +230,9 @@ void Mesh::addPolygon(vector<int>& vertices,
 void Mesh::render(bool use_textures) const
 {
   bool smooth;
+#ifdef DEBUG
   int numNormals = 0;
+#endif
   
   for (unsigned int i=0; i < polygons.size(); i++)
   {
@@ -275,7 +277,9 @@ void Mesh::render(bool use_textures) const
       if (polygons.at(i).normals.at(0) >= 0)
       {
         normals.at(polygons.at(i).normals.at(0)).applyNormal();
+#ifdef DEBUG
         numNormals ++;
+#endif
       }
     }
     
@@ -285,7 +289,9 @@ void Mesh::render(bool use_textures) const
       if (polygons.at(i).normals.at(j) >= 0)
       {
         normals.at(polygons.at(i).normals.at(j)).applyNormal();
+#ifdef DEBUG
         numNormals ++;
+#endif
       }
       
       if (use_textures && polygons.at(i).textures.at(j) >= 0)

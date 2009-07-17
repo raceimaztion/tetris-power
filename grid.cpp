@@ -58,6 +58,8 @@ Grid::Grid(int width, int height)
 {
   this->width = width;
   this->height = height;
+  
+  gridBits = new list<GridBit>[width];
 }
 
 int Grid::getWidth() const
@@ -76,8 +78,8 @@ bool Grid::isCellOccupied(int x, int y) const
     return true;
   
   Point p(x, y);
-  for (list<GridBit>::const_iterator cur = gridBits.begin();
-       cur != gridBits.end();
+  for (list<GridBit>::const_iterator cur = gridBits[x].begin();
+       cur != gridBits[x].end();
        cur++)
     if (p == cur->pos)
       return true;
@@ -86,18 +88,26 @@ bool Grid::isCellOccupied(int x, int y) const
 
 void Grid::placeBit(const ABit& bit, Colour c, int blockX, int blockY)
 {
-  gridBits.push_back(GridBit(bit, c, blockX, blockY, this));
+  GridBit newBit(bit, c, blockX, blockY, this);
+  if (newBit.pos.x < 0 || newBit.pos.x >= width)
+    return;
+  
+  gridBits[newBit.pos.x].push_back(newBit);
 }
 
 bool Grid::timerTick(float dTime)
 {
   // TODO: Check for full rows here and trigger animations
   bool result = false;
-  for (list<GridBit>::iterator cur = gridBits.begin();
-                               cur != gridBits.end();
-                               cur++)
+  for (int x=0; x < width; x++)
   {
-    result |= cur->timerTick(dTime);
+    for (list<GridBit>::iterator cur = gridBits[x].begin();
+                                 cur != gridBits[x].end();
+                                 cur++)
+    {
+      if (cur->timerTick(dTime))
+        result = true;
+    }
   }
   
   return result;
@@ -106,9 +116,12 @@ bool Grid::timerTick(float dTime)
 void Grid::render() const
 {
   // TODO: Draw a grid somewhere around here
-  for (list<GridBit>::const_iterator cur = gridBits.begin();
-                                     cur != gridBits.end();
-                                     cur++)
-    cur->render();
+  for (int x=0; x < width; x++)
+  {
+    for (list<GridBit>::const_iterator cur = gridBits[x].begin();
+                                       cur != gridBits[x].end();
+                                       cur++)
+      cur->render();
+  }
 }
 

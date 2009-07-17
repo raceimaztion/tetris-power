@@ -3,8 +3,8 @@
 
 #define SMALL 0.001f
 #define SHAPE_SPEED 2.0f
-#define SHAPE_MOVE_TIME 0.5f
-#define SHAPE_ROT_TIME 0.5f
+#define SHAPE_MOVE_TIME 0.25f
+#define SHAPE_ROT_TIME 0.25f
 #define CURVE_END_SLOPE 0.0f
 
 // Variables private to this module
@@ -251,7 +251,8 @@ void Shape::draw() const
   c.applyMaterial();
   for (int i=the_bits.size()-1; i >= 0; i--) 
   {
-    comDrawCube(the_bits.at(i).pos.x, the_bits.at(i).pos.y, 0.5f, 0);
+//    comDrawCube(the_bits.at(i).pos.x, the_bits.at(i).pos.y, 0.5f, 0);
+    comDrawTexturedCube(the_bits.at(i).pos.x, the_bits.at(i).pos.y, 0.5f, 0);
   }
   
   glPopMatrix();
