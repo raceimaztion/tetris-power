@@ -1,8 +1,6 @@
 #define MAIN_MODULE
 #include "common.h"
 
-#define MESSAGE_REPAINT 201
-
 SDL_Surface *screen; // This is the backbuffer
 bool needsRepaint = false;
 
@@ -82,7 +80,7 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   glEnable(GL_TEXTURE_2D);
   
   return true;
-}
+} // end initVideo()
 
 bool initAudio()
 {
@@ -132,36 +130,18 @@ void handleMouseMotion(const SDL_MouseMotionEvent &mouse)
   screenMouseMotion(mouse);
 }
 
-Font *loadFont(const string& fileName)
-{
-  SDL_Surface *fontSurface = IMG_Load(fileName.c_str());
-  if (fontSurface == NULL)
-  {
-    fprintf(stderr, "Runtime warning: Failed to load font from file '%s', you might not get some text in-game!\n", fileName.c_str());
-    return NULL;
-  }
-  Font *font = fParseFont(fontSurface);
-  SDL_FreeSurface(fontSurface);
-  if (font == NULL)
-  {
-    fprintf(stderr, "Runtime warning: Failed to parse font from file '%s', you might not get some text in-game!\n", fileName.c_str());
-    return NULL;
-  }
-  return font;
-}
-
 void loadFonts()
 {
   // Try to load the fallback font
   if (fallbackFont == NULL)
   {
-    fallbackFont = loadFont("fonts/main_font.png");
+    fallbackFont = fLoadFont("fonts/main_font.png");
   }
   
   // Try to load the large font
   if (largeFont == NULL)
   {
-    largeFont = loadFont("fonts/large_font.png");
+    largeFont = fLoadFont("fonts/large_font.png");
   }
 }
 
@@ -256,8 +236,7 @@ int main(int argc, char **argv)
       switch (event.type)
       {
         case SDL_USEREVENT:
-          if (event.user.code == MESSAGE_REPAINT)
-            screenPaint(true);
+          // No user-defined events used yet
           break;
         
         case SDL_KEYDOWN:

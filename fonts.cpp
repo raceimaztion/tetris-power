@@ -197,3 +197,21 @@ int fFontHeight(Font *font)
     return font->height;
 }
 
+Font *fLoadFont(const string& fileName)
+{
+  SDL_Surface *fontSurface = IMG_Load(fileName.c_str());
+  if (fontSurface == NULL)
+  {
+    fprintf(stderr, "Runtime warning: Failed to load font from file '%s', you might not get some text in-game!\n", fileName.c_str());
+    return NULL;
+  }
+  Font *font = fParseFont(fontSurface);
+  SDL_FreeSurface(fontSurface);
+  if (font == NULL)
+  {
+    fprintf(stderr, "Runtime warning: Failed to parse font from file '%s', you might not get some text in-game!\n", fileName.c_str());
+    return NULL;
+  }
+  return font;
+}
+

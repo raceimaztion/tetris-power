@@ -1,4 +1,4 @@
-OPTIONS = -Wall -c -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
+OPTIONS = -Wall -c -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT -DDEBUG
 HEADERS = common.h grid.h shapes.h mesh.h fonts.h widgets.h play.h texture.h
 MAIN_ONLY_HEADERS = splash.h mainMenu.h
 
@@ -51,4 +51,8 @@ clean:
 
 clean-all: clean
 	rm tetris
+
+tests: tests.cpp all
+	g++ -DDEBUG -o tests tests.cpp common.o texture.o mesh.o -Wall -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT -L/usr/lib -lm -lSDL -lGL -lSDL_mixer -lSDL_image -lGLU
+	./tests
 

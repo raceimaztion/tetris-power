@@ -45,5 +45,8 @@ int fStringWidth(Font *font, const char *s);
 // Get a font's height:
 int fFontHeight(Font *font);
 
+// Load a Font
+Font* fLoadFont(const string& fileName);
+
 #endif
 

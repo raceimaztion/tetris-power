@@ -155,6 +155,7 @@ void Position::applyVertex() const
 
 void Position::applyTexCoords() const
 {
+  printf("Position::applyTexCoords(): Applying 2D texture coordinate (%.2f,%.2f)\n", x, y);
   glTexCoord2f(x, y);
 }
 
@@ -576,6 +577,7 @@ void screenPaint(bool force)
     glLoadIdentity();
     
     _screenRecursivePaint(screenStack.size() - 1);
+    glFlush();
     SDL_GL_SwapBuffers();
   }
 }

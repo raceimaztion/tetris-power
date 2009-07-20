@@ -49,27 +49,30 @@ Texture::Texture(SDL_Surface* surface)
   }
   
   // Get a texture handle
-  GLuint index;
-  textureNumber = 2;
-  glGenTextures(1, &index);
-  textureNumber = index;
-  printf("Texture index: %d.\n", index);
+  textureNumber = (GLuint)-1;
+  glGenTextures(1, &textureNumber);
+  printf("Texture index: %d.\n", textureNumber);
   
   // Bind the texture object
   glBindTexture(GL_TEXTURE_2D, textureNumber);
   
+  // Set the stretching mode
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+  // Texture-colour mode
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+  
   // Send the texture to OpenGL
   glTexImage2D(GL_TEXTURE_2D, 0, numColours, surface->w, surface->h,
                0, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+  gluBuild2DMipmaps(GL_TEXTURE_2D, numColours, surface->w, surface->h,
+               textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
   
   if (glGetError() != GL_NO_ERROR)
-    printf("Texture::Texture(SDL_Surface*): An OpenGL errro has occurred!\n");
+    printf("Texture::Texture(SDL_Surface*): An OpenGL error has occurred!\n");
   
-  // Set the stretching mode
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   
   if (glIsTexture(textureNumber))
     printf("Texture::Texture(SDL_Surface*): OpenGL texture seems valid.\n");

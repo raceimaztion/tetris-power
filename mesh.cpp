@@ -285,8 +285,7 @@ void Mesh::render(bool use_textures) const
     
     for (unsigned int j=0; j < polygons.at(i).vertices.size(); j++)
     {
-//      if (smooth && polygons.at(i).normals.at(j) >= 0)
-      if (polygons.at(i).normals.at(j) >= 0)
+      if (smooth && polygons.at(i).normals.at(j) >= 0)
       {
         normals.at(polygons.at(i).normals.at(j)).applyNormal();
 #ifdef DEBUG
