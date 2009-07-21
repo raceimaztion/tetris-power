@@ -6,6 +6,17 @@ Texture::Texture()
   valid = false;
 }
 
+Texture::Texture(int texNum)
+{
+  textureNumber = texNum;
+  valid = glIsTexture(textureNumber);
+  
+  if (valid)
+    printf("Texture::Texture(int): OpenGL texture seems valid.\n");
+  else
+    printf("Texture::Texture(int): OpenGL texture seems invalid.\n");
+}
+
 Texture::Texture(SDL_Surface* surface)
 {
   if (surface == NULL)
@@ -15,6 +26,8 @@ Texture::Texture(SDL_Surface* surface)
     valid = false;
     return;
   }
+  
+  printf("Loading image...\n");
   
   GLenum textureFormat;
   GLint numColours;
@@ -49,8 +62,11 @@ Texture::Texture(SDL_Surface* surface)
   }
   
   // Get a texture handle
+  GLuint index = 0;
   textureNumber = (GLuint)-1;
-  glGenTextures(1, &textureNumber);
+  printf("Asking for texture number...\n");
+  glGenTextures(1, &index);
+  textureNumber = index;
   printf("Texture index: %d.\n", textureNumber);
   
   // Bind the texture object
@@ -95,7 +111,7 @@ Texture::~Texture()
 
 void Texture::applyTexture() const
 {
-//  if (!valid) return;
+  if (!valid) return;
   
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, textureNumber);
@@ -103,7 +119,7 @@ void Texture::applyTexture() const
 
 void Texture::cancelTextures()
 {
-//  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_TEXTURE_2D);
 }
 
 bool Texture::isValid() const
@@ -114,5 +130,34 @@ bool Texture::isValid() const
 GLuint Texture::getTextureIndex()
 {
   return textureNumber;
+}
+
+Texture texMakeCheckerboard()
+{
+  GLuint texNum;
+  GLubyte image[64][64][3];
+  int c;
+  for (int i=0; i < 64; i++)
+  {
+    for (int j=0; j < 64; j++)
+    {
+      c = 255 * (((i&8) == 0) ^ ((j&8) == 0));
+      image[i][j][0] = image[i][j][1] = image[i][j][2] = (GLubyte) c;
+    }
+  }
+  
+  glGenTextures(1, &texNum);
+  printf("Checkerboard texture number is %d.\n", texNum);
+  
+  glBindTexture(GL_TEXTURE_2D, texNum);
+  
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+  
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  
+  return Texture(texNum);
 }
 

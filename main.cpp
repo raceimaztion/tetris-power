@@ -76,7 +76,7 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
   // Make sure our specular highlights are visible
-//  glLightModel (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
+  glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
   glEnable(GL_TEXTURE_2D);
   
   return true;

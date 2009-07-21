@@ -74,6 +74,12 @@ void Colour::applyMaterial(int attribute) const
   glMaterialfv(GL_FRONT_AND_BACK, attribute, values);
 }
 
+void Colour::applyMaterial(float shininess) const
+{
+  applyMaterial();
+  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+}
+
 void Colour::applyLightAttribute(int number, int attribute) const
 {
   float values[4] = {r, g, b, a};
@@ -909,8 +915,9 @@ void comFillRect(int x, int y, int width, int height)
 
 void comLoader()
 {
+  printf("Running common module loader...\n");
+  
   Mesh::loadWavefrontObjectFile(&cube, "objects/block8.obj");
-  cube.compileList(true);
   {
     SDL_Surface* surface = IMG_Load("textures/block-normals.png");
 //    SDL_Surface* surface = IMG_Load("textures/checkerboard.png");
@@ -927,7 +934,9 @@ void comLoader()
       SDL_FreeSurface(surface);
     }
   }
-}
+  
+  printf("Finished common module loader.\n");
+} // end comLoader()
 
 void comInit()
 {

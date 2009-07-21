@@ -6,6 +6,7 @@ class Texture {
   
   public:
     Texture();
+    Texture(int texNum);
     Texture(SDL_Surface* surface);
     Texture(const Texture& t);
     ~Texture();
@@ -15,4 +16,6 @@ class Texture {
     bool isValid() const;
     GLuint getTextureIndex();
 };
+
+Texture texMakeCheckerboard();
 

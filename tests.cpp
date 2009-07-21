@@ -10,6 +10,37 @@ Mesh mesh;
 const Colour CUBE_COLOUR(0.3f, 0.5f, 0.5f);
 Light light(Position(2, -5, 3), 1, Colour(0.75f));
 
+void initGL(int samples);
+
+/* **************** *
+ * Loader functions *
+ * **************** */
+void loadImage()
+{
+  printf("Loading texture(s)...\n");
+  /*
+  {
+    SDL_Surface* surface = IMG_Load("textures/block-normals.png");
+//    SDL_Surface* surface = IMG_Load("textures/checkerboard.png");
+//    SDL_Surface* surface = IMG_Load("textures/nehe.bmp");
+    if (surface != NULL)
+    {
+      tex = Texture(surface);
+      SDL_FreeSurface(surface);
+    }
+    else
+    {
+      printf("Failed to load texture! Quitting...\n");
+      exit(1);
+    }
+  }
+  //*/
+  tex = texMakeCheckerboard();
+  
+  printf("Finished loading texture(s).\n");
+}
+
+
 /* **************************** *
  * SDL initialization functions *
  * **************************** */
@@ -48,6 +79,8 @@ bool initVideo()
     printf("Trying to use hardware acceleration.\n");
     flags |= SDL_HWACCEL;
   }
+  else
+    printf("Using software acceleration.\n");
   
   // Set up pre-window OpenGL parameters
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -92,7 +125,16 @@ bool initVideo()
     } // end if try 2 samples
   } // end if try 4 samples
   
+  loadImage();
+  
   // Set up post-window OpenGL parameters
+  initGL(samples);
+  
+  return true;
+} // end initVideo()
+
+void initGL(int samples)
+{
   // enable multisampling
   if (samples != 0)
     glEnable(GL_MULTISAMPLE);
@@ -107,20 +149,20 @@ bool initVideo()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
   // enable alpha blending
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//  glEnable (GL_BLEND);
+//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
   // set things up for our font engine
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 //  glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
 //  glPixelStorei(GL_UNPACK_LSB_FIRST, GL_TRUE);
   
   // Cull backfaces
-  glCullFace(GL_BACK);
-  glEnable(GL_CULL_FACE);
+//  glCullFace(GL_BACK);
+//  glEnable(GL_CULL_FACE);
   
   // Make sure our specular highlights are visible
-//  glLightModel (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
+  glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
   
   glEnable(GL_TEXTURE_2D);
   glShadeModel(GL_SMOOTH);
@@ -128,10 +170,8 @@ bool initVideo()
   // Set up depth testing
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
-  glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
-  
-  return true;
-} // end initVideo()
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+}
 
 void toggleFullscreen()
 {
@@ -158,26 +198,29 @@ void render()
             0, 0, 0,     // Target
             2, -5, 4);  // Up
   
-  light.apply(GL_LIGHT0);
-  CUBE_COLOUR.applyMaterial();
+//  light.apply(GL_LIGHT0);
+//  CUBE_COLOUR.applyMaterial();
   tex.applyTexture();
-  glBindTexture(GL_TEXTURE_2D, tex.getTextureIndex());
-//  mesh.render(true);
-  glBegin(GL_QUADS);
-    glNormal3f(0, 0, 1); glTexCoord2f(0, 0); glVertex3f(-1, -1, 0);
-    glNormal3f(0, 0, 1); glTexCoord2f(1, 0); glVertex3f(1, -1, 0);
-    glNormal3f(0, 0, 1); glTexCoord2f(1, 1); glVertex3f(1, 1, 0);
-    glNormal3f(0, 0, 1); glTexCoord2f(0, 1); glVertex3f(-1, 1, 0);
-  glEnd();
+//  glBindTexture(GL_TEXTURE_2D, tex.getTextureIndex());
   
-  glFlush();
+  mesh.render(true);
+  /*
+  glBegin(GL_QUADS);
+    glNormal3f(0.0f, 0.0f, 1.0f); glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 0.0f);
+    glNormal3f(0.0f, 0.0f, 1.0f); glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 0.0f);
+    glNormal3f(0.0f, 0.0f, 1.0f); glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, 0.0f);
+    glNormal3f(0.0f, 0.0f, 1.0f); glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 0.0f);
+  glEnd();
+  //*/
+  
+//  glFlush();
   SDL_GL_SwapBuffers();
   
   glPopMatrix();
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
-}
+} // end render()
 
 int main()
 {
@@ -185,28 +228,11 @@ int main()
     exit(1);
   
   // *** Load textures here ***
-  printf("Loading texture...\n");
-  {
-    SDL_Surface* surface = IMG_Load("textures/block-normals.png");
-//    SDL_Surface* surface = IMG_Load("textures/checkerboard.png");
-//    SDL_Surface* surface = IMG_Load("textures/nehe.bmp");
-    if (surface != NULL)
-    {
-      tex = Texture(surface);
-      SDL_FreeSurface(surface);
-    }
-    else
-    {
-      printf("Failed to load texture! Quitting...\n");
-      exit(1);
-    }
-  }
-  
-  printf("Finished loading texture.\n");
+//  loadImage();
   
   // ****** Load all needed stuff here ******
 //  Mesh::loadWavefrontObjectFile(&mesh, "objects/plane.obj");
-//  Mesh::loadWavefrontObjectFile(&mesh, "objects/block8.obj");
+  Mesh::loadWavefrontObjectFile(&mesh, "objects/block8.obj");
 //  Mesh::loadWavefrontObjectFile(&mesh, "objects/block9.obj");
   
   // ****** Message loop ******
@@ -224,6 +250,8 @@ int main()
             running = false;
             break;
           }
+          else if (event.key.keysym.sym == SDLK_F11)
+            toggleFullscreen();
         case SDL_VIDEORESIZE:
         case SDL_VIDEOEXPOSE:
           render();
@@ -239,5 +267,5 @@ int main()
   } // end while (running)
   
   return 0;
-}
+} // end main()
 

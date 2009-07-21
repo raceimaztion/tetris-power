@@ -53,6 +53,8 @@ void PlayScreen::prepareForShow()
   glEnable(GL_BLEND);
   glShadeModel(GL_SMOOTH);
   glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+  // Sky colour
+  glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
 }
 void PlayScreen::prepareForHide()
 {
@@ -66,10 +68,10 @@ void PlayScreen::screenPaint() const
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
   // Draw sky
-  glDisable(GL_DEPTH_TEST);
+/*  glDisable(GL_DEPTH_TEST);
   glColor3f(0.1f, 0.1f, 0.2f);
   comFillRect(0, 0, getWidth(), getHeight());
-  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_DEPTH_TEST);*/
   
   // Set up the viewport for 3D
   glMatrixMode(GL_PROJECTION);
