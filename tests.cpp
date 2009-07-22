@@ -86,22 +86,22 @@ bool initVideo()
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   
   //8-bits for each Red, Green, Blue, and Alpha plane
-  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+//  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+//  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+//  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+//  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
   
   //24-bits for the depth buffer and enable double-buffering
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+//  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   
   // Try to enable multisampling (anti-aliasing)
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+  int samples = 4;
+/*  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
   
   // Now set the video mode
   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
-  int samples = 4;
   if (screen == NULL)
   {
     // If we don't get 4 samples, try 2
@@ -111,7 +111,7 @@ bool initVideo()
     
     if (screen == NULL)
     {
-      printf("Warning: Failed to create screen with anti-aliasing, falling back to regular rendering.\n");
+      printf("Warning: Failed to create screen with anti-aliasing, falling back to regular rendering.\n");*/
       SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
       SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
       samples = 0;
@@ -122,8 +122,8 @@ bool initVideo()
         fprintf(stderr, "Error: Unable to set video mode! Error was:\n%s\n", SDL_GetError());
         return false;
       } // end if no samples
-    } // end if try 2 samples
-  } // end if try 4 samples
+/*    } // end if try 2 samples
+  } // end if try 4 samples*/
   
   loadImage();
   
@@ -162,15 +162,15 @@ void initGL(int samples)
 //  glEnable(GL_CULL_FACE);
   
   // Make sure our specular highlights are visible
-  glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
+//  glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
   
-  glEnable(GL_TEXTURE_2D);
-  glShadeModel(GL_SMOOTH);
+//  glEnable(GL_TEXTURE_2D);
+//  glShadeModel(GL_SMOOTH);
   
   // Set up depth testing
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);
-  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+//  glEnable(GL_DEPTH_TEST);
+//  glDepthFunc(GL_LEQUAL);
+//  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 }
 
 void toggleFullscreen()
@@ -203,8 +203,8 @@ void render()
   tex.applyTexture();
 //  glBindTexture(GL_TEXTURE_2D, tex.getTextureIndex());
   
-  mesh.render(true);
-  /*
+  //mesh.render(true);
+  //*
   glBegin(GL_QUADS);
     glNormal3f(0.0f, 0.0f, 1.0f); glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 0.0f);
     glNormal3f(0.0f, 0.0f, 1.0f); glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 0.0f);

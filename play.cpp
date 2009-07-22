@@ -49,10 +49,8 @@ PlayScreen::~PlayScreen()
 
 void PlayScreen::prepareForShow()
 {
-  glEnable(GL_NORMALIZE);
-  glEnable(GL_BLEND);
-  glShadeModel(GL_SMOOTH);
-  glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+  glEnable(GL_DEPTH_TEST);
+  
   // Sky colour
   glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
 }
@@ -67,17 +65,11 @@ void PlayScreen::screenPaint() const
 #endif
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
-  // Draw sky
-/*  glDisable(GL_DEPTH_TEST);
-  glColor3f(0.1f, 0.1f, 0.2f);
-  comFillRect(0, 0, getWidth(), getHeight());
-  glEnable(GL_DEPTH_TEST);*/
-  
   // Set up the viewport for 3D
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  gluPerspective(50, (float)getWidth()/getHeight(), 0.01f, 500.0f);
+  gluPerspective(50, (float)getWidth()/getHeight(), 0.1f, 50.0f);
   
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
@@ -102,6 +94,18 @@ void PlayScreen::screenPaint() const
   
   // Return viewport to 2D mode
   glDisable(GL_LIGHTING);
+  
+  // TEMP:
+  glBindTexture(GL_TEXTURE_2D, (GLuint)1);
+  glBegin(GL_QUADS);
+    glNormal3f(0.0f, 1.0f, 0.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);
+  glEnd();
+  
+  glDisable(GL_TEXTURE_2D);
   
   glPopMatrix();
   glMatrixMode(GL_PROJECTION);
@@ -216,7 +220,6 @@ void PlayScreen::putShapeInGrid()
   state = DROPPING_BLOCK;
   dropTime = 2 * ROW_DROP_TIME;
   
-  // TODO: change the block here
   shape = shRandomShape();
   
   shape.setGrid(&grid);

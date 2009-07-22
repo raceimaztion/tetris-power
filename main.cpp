@@ -58,26 +58,27 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   
   // Set up post-window OpenGL parameters
   // enable multisampling
-  glEnable(GL_MULTISAMPLE);
+//  glEnable(GL_MULTISAMPLE);
   // set the background colour
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   // set the viewport to fill the window
   glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
   // clear the screen
+//  glEnable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // enable alpha blending
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//  glEnable(GL_BLEND);
+//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   // set things up for our font engine
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
   glPixelStorei(GL_UNPACK_LSB_FIRST, GL_TRUE);
   // Cull backfaces
-  glCullFace(GL_BACK);
-  glEnable(GL_CULL_FACE);
+//  glCullFace(GL_BACK);
+//  glEnable(GL_CULL_FACE);
   // Make sure our specular highlights are visible
-  glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
-  glEnable(GL_TEXTURE_2D);
+//  glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
+//  glEnable(GL_TEXTURE_2D);
   
   return true;
 } // end initVideo()
@@ -145,10 +146,7 @@ void loadFonts()
   }
 }
 
-/* *************** *
- * Thread function *
- * *************** */
-Uint32 timerHandler(Uint32 interval, void* unused)
+void timerTick()
 {
   static Uint32 lastTime = 0;
   static float currentTime = 0;
@@ -172,6 +170,14 @@ Uint32 timerHandler(Uint32 interval, void* unused)
   }
   
   lastTime = curTime;
+}
+
+/* *************** *
+ * Thread function *
+ * *************** */
+Uint32 timerHandler(Uint32 interval, void* unused)
+{
+  timerTick();
   
   return interval;
 }
@@ -188,11 +194,11 @@ int main(int argc, char **argv)
   
   if (!initVideo())
     exit(1);
-  if (SDL_Init(SDL_INIT_TIMER) < 0)
+/*  if (SDL_Init(SDL_INIT_TIMER) < 0)
   {
     fprintf(stderr, "Error: Failed to initialize SDL timer system.\nError was: %s.\n", SDL_GetError());
     exit(1);
-  }
+  }*/
   
   for (int i=0; i < 323; i++)
     keys_pressed[i] = 0;
@@ -225,7 +231,7 @@ int main(int argc, char **argv)
   SDL_Event event;
   
   // Set up our timer system
-  SDL_AddTimer(TIMER_TICK, timerHandler, NULL);
+//  SDL_AddTimer(TIMER_TICK, timerHandler, NULL);
   
   // The main game loop
   while (running)
@@ -266,6 +272,8 @@ int main(int argc, char **argv)
     
     // Wait ten milliseconds and do it all again
     SDL_Delay(10);
+    
+    timerTick();
     
     // If we're out of screens, quit
     if (screenNumStackedScreens() < 1)

@@ -161,7 +161,9 @@ void Position::applyVertex() const
 
 void Position::applyTexCoords() const
 {
+#ifdef DEBUG
   printf("Position::applyTexCoords(): Applying 2D texture coordinate (%.2f,%.2f)\n", x, y);
+#endif
   glTexCoord2f(x, y);
 }
 
@@ -298,8 +300,6 @@ Bezier::Bezier(float startV, float endV, float dStart, float dEnd)
 
 float Bezier::f(float t) const
 {
-  // TODO: Use 'type' to choose an equation to use for a slight speed-up
-  //return a + t*(b + t*(c + t*d));
   switch (type)
   {
     case 0:
@@ -746,7 +746,7 @@ void comDrawCube(float x, float y, float scale, float rotation)
   glTranslatef(x + 0.5f, 0.0f, y + 0.5f);
   glScalef(scale, scale, scale);
   glRotatef(rotation, 0, 1, 0);
-  cube.render();
+  cube.render(true);
   
   glPopMatrix();
 }
@@ -775,10 +775,9 @@ void comDrawTexturedCube(float x, float y, float scale, float rotation)
   glTranslatef(x + 0.5f, 0.0f, y + 0.5f);
   glScalef(scale, scale, scale);
   glRotatef(rotation, 0, 1, 0);
+  
   cubeTex.applyTexture();
   cube.render(true);
-//  cube.renderList();
-//  Texture::cancelTextures();
   
   glPopMatrix();
 }
@@ -918,8 +917,9 @@ void comLoader()
   printf("Running common module loader...\n");
   
   Mesh::loadWavefrontObjectFile(&cube, "objects/block8.obj");
+  /*
   {
-    SDL_Surface* surface = IMG_Load("textures/block-normals.png");
+//    SDL_Surface* surface = IMG_Load("textures/block-normals.png");
 //    SDL_Surface* surface = IMG_Load("textures/checkerboard.png");
     if (surface == NULL)
       printf("Runtime warning: Failed to load cube texture from 'textures/block-normals.png'.\n");
@@ -927,13 +927,15 @@ void comLoader()
     {
       cubeTex = Texture(surface);
       printf("Common texture number: %d\n", cubeTex.getTextureIndex());
-      if (cubeTex.isValid())
-        printf("Common texture is valid.\n");
-      else
-        printf("Common texture is invalid!\n");
       SDL_FreeSurface(surface);
     }
   }
+  //*/
+//  cubeTex = texMakeCheckerboard();
+  if (cubeTex.isValid())
+    printf("Common texture is valid.\n");
+  else
+    printf("Common texture is invalid!\n");
   
   printf("Finished common module loader.\n");
 } // end comLoader()
@@ -942,6 +944,8 @@ void comInit()
 {
   static Loadable cload("Common files", comLoader);
   loaderAddLoader(&cload);
+  
+  cubeTex = texMakeCheckerboard();
 }
 
 

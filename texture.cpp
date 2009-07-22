@@ -63,7 +63,7 @@ Texture::Texture(SDL_Surface* surface)
   
   // Get a texture handle
   GLuint index = 0;
-  textureNumber = (GLuint)-1;
+  textureNumber = 0;
   printf("Asking for texture number...\n");
   glGenTextures(1, &index);
   textureNumber = index;
@@ -78,7 +78,7 @@ Texture::Texture(SDL_Surface* surface)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
   // Texture-colour mode
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   
   // Send the texture to OpenGL
   glTexImage2D(GL_TEXTURE_2D, 0, numColours, surface->w, surface->h,
@@ -111,7 +111,15 @@ Texture::~Texture()
 
 void Texture::applyTexture() const
 {
-  if (!valid) return;
+  if (!valid)
+  {
+    printf("Runtime warning: Texture::applyTexture(): Trying to apply an invalid texture.\n\t\tNot doing anything.\n");
+    return;
+  }
+#ifdef DEBUG
+  else
+    printf("Applying texture number %d.\n", textureNumber);
+#endif
   
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, textureNumber);
@@ -146,6 +154,9 @@ Texture texMakeCheckerboard()
     }
   }
   
+  bool texturesEnabled = glIsEnabled(GL_TEXTURE_2D);
+  glDisable(GL_TEXTURE_2D);
+  
   glGenTextures(1, &texNum);
   printf("Checkerboard texture number is %d.\n", texNum);
   
@@ -157,6 +168,9 @@ Texture texMakeCheckerboard()
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  
+  if (texturesEnabled)
+    glEnable(GL_TEXTURE_2D);
   
   return Texture(texNum);
 }
