@@ -106,7 +106,8 @@ Texture::Texture(const Texture& t)
 
 Texture::~Texture()
 {
-  glDeleteTextures(1, &textureNumber);
+  if (valid)
+    glDeleteTextures(1, &textureNumber);
 }
 
 void Texture::applyTexture() const

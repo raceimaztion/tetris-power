@@ -78,7 +78,7 @@ class PlayScreen : public Screen, public ButtonCallback, public Loadable {
     bool isOpaque() const;
     
     void dropShape();
-    void putShapeInGrid();
+    void putShapeInGrid(int distance=0);
     
     void load();
     

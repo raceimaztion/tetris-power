@@ -50,6 +50,7 @@ PlayScreen::~PlayScreen()
 void PlayScreen::prepareForShow()
 {
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_TEXTURE_2D);
   
   // Sky colour
   glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
@@ -79,6 +80,20 @@ void PlayScreen::screenPaint() const
   
   lamp.apply(GL_LIGHT0);
   
+  // TEMP:
+  /*
+  glBindTexture(GL_TEXTURE_2D, (GLuint)1);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glColor3f(0.5f, 0.5f, 0.5f);
+  glBegin(GL_QUADS);
+    glNormal3f(0.0f, 1.0f, 0.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);
+  glEnd();
+  //*/
+  
   BACKDROP_COLOUR.applyMaterial();
   backdrop.render();
   
@@ -94,16 +109,6 @@ void PlayScreen::screenPaint() const
   
   // Return viewport to 2D mode
   glDisable(GL_LIGHTING);
-  
-  // TEMP:
-  glBindTexture(GL_TEXTURE_2D, (GLuint)1);
-  glBegin(GL_QUADS);
-    glNormal3f(0.0f, 1.0f, 0.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);
-  glEnd();
   
   glDisable(GL_TEXTURE_2D);
   
@@ -161,8 +166,8 @@ void PlayScreen::timerTick(float dTime)
         state = WAITING;
       else
         state = PLAYING;
-      markRepaint();
     }
+    markRepaint();
   }
   else if (state == WAITING)
   {
@@ -210,13 +215,14 @@ void PlayScreen::buttonCallback(const Button& b)
 
 void PlayScreen::dropShape()
 {
+  int curY = shape.getY();
   while (shape.move(0, -1)) ;
-  putShapeInGrid();
+  putShapeInGrid(shape.getY() - curY);
 }
 
-void PlayScreen::putShapeInGrid()
+void PlayScreen::putShapeInGrid(int distance)
 {
-  shape.putInGrid();
+  shape.putInGrid(distance);
   state = DROPPING_BLOCK;
   dropTime = 2 * ROW_DROP_TIME;
   

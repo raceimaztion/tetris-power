@@ -746,7 +746,7 @@ void comDrawCube(float x, float y, float scale, float rotation)
   glTranslatef(x + 0.5f, 0.0f, y + 0.5f);
   glScalef(scale, scale, scale);
   glRotatef(rotation, 0, 1, 0);
-  cube.render(true);
+  cube.render();
   
   glPopMatrix();
 }
@@ -776,6 +776,7 @@ void comDrawTexturedCube(float x, float y, float scale, float rotation)
   glScalef(scale, scale, scale);
   glRotatef(rotation, 0, 1, 0);
   
+  glEnable(GL_TEXTURE_2D);
   cubeTex.applyTexture();
   cube.render(true);
   

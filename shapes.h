@@ -69,7 +69,9 @@ class Shape {
     // Set the grid this shape is in
     void setGrid(Grid* grid);
     // Put the bits of this shape into the grid
-    void putInGrid();
+    void putInGrid(int distance=0);
+    int getX();
+    int getY();
 };
 
 // Initialization function for the Shapes module. Returns false if setup failed

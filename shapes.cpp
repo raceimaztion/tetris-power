@@ -268,7 +268,7 @@ void Shape::setGrid(Grid* grid)
   this->grid = grid;
 }
 
-void Shape::putInGrid()
+void Shape::putInGrid(int distance)
 {
   if (grid == NULL)
   {
@@ -276,8 +276,21 @@ void Shape::putInGrid()
     return;
   }
   
+  float vertOffset = offsetY.f(timeY);
+  float vertSpeed = offsetY.df(timeY);
+  
   for (int i=the_bits.size()-1; i >= 0; i--)
-    grid->placeBit(the_bits.at(i), c, pos.x, pos.y);
+    grid->placeBit(the_bits.at(i), c, pos.x, pos.y, vertOffset, vertSpeed);
+}
+
+int Shape::getX()
+{
+  return pos.x;
+}
+
+int Shape::getY()
+{
+  return pos.y;
 }
 
 // Init function for the Shapes module
