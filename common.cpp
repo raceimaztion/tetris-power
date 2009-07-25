@@ -264,7 +264,7 @@ void Camera::rotate(Position dr)
 
 void Camera::animate(float dTime)
 {
-  // TODO: Fill this in
+  // TODO: Animate the camera motions here
 }
 
 /* ****************** *

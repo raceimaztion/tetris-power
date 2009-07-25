@@ -269,15 +269,19 @@ void Button::addCallback(ButtonCallback *c)
 
 void Button::removeCallback(void (*callback)(const Button&))
 {
-  // TODO: Remove reference to callback
+  callbackFunctions.remove(callback);
 }
 
 void Button::trigger()
 {
-  for (unsigned int i=0; i < callbackFunctions.size(); i++)
-    (*(callbackFunctions.at(i)))(*this);
-  for (unsigned int i=0; i < callbackClasses.size(); i++)
-    callbackClasses.at(i)->buttonCallback(*this);
+  for (list<void (*)(const Button& b)>::iterator cur = callbackFunctions.begin();
+                                                 cur != callbackFunctions.end();
+                                                 cur++)
+    (*cur)(*this);
+  for (list<ButtonCallback*>::iterator cur = callbackClasses.begin();
+                                       cur != callbackClasses.end();
+                                       cur ++)
+    (*cur)->buttonCallback(*this);
 }
 
 void Button::paint() const
@@ -399,13 +403,15 @@ void Panel::addChild(Widget *child)
 
 void Panel::removeChild(Widget *child)
 {
-  // TODO: remove the child
+  children.remove(child);
 }
 
 void Panel::setFont(Font* font)
 {
-  for (unsigned int i=0; i < children.size(); i++)
-    children.at(i)->setFont(font);
+  for (list<Widget*>::iterator cur = children.begin();
+                               cur != children.end();
+                               cur++)
+    (*cur)->setFont(font);
 }
 
 void Panel::paint() const
@@ -416,28 +422,36 @@ void Panel::paint() const
   bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
   glDisable(GL_DEPTH_TEST);
   
-  for (unsigned int i=0; i < children.size(); i++)
-    children.at(i)->paint();
+  for (list<Widget*>::const_iterator cur = children.begin();
+                               cur != children.end();
+                               cur++)
+    (*cur)->paint();
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
 }
 
 void Panel::timerTick()
 {
-  for (unsigned int i=0; i < children.size(); i++)
-    children.at(i)->timerTick();
+  for (list<Widget*>::iterator cur = children.begin();
+                               cur != children.end();
+                               cur++)
+    (*cur)->timerTick();
 }
 
 void Panel::mouse(const SDL_MouseButtonEvent& mouse)
 {
-  for (unsigned int i=0; i < children.size(); i++)
-    children.at(i)->mouse(mouse);
+  for (list<Widget*>::iterator cur = children.begin();
+                               cur != children.end();
+                               cur++)
+    (*cur)->mouse(mouse);
 }
 
 void Panel::mouse(const SDL_MouseMotionEvent& mouse)
 {
-  for (unsigned int i=0; i < children.size(); i++)
-    children.at(i)->mouse(mouse);
+  for (list<Widget*>::iterator cur = children.begin();
+                               cur != children.end();
+                               cur++)
+    (*cur)->mouse(mouse);
 }
 
 /* ************************** *

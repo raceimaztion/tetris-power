@@ -150,7 +150,6 @@ void Grid::placeBit(const ABit& bit, Colour c, int blockX, int blockY, float off
 
 bool Grid::timerTick(float dTime)
 {
-  // TODO: Check for full rows here and trigger animations
   bool result = false, full;
   
   // Check for full rows
@@ -188,7 +187,10 @@ bool Grid::timerTick(float dTime)
     {
       bit = getGridBit(x, y);
       if (bit != NULL)
+      {
+        // TODO: Trigger removal animations
         gridBits[x].remove(*bit);
+      }
       
       // move the blocks above down
       for (int y2=y+1; y2 < height; y2++)

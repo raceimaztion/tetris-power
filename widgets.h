@@ -61,8 +61,8 @@ class ButtonCallback;
 class Button : public Label {
   private:
     int tag, state;
-    vector<void (*)(const Button&)> callbackFunctions;
-    vector<ButtonCallback*> callbackClasses;
+    list<void (*)(const Button&)> callbackFunctions;
+    list<ButtonCallback*> callbackClasses;
     void trigger();
     
   public:
@@ -95,7 +95,7 @@ class ButtonCallback {
 // Panel widget class
 class Panel : public Widget {
   private:
-    vector<Widget*> children;
+    list<Widget*> children;
     
   public:
     Panel(int x, int y, int width, int height, Colour c);

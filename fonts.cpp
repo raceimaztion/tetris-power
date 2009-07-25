@@ -153,7 +153,6 @@ void fDrawLetter(Font* font, const char c)
     return;
   }
   
-  // TODO: Finish this
   glBitmap(font->widths[index], font->height, 0, 0, font->widths[index], 0, font->bitmaps[index]);
 }
 
