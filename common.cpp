@@ -74,10 +74,18 @@ void Colour::applyMaterial(int attribute) const
   glMaterialfv(GL_FRONT_AND_BACK, attribute, values);
 }
 
-void Colour::applyMaterial(float shininess) const
+void Colour::applyMaterialShiny(float shininess) const
 {
   applyMaterial();
   glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+}
+
+void Colour::applyMaterialAlpha(float alpha) const
+{
+  float values[4] = {r, g, b, alpha};
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, values);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, values);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, values);
 }
 
 void Colour::applyLightAttribute(int number, int attribute) const

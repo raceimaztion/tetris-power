@@ -1,6 +1,9 @@
 #include "common.h"
 
-#define ACCELERATION 5.0f
+#define ACCELERATION 10.0f
+
+#define VANISH_TIME 1.0f
+#define NUM_SPINS_DURING_VANISH 4
 
 /* ************* *
  * GridBit class *
@@ -11,7 +14,8 @@ GridBit::GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, Grid *grid
   this->c = c;
   this->grid = grid;
   offsetY = speedY = 0.0f;
-  moving = false;
+  moving = vanishing = false;
+  vanishTime = 0.0f;
 }
 
 GridBit::GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, float vertOffset, float vertSpeed, Grid *grid)
@@ -22,30 +26,56 @@ GridBit::GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, float vert
   this->offsetY = vertOffset;
   this->speedY = vertSpeed;
   moving = true;
+  vanishing = false;
+  vanishTime = 0.0f;
 }
 
 bool GridBit::timerTick(float dTime)
 {
-  if (moving)
+  if (!vanishing)
   {
-    speedY += ACCELERATION*dTime;
-    offsetY -= speedY*dTime;
-    if (offsetY < 0.0f)
+    if (moving)
     {
-      offsetY = speedY = 0.0f;
+      speedY += ACCELERATION*dTime;
+      offsetY -= speedY*dTime;
+      if (offsetY < 0.0f)
+      {
+        offsetY = speedY = 0.0f;
+        moving = false;
+      }
+      
+      return true;
+    }
+    else
+      return false;
+  }
+  else // if (vanishing)
+  {
+    vanishTime += dTime/VANISH_TIME;
+    if (vanishTime >= 1.0f)
+    {
       moving = false;
+      return false;
     }
     
     return true;
   }
-  else
-    return false;
 }
 
 void GridBit::render() const
 {
-  c.applyMaterial();
-  comDrawCube(pos.x, pos.y + offsetY, 0.5f, 0);
+  if (!vanishing)
+  {
+    c.applyMaterial();
+    comDrawTexturedCube(pos.x, pos.y + offsetY, 0.5f, 0);
+  }
+  else
+  {
+    float alpha = 1.0f - vanishTime;
+    alpha *= alpha;
+    c.applyMaterialAlpha(alpha);
+    comDrawCube(pos.x, pos.y + offsetY, 0.5f*(1.0f - vanishTime), 360*vanishTime*NUM_SPINS_DURING_VANISH);
+  }
 }
 
 bool GridBit::drop()
@@ -73,7 +103,22 @@ bool GridBit::drop(int distance)
   return true;
 }
 
-bool GridBit::operator==(const GridBit& bit)
+bool GridBit::isMoving() const
+{
+  return moving;
+}
+
+void GridBit::triggerVanishing()
+{
+  vanishing = true;
+}
+
+bool GridBit::isVanishing() const
+{
+  return vanishing;
+}
+
+bool GridBit::operator==(const GridBit& bit) const
 {
   return (pos.x == bit.pos.x) && (pos.y == bit.pos.y);
 }
@@ -165,6 +210,26 @@ bool Grid::timerTick(float dTime)
     }
   }
   
+  {
+    list<GridBit> vanished;
+    
+    for (list<GridBit>::iterator cur = vanishingBits.begin();
+                                 cur != vanishingBits.end();
+                                 cur++)
+    {
+      if (cur->timerTick(dTime))
+        result = true;
+      else
+        vanished.push_back(*cur);
+    }
+    
+    if (!vanished.empty())
+      for (list<GridBit>::const_iterator cur = vanished.begin();
+                                         cur != vanished.end();
+                                         cur ++)
+        vanishingBits.remove(*cur);
+  }
+  
   if (result)
     return true;
   
@@ -188,7 +253,8 @@ bool Grid::timerTick(float dTime)
       bit = getGridBit(x, y);
       if (bit != NULL)
       {
-        // TODO: Trigger removal animations
+        vanishingBits.push_back(*bit);
+        vanishingBits.back().triggerVanishing();
         gridBits[x].remove(*bit);
       }
       
@@ -200,6 +266,9 @@ bool Grid::timerTick(float dTime)
           bit->drop(1);
       }
     }
+    
+    // Make sure we don't miss the new current row
+    y--;
   }// end for y
   
   return result;
@@ -215,5 +284,9 @@ void Grid::render() const
                                        cur++)
       cur->render();
   }
+  for (list<GridBit>::const_iterator cur = vanishingBits.begin();
+                                     cur != vanishingBits.end();
+                                     cur++)
+    cur->render();
 }
 

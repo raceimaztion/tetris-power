@@ -9,7 +9,8 @@ class GridBit : public ABit {
     float offsetY, speedY;
     Grid* grid;
     Colour c;
-    bool moving;
+    bool moving, vanishing;
+    float vanishTime;
   
   public:
     GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, Grid *grid);
@@ -19,14 +20,18 @@ class GridBit : public ABit {
     void render() const;
     bool drop();
     bool drop(int distance);
+    bool isMoving() const;
+    void triggerVanishing();
+    bool isVanishing() const;
     
-    bool operator==(const GridBit& bit);
+    bool operator==(const GridBit& bit) const;
 };
 
 class Grid {
   private:
     int width, height;
     list<GridBit>* gridBits;
+    list<GridBit> vanishingBits;
     // Useful methods
     GridBit* getGridBit(int x, int y);
   

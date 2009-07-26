@@ -67,8 +67,8 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
 //  glEnable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // enable alpha blending
-//  glEnable(GL_BLEND);
-//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   // set things up for our font engine
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);

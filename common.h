@@ -69,7 +69,8 @@ class Colour {
     void apply(float alpha) const;
     void applyMaterial() const;
     void applyMaterial(int attribute) const;
-    void applyMaterial(float shininess) const;
+    void applyMaterialShiny(float shininess) const;
+    void applyMaterialAlpha(float alpha) const;
     void applyLightAttribute(int number, int attribute) const;
     void applyLightAttribute(int number, int attribute, float power) const;
     
