@@ -24,7 +24,8 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                        lamp(Position(5, -5, 5), 1, Colour(0.5f)),
                                        camera(Position(0, 25, 0), Position(0, 0, 0)),
                                        grid(GRID_WIDTH, GRID_HEIGHT),
-                                       shape(shRandomShape()),
+                                       shape(shRandomShape(&grid)),
+                                       nextShape(shRandomShape(&grid)),
                                        controls(0.25f)
 {
   // Need to load a bunch of stuff here
@@ -39,7 +40,7 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
   menu.addCallback(this);
   
   shape.setGrid(&grid);
-  shape.prep();
+  shape.prepForUse();
 }
 
 PlayScreen::~PlayScreen()
@@ -105,6 +106,11 @@ void PlayScreen::screenPaint() const
   // Draw block
   if (state == PLAYING)
     shape.draw();
+  // Draw next shape
+  glPushMatrix();
+  glTranslatef(grid.getWidth() + 4 - 0.5f*nextShape.getSize(), 0, grid.getHeight() - 2 - 0.5f*nextShape.getSize());
+  nextShape.draw();
+  glPopMatrix();
   // Draw background object(s)
   
   // Return viewport to 2D mode
@@ -162,6 +168,11 @@ void PlayScreen::timerTick(float dTime)
   {
     if (!grid.timerTick(dTime))
     {
+      // The grid is finished moving blocks down, show the next shape
+      nextShape = shRandomShape(&grid);
+      controls.flushKeys();
+      
+      // If the drop key is still held, wait until it's not
       if (controls.holdingDrop())
         state = WAITING;
       else
@@ -218,6 +229,7 @@ void PlayScreen::dropShape()
   int curY = shape.getY();
   while (shape.move(0, -1)) ;
   putShapeInGrid(shape.getY() - curY);
+  controls.flushKeys();
 }
 
 void PlayScreen::putShapeInGrid(int distance)
@@ -226,10 +238,11 @@ void PlayScreen::putShapeInGrid(int distance)
   state = DROPPING_BLOCK;
   dropTime = 2 * ROW_DROP_TIME;
   
-  shape = shRandomShape();
+  shape = nextShape;
+  // The next shape will be changed when the block stops falling
   
   shape.setGrid(&grid);
-  shape.prep();
+  shape.prepForUse();
   markRepaint();
 }
 
@@ -288,6 +301,11 @@ float Control::getRepeatTime() const
 void Control::setRepeatTime(float repeatTime)
 {
   this->repeatTime = repeatTime;
+}
+
+void Control::flush()
+{
+  keyPressed = keyHeld;
 }
 
 /*
@@ -432,5 +450,16 @@ void Controls::setRepeatTime(float repeatTime)
   drop.setRepeatTime(repeatTime);
   spinLeft.setRepeatTime(repeatTime);
   spinRight.setRepeatTime(repeatTime);
+}
+
+void Controls::flushKeys()
+{
+  left.flush();
+  right.flush();
+  up.flush();
+  down.flush();
+  drop.flush();
+  spinLeft.flush();
+  spinRight.flush();
 }
 

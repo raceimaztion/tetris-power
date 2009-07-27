@@ -505,6 +505,7 @@ Screen::Screen(int screenID)
 
 Screen::~Screen()
 {
+  // Nothing to do here
 }
 
 void Screen::end()
@@ -927,7 +928,7 @@ Colour comRandomColour()
         b = comRandomFloat(0.125f, 0.875f);
   Colour result(r, g, b);
   
-  float brightness = comRandomFloat(0.5f, 0.75f);
+  float brightness = comRandomFloat(0.4f, 0.6f);
   brightness /= result.brightness();
   result = result * brightness;
   

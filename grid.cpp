@@ -1,9 +1,9 @@
 #include "common.h"
 
-#define ACCELERATION 10.0f
+#define ACCELERATION 20.0f
 
 #define VANISH_TIME 1.0f
-#define NUM_SPINS_DURING_VANISH 4
+#define NUM_SPINS_DURING_VANISH 3
 
 /* ************* *
  * GridBit class *
@@ -197,7 +197,25 @@ bool Grid::timerTick(float dTime)
 {
   bool result = false, full;
   
-  // Check for full rows
+  { // Animate the vanishing bits
+    list<GridBit> vanished;
+    
+    for (list<GridBit>::iterator cur=vanishingBits.begin(); cur != vanishingBits.end(); cur++)
+    {
+      if (cur->timerTick(dTime))
+        result = true;
+      else
+        vanished.push_back(*cur);
+    }
+    
+    if (!vanished.empty())
+      for (list<GridBit>::const_iterator cur=vanished.begin(); cur != vanished.end(); cur++)
+        vanishingBits.remove(*cur);
+  }
+  
+  if (result)
+    return true;
+  
   // Trigger animations
   for (int x=0; x < width; x++)
   {
@@ -210,29 +228,10 @@ bool Grid::timerTick(float dTime)
     }
   }
   
-  {
-    list<GridBit> vanished;
-    
-    for (list<GridBit>::iterator cur = vanishingBits.begin();
-                                 cur != vanishingBits.end();
-                                 cur++)
-    {
-      if (cur->timerTick(dTime))
-        result = true;
-      else
-        vanished.push_back(*cur);
-    }
-    
-    if (!vanished.empty())
-      for (list<GridBit>::const_iterator cur = vanished.begin();
-                                         cur != vanished.end();
-                                         cur ++)
-        vanishingBits.remove(*cur);
-  }
-  
   if (result)
     return true;
   
+  // Check for full rows
   for (int y=0; y < height; y++)
   {
     full = true;
@@ -245,6 +244,7 @@ bool Grid::timerTick(float dTime)
       }
     
     if (!full) continue;
+    result = true;
     
     // Row is full, remove row and move the above blocks down
     GridBit* bit;

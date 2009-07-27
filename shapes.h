@@ -51,8 +51,8 @@ class Shape {
     
     // Add ABit to the shape
     void addBit(ABit bit);
-    // Prepare the shape to be used
-    void prep();
+    // Prepare the shape to be used in the grid
+    void prepForUse();
     // Returns true if this shape collides with anything in the grid
     bool collides() const;
     // Try to move this shape. Returns true if we could move it, false otherwise
@@ -73,16 +73,19 @@ class Shape {
     void putInGrid(int distance=0);
     // Drop the shape down and put it in the grid
     void drop();
+    // Prepare the shape to be shown (but not yet used)
+    void prepForShow();
     
     bool isDropping() const;
     void setDropping(bool dropping);
-    int getX();
-    int getY();
+    int getX() const;
+    int getY() const;
+    int getSize() const;
 };
 
 // Initialization function for the Shapes module. Returns false if setup failed
 bool shInit();
 
 // Get a random shape
-Shape shRandomShape();
+Shape shRandomShape(Grid* grid=NULL);
 

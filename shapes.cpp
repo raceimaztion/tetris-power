@@ -112,7 +112,7 @@ void Shape::addBit(ABit bit)
   the_bits.push_back(bit);
 }
 
-void Shape::prep()
+void Shape::prepForUse()
 {
   if (grid == NULL)
   {
@@ -284,6 +284,13 @@ void Shape::putInGrid(int distance)
     grid->placeBit(the_bits.at(i), c, pos.x, pos.y, vertOffset, vertSpeed);
 }
 
+void Shape::prepForShow()
+{
+  c = comRandomColour();
+  for (int i=comRandomInt(4); i > 0; i--) rotateLeft();
+  offsetRot = Bezier();
+}
+
 bool Shape::isDropping() const
 {
   return dropping;
@@ -294,14 +301,19 @@ void Shape::setDropping(bool dropping)
   this->dropping = dropping;
 }
 
-int Shape::getX()
+int Shape::getX() const
 {
   return pos.x;
 }
 
-int Shape::getY()
+int Shape::getY() const
 {
   return pos.y;
+}
+
+int Shape::getSize() const
+{
+  return size;
 }
 
 // Init function for the Shapes module
@@ -331,10 +343,12 @@ bool shInit()
   return true;
 }
 
-Shape shRandomShape()
+Shape shRandomShape(Grid* grid)
 {
   int index = comRandomInt(allShapes.size());
   Shape newShape(allShapes.at(index));
+  newShape.setGrid(grid);
+  newShape.prepForShow();
   return newShape;
 }
 

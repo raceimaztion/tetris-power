@@ -18,6 +18,7 @@ class Control {
     void timerTick(float dTime); // Advances the current idea of time
     float getRepeatTime() const; // Find out how much time between key presses
     void setRepeatTime(float time); // Set the time between key presses
+    void flush(); // Stop considering the key previously-pressed
 };
 
 class Controls {
@@ -38,6 +39,7 @@ class Controls {
     bool holdingSpinLeft();
     bool holdingSpinRight();
     bool anyKeyPressed();
+    void flushKeys(); // Stop considering all keys as previously-pressed
     
     void timerTick(float dTime);
     float getRepeatTime() const;
@@ -58,7 +60,7 @@ class PlayScreen : public Screen, public ButtonCallback, public Loadable {
     Mesh backdrop;
     Grid grid;
     // Block-related:
-    Shape shape;
+    Shape shape, nextShape;
     float dropTime;
     PlayState state;
     // Input-related
