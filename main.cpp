@@ -64,7 +64,6 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   // set the viewport to fill the window
   glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
   // clear the screen
-//  glEnable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // enable alpha blending
   glEnable(GL_BLEND);
@@ -79,6 +78,7 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   // Make sure our specular highlights are visible
 //  glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
 //  glEnable(GL_TEXTURE_2D);
+//  glEnable(GL_DEPTH_TEST);
   
   return true;
 } // end initVideo()

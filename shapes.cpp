@@ -84,6 +84,7 @@ void Shape::init()
   c = comRandomColour();
   grid = NULL;
   timeX = timeY = timeRot = 0.0f;
+  dropping = false;
 }
 
 void Shape::rotLeft()
@@ -281,6 +282,16 @@ void Shape::putInGrid(int distance)
   
   for (int i=the_bits.size()-1; i >= 0; i--)
     grid->placeBit(the_bits.at(i), c, pos.x, pos.y, vertOffset, vertSpeed);
+}
+
+bool Shape::isDropping() const
+{
+  return dropping;
+}
+
+void Shape::setDropping(bool dropping)
+{
+  this->dropping = dropping;
 }
 
 int Shape::getX()

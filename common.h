@@ -111,24 +111,6 @@ class Light {
     void disable(int number) const;
 };
 
-class Camera {
-  private:
-    Position pos, rotation;
-  
-  public:
-    Camera();
-    Camera(Position pos);
-    Camera(Position pos, Position rot);
-    Camera(const Camera& c);
-    
-    void apply() const;
-    void move(float dx, float dy, float dz);
-    void move(const Position dp);
-    void rotate(float rx, float ry, float rz);
-    void rotate(const Position dr);
-    void animate(float dTime);
-};
-
 /* *************************** *
  * Interpolation-related class *
  * *************************** */
@@ -147,9 +129,75 @@ class Bezier {
     float f(float t) const; // Evaluate the function at a point
     float df(float t) const; // Find the derivative at a point
     bool isFlat() const; // Returns true if this is a "flat" curve (one that always remains at zero)
+    float getA() const;
+    float getB() const;
+    float getC() const;
+    float getD() const;
     
     void changeCurve(float startV, float endV, float dStart, float dEnd);
     Bezier& operator=(const Bezier& curve);
+};
+
+/* **************************** *
+ * Two-dimensional Bezier curve *
+ * **************************** */
+class Bezier2D {
+  private:
+    Bezier x, y;
+  
+  public:
+    Bezier2D(); // Creates a default set of equations that stay at (0,0)
+    Bezier2D(const Bezier2D& curve);
+    Bezier2D(Bezier x, Bezier y);
+    Bezier2D(float startX, float startY, float endX, float endY,
+             float dStartX, float dStartY, float dEndX, float dEndY);
+    
+    float fx(float t) const;
+    float dfx(float t) const;
+    float fy(float t) const;
+    float dfy(float t) const;
+    bool isFlat() const;
+};
+
+/* ****************************** *
+ * Three-dimensional Bezier curve *
+ * ****************************** */
+class Bezier3D {
+  private:
+    Bezier x, y, z;
+  
+  public:
+    Bezier3D(); // Creates a default set of equations that stay at (0,0,0)
+    Bezier3D(const Bezier3D& curve);
+    Bezier3D(Bezier x, Bezier y, Bezier z);
+    Bezier3D(Position start, Position end, Position speedStart, Position speedEnd);
+    
+    Position f(float t) const;
+    Position df(float t) const;
+    bool isFlat() const;
+};
+
+/* ************ *
+ * Camera class *
+ * ************ */
+class Camera {
+  private:
+    Position pos, rotation;
+    Bezier3D posOffset, rotOffset;
+    float posTime, rotTime;
+  
+  public:
+    Camera();
+    Camera(Position pos);
+    Camera(Position pos, Position rot);
+    Camera(const Camera& c);
+    
+    void apply() const;
+    void move(float dx, float dy, float dz);
+    void move(const Position dp);
+    void rotate(float rx, float ry, float rz);
+    void rotate(const Position dr);
+    bool animate(float dTime);
 };
 
 /* ********************************** *

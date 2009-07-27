@@ -248,9 +248,7 @@ void Camera::apply() const
 
 void Camera::move(float dx, float dy, float dz)
 {
-  pos.x += dx;
-  pos.y += dy;
-  pos.z += dz;
+  move(Position(dx, dy, dz));
 }
 
 void Camera::move(Position dp)
@@ -260,9 +258,7 @@ void Camera::move(Position dp)
 
 void Camera::rotate(float dx, float dy, float dz)
 {
-  rotation.x += dx;
-  rotation.y += dy;
-  rotation.z += dz;
+  rotate(Position(dx, dy, dz));
 }
 
 void Camera::rotate(Position dr)
@@ -270,9 +266,10 @@ void Camera::rotate(Position dr)
   rotation += dr;
 }
 
-void Camera::animate(float dTime)
+bool Camera::animate(float dTime)
 {
   // TODO: Animate the camera motions here
+  return false;
 }
 
 /* ****************** *
@@ -377,6 +374,123 @@ Bezier& Bezier::operator=(const Bezier& curve)
   type = curve.type;
   
   return *this;
+}
+
+float Bezier::getA() const
+{
+  return a;
+}
+
+float Bezier::getB() const
+{
+  return b;
+}
+
+float Bezier::getC() const
+{
+  return c;
+}
+
+float Bezier::getD() const
+{
+  return d;
+}
+
+/* **************************** *
+ * Two-dimensional Bezier curve *
+ * **************************** */
+Bezier2D::Bezier2D()
+{
+  // Nothing to do here
+}
+
+Bezier2D::Bezier2D(const Bezier2D& b2d)
+{
+  x = b2d.x;
+  y = b2d.y;
+}
+
+Bezier2D::Bezier2D(Bezier x, Bezier y)
+{
+  this->x = x;
+  this->y = y;
+}
+
+Bezier2D::Bezier2D(float startX, float startY, float endX, float endY,
+                   float dStartX, float dStartY, float dEndX, float dEndY) : x(startX, endX, dStartX, dEndX),
+                                                                             y(startY, endY, dStartY, dEndY)
+{
+  // Nothing to do here
+}
+
+float Bezier2D::fx(float t) const
+{
+  return x.f(t);
+}
+
+float Bezier2D::dfx(float t) const
+{
+  return x.df(t);
+}
+
+float Bezier2D::fy(float t) const
+{
+  return y.f(t);
+}
+
+float Bezier2D::dfy(float t) const
+{
+  return y.df(t);
+}
+
+bool Bezier2D::isFlat() const
+{
+  return x.isFlat() && y.isFlat();
+}
+
+/* ****************************** *
+ * Three-dimensional Bezier curve *
+ * ****************************** */
+Bezier3D::Bezier3D()
+{
+  // Nothing to do here
+}
+
+Bezier3D::Bezier3D(const Bezier3D& curve)
+{
+  x = curve.x;
+  y = curve.y;
+  z = curve.z;
+}
+
+Bezier3D::Bezier3D(Bezier x, Bezier y, Bezier z)
+{
+  this->x = x;
+  this->y = y;
+  this->z = z;
+}
+
+Bezier3D::Bezier3D(Position start, Position end, Position speedStart, Position speedEnd) :
+                   x(start.x, end.x, speedStart.x, speedEnd.x),
+                   y(start.y, end.y, speedStart.y, speedEnd.y),
+                   z(start.z, end.z, speedStart.z, speedEnd.z)
+{
+  // Nothing to do here
+}
+
+Position Bezier3D::f(float t) const
+{
+  return Position(x.f(t), y.f(t), z.f(t));
+}
+
+Position Bezier3D::df(float t) const
+{
+  return Position(x.df(t), y.df(t), z.df(t));
+}
+
+bool Bezier3D::isFlat() const
+{
+  return x.isFlat() && y.isFlat() && z.isFlat();
 }
 
 /* ******************************** *

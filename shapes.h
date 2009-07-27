@@ -38,6 +38,7 @@ class Shape {
     // Interpolation stuff
     Bezier offsetX, offsetY, offsetRot;
     float timeX, timeY, timeRot;
+    bool dropping;
     // Private useful methods
     void init();
     void rotLeft();
@@ -70,6 +71,11 @@ class Shape {
     void setGrid(Grid* grid);
     // Put the bits of this shape into the grid
     void putInGrid(int distance=0);
+    // Drop the shape down and put it in the grid
+    void drop();
+    
+    bool isDropping() const;
+    void setDropping(bool dropping);
     int getX();
     int getY();
 };
