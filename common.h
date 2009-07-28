@@ -1,6 +1,8 @@
 #ifndef COMMON_HEADER
 #define COMMON_HEADER
 
+#define NO_SDL_GLEXT
+
 // System library includes
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,6 +26,7 @@
 #include "SDL_opengl.h"
 #include "SDL_image.h"
 #include "SDL_mixer.h"
+#include "GL/glext.h"
 
 using namespace std;
 

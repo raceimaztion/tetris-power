@@ -7,7 +7,7 @@
 #define BEVEL_BOTTOM_LEFT
 #define BEVEL_MAX 20
 
-void _wDrawRect(int x, int y, int width, int height)
+void _wDrawBeveledRect(int x, int y, int width, int height)
 {
   int bevel = min(min(width, height), BEVEL_MAX) / 2;
   
@@ -38,20 +38,32 @@ void _wDrawRect(int x, int y, int width, int height)
 #else
   glVertex2i(x+width-1, y);
 #endif
+} // end _wDrawBeveledRect()
+
+void _wDrawGradientRect(int x, int y, int width, int height, Colour c)
+{
+  c.brighter(0.1f).apply();
+  glVertex2i(x+width-1, y);
+  glVertex2i(x, y);
+  c.darker(0.1f).apply();
+  glVertex2i(x, y+height-1);
+  glVertex2i(x+width-1, y+height-1);
 }
 
 // Handy rectangle-drawing functions
-void wDrawRect(int x, int y, int width, int height)
+void wDrawRect(int x, int y, int width, int height, Colour c)
 {
   glBegin(GL_LINE_LOOP);
-  _wDrawRect(x, y, width, height);
+//  _wDrawBeveledRect(x, y, width, height);
+  _wDrawGradientRect(x, y, width, height, c);
   glEnd();
 }
 
-void wFillRect(int x, int y, int width, int height)
+void wFillRect(int x, int y, int width, int height, Colour c)
 {
   glBegin(GL_POLYGON);
-  _wDrawRect(x, y, width, height);
+//  _wDrawBeveledRect(x, y, width, height);
+  _wDrawGradientRect(x, y, width, height, c);
   glEnd();
 }
 
@@ -301,15 +313,15 @@ void Button::paint() const
   c.apply();
   if (state == BUTTON_PRESSED)
   {
-    wFillRect(x, y, width, height);
+    wFillRect(x, y+height-1, width, -height, c);
     glColor3f(0, 0, 0);
   }
   else
   {
-    wDrawRect(x, y, width, height);
+    wDrawRect(x, y, width, height, c);
     if (state == BUTTON_HOVERED)
     {
-      wFillRect(x+1, y+1, width-3, height-3);
+      wFillRect(x+1, y+1, width-3, height-3, c);
       glColor3f(0, 0, 0);
     }
   }
@@ -485,9 +497,9 @@ void ProgressMeter::paint() const
   c.apply();
   
   // Draw the outline
-  wDrawRect(x, y, width, height);
+  wDrawRect(x, y, width, height, c);
   // Draw the progress
-  wFillRect(x+1, y+1, (int)((width-3)*min(1.0f, percentage)), height-3);
+  wFillRect(x+1, y+1, (int)((width-3)*min(1.0f, percentage)), height-3, c);
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
 }

@@ -2,7 +2,7 @@
 
 // Element sizes and positions
 #define MENU_BUTTON_WIDTH 60
-#define MENU_BUTTON_HEIGHT 25
+#define MENU_BUTTON_HEIGHT 20
 
 // Button tags
 #define MENU_BUTTON_TAG 0x31
@@ -108,7 +108,8 @@ void PlayScreen::screenPaint() const
     shape.draw();
   // Draw next shape
   glPushMatrix();
-  glTranslatef(grid.getWidth() + 4 - 0.5f*nextShape.getSize(), 0, grid.getHeight() - 2 - 0.5f*nextShape.getSize());
+  glTranslatef(grid.getWidth() + 4 - 0.5f*nextShape.getSize(), 0,
+               grid.getHeight() - 2 - 0.5f*nextShape.getSize());
   nextShape.draw();
   glPopMatrix();
   // Draw background object(s)
