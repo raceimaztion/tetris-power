@@ -1066,10 +1066,11 @@ void comLoader()
 
 void comInit()
 {
-  static Loadable cload("Common files", comLoader);
-  loaderAddLoader(&cload);
+//  static Loadable cload("Common files", comLoader);
+//  loaderAddLoader(&cload);
   
   cubeTex = texMakeCheckerboard();
+  comLoader();
 }
 
 

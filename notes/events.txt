@@ -1,0 +1,13 @@
+An events system might be a good idea, it could simplify many problems that I'm having.
+
+Examples of events I could use:
+- Block-land:
+	When a block lands on the grid
+	Could be used to get a new block
+- Row-full
+	When a row is full and should start vanishing
+	Could be used to trigger the vanishing animations as well as updating the score
+- Row-removed:
+	When a row has been removed
+	Could be used to trigger the blocks above to fall
+- 
