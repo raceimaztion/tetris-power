@@ -1,14 +1,15 @@
 OPTIONS = -Wall -c -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT# -DDEBUG
-HEADERS = common.h grid.h shapes.h mesh.h fonts.h widgets.h play.h texture.h shaders.h
+HEADERS = common.h grid.h shapes.h mesh.h fonts.h widgets.h play.h texture.h shaders.h screen.h
 MAIN_ONLY_HEADERS = splash.h mainMenu.h
+MODULES = main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o texture.o shaders.o screen.o
 
 all: tetris
 
 linecount:
 	wc -l *.h *.cpp
 
-tetris: main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o texture.o shaders.o $(HEADERS)
-	g++ -o tetris main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o texture.o shaders.o -L/usr/lib -lm -lSDL -lGL -lSDL_mixer -lSDL_image -lGLU
+tetris: $(MODULES) screen.o $(HEADERS)
+	g++ -o tetris $(MODULES) -L/usr/lib -lm -lSDL -lGL -lSDL_mixer -lSDL_image -lGLU
 
 main.o: main.cpp $(HEADERS) $(MAIN_ONLY_HEADERS)
 	g++ $(OPTIONS) main.cpp
@@ -45,6 +46,9 @@ texture.o: texture.cpp $(HEADERS)
 
 shaders.o: shaders.cpp common.h
 	g++ $(OPTIONS) shaders.cpp
+
+screen.o: screen.cpp $(HEADERS)
+	g++ $(OPTIONS) screen.cpp
 
 run: tetris
 	./tetris
