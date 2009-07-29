@@ -26,7 +26,7 @@ class Widget {
     
     virtual void setFont(Font* font);
     virtual void paint() const;
-    virtual void timerTick();
+    virtual void timerTick(float dTime);
     virtual void mouse(const SDL_MouseButtonEvent& mouse);
     virtual void mouse(const SDL_MouseMotionEvent& mouse);
 };
@@ -53,7 +53,7 @@ class Label : public Widget {
     void setAlignment(float x, float y);
     
     virtual void paint() const;
-    virtual void timerTick();
+    virtual void timerTick(float dTime);
 };
 
 // Button widget class
@@ -76,7 +76,7 @@ class Button : public Label {
     void removeCallback(void (*callback)(const Button&));
     
     void paint() const;
-    void timerTick();
+    void timerTick(float dTime);
     void mouse(const SDL_MouseButtonEvent& mouse);
     void mouse(const SDL_MouseMotionEvent& mouse);
 };
@@ -106,7 +106,7 @@ class Panel : public Widget {
     void setFont(Font* font);
     
     void paint() const;
-    void timerTick();
+    void timerTick(float dTime);
     void mouse(const SDL_MouseButtonEvent& mouse);
     void mouse(const SDL_MouseMotionEvent& mouse);
 };
@@ -122,6 +122,24 @@ class ProgressMeter : public Widget {
     float getPercentage() const;
     void setPercentage(float percentage);
     void paint() const;
-    void timerTick();
+    void timerTick(float dTime);
+};
+
+class FloatyLabel : public Label {
+  private:
+    float curTime, totalTime, vertSpeed;
+  
+  public:
+    FloatyLabel(int x, int y, Colour c, string label, Font* font, float totalTime, float vertSpeed);
+    FloatyLabel(int x, int y, int width, int height, Colour c, string label, Font* font, float totalTime, float vertSpeed);
+    FloatyLabel(const FloatyLabel& fl);
+    
+    void paint() const;
+    void timerTick(float dTime);
+    bool isDone() const;
+    
+    float getCurTime() const;
+    float getTotalTime() const;
+    float getVertSpeed() const;
 };
 

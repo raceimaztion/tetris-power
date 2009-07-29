@@ -40,7 +40,7 @@ MainMenu::MainMenu(int screenID) : Screen(screenID),
 
 void MainMenu::timerTick(float dTime)
 {
-  panel.timerTick();
+  panel.timerTick(dTime);
   if (quit.getFont() == NULL && fallbackFont != NULL)
   {
     panel.setFont(fallbackFont);

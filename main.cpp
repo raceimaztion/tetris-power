@@ -194,6 +194,7 @@ int main(int argc, char **argv)
   
   if (!initVideo())
     exit(1);
+  
 /*  if (SDL_Init(SDL_INIT_TIMER) < 0)
   {
     fprintf(stderr, "Error: Failed to initialize SDL timer system.\nError was: %s.\n", SDL_GetError());
@@ -270,8 +271,8 @@ int main(int argc, char **argv)
       }
     }
     
-    // Wait ten milliseconds and do it all again
-    SDL_Delay(10);
+    // Wait a bit and do it all again
+    SDL_Delay(5);
     
     timerTick();
     

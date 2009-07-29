@@ -353,6 +353,7 @@ template<class T> inline T minMag(T a, T b)
 #include "splash.h"
 #include "mainMenu.h"
 #include "play.h"
+#include "score.h"
 
 #ifdef MAIN_MODULE
 #define GLOBAL

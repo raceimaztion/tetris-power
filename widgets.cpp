@@ -145,7 +145,7 @@ bool Widget::isIn(int px, int py) const
 
 void Widget::setFont(Font* font) { }
 void Widget::paint() const { printf("Runtime warning: Using raw Widget::paint() method!\n"); }
-void Widget::timerTick() { }
+void Widget::timerTick(float dTime) { }
 void Widget::mouse(const SDL_MouseButtonEvent& mouse) { }
 void Widget::mouse(const SDL_MouseMotionEvent& mouse) { }
 
@@ -243,7 +243,7 @@ void Label::paint() const
   glPopMatrix();
 }
 
-void Label::timerTick() { }
+void Label::timerTick(float dTime) { }
 
 /* ******************* *
  * Button widget class *
@@ -332,7 +332,7 @@ void Button::paint() const
   if (usedDepth) glEnable(GL_DEPTH_TEST);
 }
 
-void Button::timerTick()
+void Button::timerTick(float dTime)
 {
   
 }
@@ -442,12 +442,12 @@ void Panel::paint() const
   if (usedDepth) glEnable(GL_DEPTH_TEST);
 }
 
-void Panel::timerTick()
+void Panel::timerTick(float dTime)
 {
   for (list<Widget*>::iterator cur = children.begin();
                                cur != children.end();
                                cur++)
-    (*cur)->timerTick();
+    (*cur)->timerTick(dTime);
 }
 
 void Panel::mouse(const SDL_MouseButtonEvent& mouse)
@@ -504,9 +504,81 @@ void ProgressMeter::paint() const
   if (usedDepth) glEnable(GL_DEPTH_TEST);
 }
 
-void ProgressMeter::timerTick()
+void ProgressMeter::timerTick(float dTime)
 {
   // Not using this yet
   // Maybe use it to change a stipple pattern used on the fill meter?
 }
+
+/* ***************** *
+ * FloatyLabel class *
+ * ***************** */
+FloatyLabel::FloatyLabel(int x, int y, Colour c, string label, Font* font, float totalTime, float vertSpeed) :
+                                                       Label(x, y, 0, 0, c, label, font)
+{
+  curTime = 0.0f;
+  this->totalTime = totalTime;
+  this->vertSpeed = vertSpeed;
+}
+
+FloatyLabel::FloatyLabel(int x, int y, int width, int height, Colour c, string label, Font* font, float totalTime, float vertSpeed) :
+                                                       Label(x, y, width, height, c, label, font)
+{
+  curTime = 0.0f;
+  this->totalTime = totalTime;
+  this->vertSpeed = vertSpeed;
+}
+
+FloatyLabel::FloatyLabel(const FloatyLabel& fl) : Label(fl)
+{
+  curTime = fl.curTime;
+  totalTime = fl.totalTime;
+}
+
+void FloatyLabel::paint() const
+{
+  if (!visible) return;
+  
+  c.apply(1.0f - curTime/totalTime);
+  
+  int lineWidth = fStringWidth(getFont(), getLabel().c_str()), lineHeight = fFontHeight(getFont());
+  float px = x + getAlignmentX()*(width - lineWidth), py = y + height - getAlignmentY()*(height - lineHeight) + curTime*vertSpeed;
+  
+  bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
+  
+  glRasterPos2f(px, py);
+  c.apply();
+  
+  fDrawString(getFont(), getLabel().c_str());
+  
+  if (usedDepth) glEnable(GL_DEPTH_TEST);
+}
+
+void FloatyLabel::timerTick(float dTime)
+{
+  curTime += dTime;
+  triggerRepaint();
+}
+
+bool FloatyLabel::isDone() const
+{
+  return curTime >= totalTime;
+}
+
+float FloatyLabel::getCurTime() const
+{
+  return curTime;
+}
+
+float FloatyLabel::getTotalTime() const
+{
+  return totalTime;
+}
+
+float FloatyLabel::getVertSpeed() const
+{
+  return vertSpeed;
+}
+
 

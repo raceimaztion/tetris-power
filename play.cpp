@@ -191,6 +191,7 @@ void PlayScreen::timerTick(float dTime)
   }
   
   controls.timerTick(dTime);
+  panel.timerTick(dTime);
 }
 
 void PlayScreen::keyboard(const SDL_KeyboardEvent& key)

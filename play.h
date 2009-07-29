@@ -8,6 +8,7 @@ class Control {
          keyPressed;   // keyPressed indicates if the key has been pressed since the last request
     float repeatTime,  // The amount of time between repeats
           timeLeft;    // The amount of time left until the next "press"
+    list<FloatyLabel> scoreLabels;
   
   public:
     Control(); // Default constructor with no time between keypresses

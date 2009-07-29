@@ -345,10 +345,27 @@ bool shInit()
 
 Shape shRandomShape(Grid* grid)
 {
+  static int lastIndex = -1;
+  static int lastCount = 0;
+  
   int index = comRandomInt(allShapes.size());
+  if (index == lastIndex)
+  {
+    lastCount ++;
+    if (lastCount >= 2)
+    {
+      do { index = comRandomInt(allShapes.size()); }
+      while (index == lastIndex);
+      lastCount = 1;
+    }
+  }
+  
   Shape newShape(allShapes.at(index));
   newShape.setGrid(grid);
   newShape.prepForShow();
+  
+  lastIndex = index;
+  
   return newShape;
 }
 

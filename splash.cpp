@@ -24,7 +24,7 @@ SplashScreen::~SplashScreen()
 
 void SplashScreen::timerTick(float dTime)
 {
-  // Nothing to do here
+  // Nothing much to do here
   if (!loaderDoneLoading() || (progress.getPercentage() < 1.0f))
   {
     progress.setPercentage(loaderGetProgress());
@@ -35,6 +35,7 @@ void SplashScreen::timerTick(float dTime)
     if (!replaceWith(MAIN_MENU_SCREEN))
       end();
   }*/
+  panel.timerTick(dTime);
 }
 
 void SplashScreen::prepareForShow()
