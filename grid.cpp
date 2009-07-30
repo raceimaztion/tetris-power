@@ -123,6 +123,12 @@ bool GridBit::operator==(const GridBit& bit) const
   return (pos.x == bit.pos.x) && (pos.y == bit.pos.y);
 }
 
+/*
+  GridListener class
+*/
+void GridListener::rowRemoved(int row) { }
+void GridListener::gridEmpty() { }
+
 /* ********** *
  * Grid class *
  * ********** */
@@ -232,7 +238,7 @@ bool Grid::timerTick(float dTime)
     return true;
   
   // Check for full rows
-  for (int y=0; y < height; y++)
+  for (int y=0,ay=0; y < height; y++,ay++)
   {
     full = true;
     
@@ -247,6 +253,9 @@ bool Grid::timerTick(float dTime)
     result = true;
     
     // Row is full, remove row and move the above blocks down
+    for (list<GridListener*>::iterator cur=listeners.begin(); cur != listeners.end(); cur++)
+      (*cur)->rowRemoved(ay);
+    
     GridBit* bit;
     for (int x=0; x < width; x++)
     {
@@ -288,5 +297,15 @@ void Grid::render() const
                                      cur != vanishingBits.end();
                                      cur++)
     cur->render();
+}
+
+void Grid::addListener(GridListener* listener)
+{
+  listeners.push_back(listener);
+}
+
+void Grid::removeListener(GridListener* listener)
+{
+  listeners.remove(listener);
 }
 

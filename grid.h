@@ -27,11 +27,18 @@ class GridBit : public ABit {
     bool operator==(const GridBit& bit) const;
 };
 
+class GridListener {
+  public:
+    virtual void rowRemoved(int row);
+    virtual void gridEmpty();
+};
+
 class Grid {
   private:
     int width, height;
     list<GridBit>* gridBits;
     list<GridBit> vanishingBits;
+    list<GridListener*> listeners;
     // Useful methods
     GridBit* getGridBit(int x, int y);
   
@@ -45,5 +52,8 @@ class Grid {
     void placeBit(const ABit& bit, Colour c, int x, int y, float offsetY, float speedY);
     bool timerTick(float dTime);
     void render() const;
+    
+    void addListener(GridListener* listener);
+    void removeListener(GridListener* listener);
 };
 

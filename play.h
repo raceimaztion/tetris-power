@@ -49,10 +49,11 @@ class Controls {
 
 enum PlayState { PLAYING, DROPPING_BLOCK, WAITING };
 
-class PlayScreen : public Screen, public ButtonCallback, public Loadable {
+class PlayScreen : public Screen, public ButtonCallback, public Loadable, public GridListener {
   private:
     // Widgets
-    Panel panel;
+    Panel panel, floatables;
+    list<FloatyLabel> floatingLabels;
     Button menu;
     // 3D view-related
     Light lamp;
@@ -82,6 +83,9 @@ class PlayScreen : public Screen, public ButtonCallback, public Loadable {
     
     void dropShape();
     void putShapeInGrid(int distance=0);
+    
+    void rowRemoved(int row);
+    void gridEmpty();
     
     void load();
     

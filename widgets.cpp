@@ -533,26 +533,38 @@ FloatyLabel::FloatyLabel(const FloatyLabel& fl) : Label(fl)
 {
   curTime = fl.curTime;
   totalTime = fl.totalTime;
+  vertSpeed = fl.vertSpeed;
 }
 
 void FloatyLabel::paint() const
 {
-  if (!visible) return;
+  // If we don't have a font or aren't visible, don't draw anything
+  if (getFont() == NULL)
+  {
+    printf("Runtime warning: FloatyLabel::paint(): No font is selected, aborting paint() method.\n");
+    return;
+  }
+  if (!visible)
+    return;
   
-  c.apply(1.0f - curTime/totalTime);
+  glPushMatrix();
+//  if (x < 0) glTranslatef(getWidth(), 0, 0);
+//  if (y < 0) glTranslatef(0, getHeight(), 0);
   
   int lineWidth = fStringWidth(getFont(), getLabel().c_str()), lineHeight = fFontHeight(getFont());
-  float px = x + getAlignmentX()*(width - lineWidth), py = y + height - getAlignmentY()*(height - lineHeight) + curTime*vertSpeed;
+  float px = x + getAlignmentX()*(width - lineWidth),
+        py = y + height - getAlignmentY()*(height - lineHeight) + vertSpeed*curTime;
   
   bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
   glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
   
+  c.apply(1.0f - (curTime/totalTime));
   glRasterPos2f(px, py);
-  c.apply();
-  
   fDrawString(getFont(), getLabel().c_str());
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
+  glPopMatrix();
 }
 
 void FloatyLabel::timerTick(float dTime)
@@ -581,4 +593,10 @@ float FloatyLabel::getVertSpeed() const
   return vertSpeed;
 }
 
+bool FloatyLabel::operator==(const FloatyLabel& fl)
+{
+  return (x == fl.x) && (y == fl.y) &&
+         (width == fl.width) && (height == fl.height) &&
+         (getLabel() == fl.getLabel()) && (curTime == fl.curTime);
+}
 

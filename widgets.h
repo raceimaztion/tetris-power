@@ -141,5 +141,7 @@ class FloatyLabel : public Label {
     float getCurTime() const;
     float getTotalTime() const;
     float getVertSpeed() const;
+    
+    bool operator==(const FloatyLabel& fl);
 };
 

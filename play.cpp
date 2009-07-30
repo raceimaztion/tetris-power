@@ -18,6 +18,7 @@ const Colour BLOCK_COLOUR(0.5f, 0.4f, 0.3f),
 PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                        Loadable("Backdrop"),
                                        panel(0, 0, getWidth(), getHeight(), Colour(0)),
+                                       floatables(0, 0, getWidth(), getHeight(), Colour(0)),
                                        menu(getWidth()-MENU_BUTTON_WIDTH-2, getHeight()-MENU_BUTTON_HEIGHT-2,
                                             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
                                             Colour(0.2f, 0.2f, 0.5f), "Menu", fallbackFont, MENU_BUTTON_TAG),
@@ -38,6 +39,7 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
   
   // Register all callbacks
   menu.addCallback(this);
+  grid.addListener(this);
   
   shape.setGrid(&grid);
   shape.prepForUse();
@@ -126,6 +128,9 @@ void PlayScreen::screenPaint() const
   
   // Draw widgets
   panel.paint();
+  
+  // Draw floatables:
+  floatables.paint();
 }
 
 void PlayScreen::timerTick(float dTime)
@@ -192,7 +197,22 @@ void PlayScreen::timerTick(float dTime)
   
   controls.timerTick(dTime);
   panel.timerTick(dTime);
-}
+  floatables.timerTick(dTime);
+  // TODO: Remove finished floatables
+  {
+    list<FloatyLabel*> finished;
+    for (list<FloatyLabel>::iterator cur = floatingLabels.begin(); cur != floatingLabels.end(); cur++)
+    {
+      if ((*cur).isDone())
+        finished.push_back(&(*cur));
+    }
+    for (list<FloatyLabel*>::iterator cur = finished.begin(); cur != finished.end(); cur++)
+    {
+      floatables.removeChild(*cur);
+      floatingLabels.remove(**cur);
+    }
+  }
+} // end timerTick()
 
 void PlayScreen::keyboard(const SDL_KeyboardEvent& key)
 {
@@ -246,6 +266,18 @@ void PlayScreen::putShapeInGrid(int distance)
   shape.setGrid(&grid);
   shape.prepForUse();
   markRepaint();
+}
+
+void PlayScreen::rowRemoved(int row)
+{
+  floatingLabels.push_back(FloatyLabel(0, row*10 + 50, getWidth(), 1,
+                                     Colour(0.8f, 0.9f, 0.7f), "+100", fallbackFont,
+                                     2.0f, 1.0f));
+  floatables.addChild(&floatingLabels.back());
+}
+
+void PlayScreen::gridEmpty()
+{
 }
 
 void PlayScreen::load()
