@@ -201,6 +201,7 @@ void Grid::placeBit(const ABit& bit, Colour c, int blockX, int blockY, float off
 
 bool Grid::timerTick(float dTime)
 {
+  static bool emptySent = true;
   bool result = false, full;
   
   { // Animate the vanishing bits
@@ -279,6 +280,25 @@ bool Grid::timerTick(float dTime)
     // Make sure we don't miss the new current row
     y--;
   }// end for y
+  
+  if (!emptySent && !result)
+  {
+    bool empty = true;
+    for (int i=0; i < width; i++)
+      if (!gridBits[i].empty())
+      {
+        empty = false;
+        break;
+      }
+    if (empty)
+    {
+      emptySent = true;
+      for (list<GridListener*>::iterator cur = listeners.begin(); cur != listeners.end(); cur++)
+        (*cur)->gridEmpty();
+    }
+  }
+  else if (result)
+    emptySent = false;
   
   return result;
 }

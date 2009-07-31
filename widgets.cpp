@@ -431,6 +431,8 @@ void Panel::paint() const
 #ifdef DEBUG
   printf("Panel::paint(): Drawing panel and %d %s.\n", children.size(), (children.size()==1 ? "child": "children"));
 #endif
+  if (!visible) return;
+  
   bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
   glDisable(GL_DEPTH_TEST);
   

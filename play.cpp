@@ -274,7 +274,7 @@ void PlayScreen::rowRemoved(int row)
 {
   floatingLabels.push_back(FloatyLabel(0, getHeight() - (row*21 + 42), getWidth(), 1,
                                      Colour(0.8f, 0.9f, 0.7f), "+100", fallbackFont,
-                                     2.0f, -2.0f));
+                                     2.0f, -20.0f));
   floatables.addChild(&floatingLabels.back());
   
   scoreAdd(100);
@@ -282,6 +282,12 @@ void PlayScreen::rowRemoved(int row)
 
 void PlayScreen::gridEmpty()
 {
+  floatingLabels.push_back(FloatyLabel(0, 0, getWidth(), getHeight(),
+                                     Colour(0.8f, 0.9f, 0.7f), "+150", largeFont,
+                                     2.0f, -20.0f));
+  floatables.addChild(&floatingLabels.back());
+  
+  scoreAdd(150);
 }
 
 void PlayScreen::load()
