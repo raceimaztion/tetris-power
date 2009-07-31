@@ -1,8 +1,8 @@
 #include "common.h"
 
-#define ACCELERATION 30.0f
+#define ACCELERATION 35.0f
 
-#define VANISH_TIME 1.0f
+#define VANISH_TIME 0.75f
 #define NUM_SPINS_DURING_VANISH 3
 
 /* ************* *

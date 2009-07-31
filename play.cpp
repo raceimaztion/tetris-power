@@ -21,7 +21,9 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                        floatables(0, 0, getWidth(), getHeight(), Colour(0)),
                                        menu(getWidth()-MENU_BUTTON_WIDTH-2, getHeight()-MENU_BUTTON_HEIGHT-2,
                                             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
-                                            Colour(0.2f, 0.2f, 0.5f), "Menu", fallbackFont, MENU_BUTTON_TAG),
+                                            Colour(0.5f, 0.5f, 0.7f), "Menu", fallbackFont, MENU_BUTTON_TAG),
+                                       scoreView(50, 50, 200, 15,
+                                                 Colour(0.8f, 0.7f, 0.5f), fallbackFont),
                                        lamp(Position(5, -5, 5), 1, Colour(0.5f)),
                                        camera(Position(0, 25, 0), Position(0, 0, 0)),
                                        grid(GRID_WIDTH, GRID_HEIGHT),
@@ -36,6 +38,7 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
   
   // Add all the widgets to the panel
   panel.addChild(&menu);
+  panel.addChild(&scoreView);
   
   // Register all callbacks
   menu.addCallback(this);
@@ -43,6 +46,8 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
   
   shape.setGrid(&grid);
   shape.prepForUse();
+  
+  scoreView.setAlignment(0.0f, 0.5f);
 }
 
 PlayScreen::~PlayScreen()
@@ -129,7 +134,7 @@ void PlayScreen::screenPaint() const
   // Draw widgets
   panel.paint();
   
-  // Draw floatables:
+  // Draw floatables
   floatables.paint();
 }
 
@@ -198,7 +203,6 @@ void PlayScreen::timerTick(float dTime)
   controls.timerTick(dTime);
   panel.timerTick(dTime);
   floatables.timerTick(dTime);
-  // TODO: Remove finished floatables
   {
     list<FloatyLabel*> finished;
     for (list<FloatyLabel>::iterator cur = floatingLabels.begin(); cur != floatingLabels.end(); cur++)
@@ -217,8 +221,6 @@ void PlayScreen::timerTick(float dTime)
 void PlayScreen::keyboard(const SDL_KeyboardEvent& key)
 {
   controls.keyEvent(key);
-/*  if (key.type == SDL_KEYUP && key.keysym.sym == SDLK_ESCAPE)
-    end();*/
 }
 
 void PlayScreen::mouseButton(const SDL_MouseButtonEvent& mouse)
@@ -270,10 +272,12 @@ void PlayScreen::putShapeInGrid(int distance)
 
 void PlayScreen::rowRemoved(int row)
 {
-  floatingLabels.push_back(FloatyLabel(0, row*10 + 50, getWidth(), 1,
+  floatingLabels.push_back(FloatyLabel(0, getHeight() - (row*21 + 42), getWidth(), 1,
                                      Colour(0.8f, 0.9f, 0.7f), "+100", fallbackFont,
-                                     2.0f, 1.0f));
+                                     2.0f, -2.0f));
   floatables.addChild(&floatingLabels.back());
+  
+  scoreAdd(100);
 }
 
 void PlayScreen::gridEmpty()

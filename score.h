@@ -9,6 +9,18 @@
 
 // Find the current score
 long scoreGetScore();
-// Tell the score system that a block was removed. TODO: Add a parameter for block type
-void scoreRowRemoved(int x, int y);
-//
+// Add the given amount to the current score
+void scoreAdd(int amount);
+
+/*
+  The ScoreView widget
+*/
+
+class ScoreView : public Label {
+  public:
+    ScoreView(int x, int y, int width, int height, Colour c, Font* font);
+    ScoreView(const ScoreView& sv);
+    
+    void timerTick(float dTime);
+};
+

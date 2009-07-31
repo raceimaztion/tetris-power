@@ -55,6 +55,7 @@ class PlayScreen : public Screen, public ButtonCallback, public Loadable, public
     Panel panel, floatables;
     list<FloatyLabel> floatingLabels;
     Button menu;
+    ScoreView scoreView;
     // 3D view-related
     Light lamp;
     Camera camera;

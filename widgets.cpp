@@ -539,7 +539,7 @@ FloatyLabel::FloatyLabel(const FloatyLabel& fl) : Label(fl)
 void FloatyLabel::paint() const
 {
   // If we don't have a font or aren't visible, don't draw anything
-  if (getFont() == NULL)
+  if (font == NULL)
   {
     printf("Runtime warning: FloatyLabel::paint(): No font is selected, aborting paint() method.\n");
     return;
@@ -551,9 +551,9 @@ void FloatyLabel::paint() const
 //  if (x < 0) glTranslatef(getWidth(), 0, 0);
 //  if (y < 0) glTranslatef(0, getHeight(), 0);
   
-  int lineWidth = fStringWidth(getFont(), getLabel().c_str()), lineHeight = fFontHeight(getFont());
-  float px = x + getAlignmentX()*(width - lineWidth),
-        py = y + height - getAlignmentY()*(height - lineHeight) + vertSpeed*curTime;
+  int lineWidth = fStringWidth(font, label.c_str()), lineHeight = fFontHeight(font);
+  float px = x + align_x*(width - lineWidth),
+        py = y + height - align_y*(height - lineHeight) + vertSpeed*curTime;
   
   bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
   glDisable(GL_DEPTH_TEST);
@@ -561,7 +561,7 @@ void FloatyLabel::paint() const
   
   c.apply(1.0f - (curTime/totalTime));
   glRasterPos2f(px, py);
-  fDrawString(getFont(), getLabel().c_str());
+  fDrawString(font, label.c_str());
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
   glPopMatrix();

@@ -33,7 +33,7 @@ class Widget {
 
 // Label widget class
 class Label : public Widget {
-  private:
+  protected:
     string label;
     Font *font;
     float align_x, align_y;
@@ -59,7 +59,7 @@ class Label : public Widget {
 // Button widget class
 class ButtonCallback;
 class Button : public Label {
-  private:
+  protected:
     int tag, state;
     list<void (*)(const Button&)> callbackFunctions;
     list<ButtonCallback*> callbackClasses;
@@ -94,7 +94,7 @@ class ButtonCallback {
 
 // Panel widget class
 class Panel : public Widget {
-  private:
+  protected:
     list<Widget*> children;
     
   public:
@@ -112,7 +112,7 @@ class Panel : public Widget {
 };
 
 class ProgressMeter : public Widget {
-  private:
+  protected:
     float percentage;
     
   public:
@@ -126,7 +126,7 @@ class ProgressMeter : public Widget {
 };
 
 class FloatyLabel : public Label {
-  private:
+  protected:
     float curTime, totalTime, vertSpeed;
   
   public:

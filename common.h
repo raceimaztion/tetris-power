@@ -346,6 +346,7 @@ template<class T> inline T minMag(T a, T b)
 #include "widgets.h"
 #include "texture.h"
 #include "screen.h"
+#include "score.h"
 // Order-dependent headers
 #include "shapes.h"
 #include "grid.h"
@@ -353,7 +354,6 @@ template<class T> inline T minMag(T a, T b)
 #include "splash.h"
 #include "mainMenu.h"
 #include "play.h"
-#include "score.h"
 
 #ifdef MAIN_MODULE
 #define GLOBAL
