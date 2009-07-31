@@ -1,0 +1,18 @@
+Minor stuff:
+- Add a background
+	- Some kind of ground with sky
+	- Use some kind of background (probably flat) in front of the sky to indicate current level
+- Add the Options screen
+- Add sound effects
+- Add background music
+	- If there's more than one track available, add the option to the Options screen
+- Add a drop-down menu widget
+- Add an in-game menu and start a new game when started from the menu
+- Add levels of difficulty
+- Add highscore list
+	- And ability to clear said list
+- 
+
+Major stuff:
+- Animate EVERYTHING
+- Add an introduction screen
