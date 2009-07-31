@@ -11,10 +11,17 @@ SplashScreen::SplashScreen(int screenID) : Screen(screenID),
                                            panel(0, 0, getWidth(), getHeight(), Colour(0)),
                                            progress(getWidth()/4, getHeight() - 2*PROGRESS_HEIGHT,
                                                     getWidth()/2, PROGRESS_HEIGHT,
-                                                    Colour(0.2f, 0.6f, 0.2f))
+                                                    Colour(0.2f, 0.6f, 0.2f)),
+                                           status(0, getHeight() - 2*PROGRESS_HEIGHT - 20,
+                                                  getWidth(), 15,
+                                                  Colour(0.7f), "Loading...", fallbackFont),
+                                           title(0, 20, getWidth(), 30,
+                                                 Colour(0.6f), "Power-Tetris", largeFont)
 {
   // Nothing much to do here
   panel.addChild(&progress);
+  panel.addChild(&status);
+  panel.addChild(&title);
 }
 
 SplashScreen::~SplashScreen()
@@ -24,10 +31,17 @@ SplashScreen::~SplashScreen()
 
 void SplashScreen::timerTick(float dTime)
 {
+  static done = false;
   // Nothing much to do here
   if (!loaderDoneLoading() || (progress.getPercentage() < 1.0f))
   {
     progress.setPercentage(loaderGetProgress());
+    markRepaint();
+  }
+  else if (!done)
+  {
+    done = true;
+    status.setLabel("Click anywhere to continue.");
     markRepaint();
   }
 /*  else // TEMP:
