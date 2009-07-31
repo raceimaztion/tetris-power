@@ -67,6 +67,31 @@ void wFillRect(int x, int y, int width, int height, Colour c)
   glEnd();
 }
 
+void wDrawText(float x, float y, const string& text, Font* font)
+{
+  
+}
+
+void wDrawText(float x, float y, float width, float height, float align_x, float align_y, const string& text, Font* font)
+{
+  if (font == NULL)
+  {
+    printf("Runtime warning: Label::paint(): No font is selected, aborting paint() method.\n");
+    return;
+  }
+  
+  int lineWidth = fStringWidth(font, text.c_str()), lineHeight = fFontHeight(font);
+  float px = x + align_x*(width - lineWidth), py = y + height - align_y*(height - lineHeight);
+  
+  bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
+  
+  glRasterPos2f(px, py);
+  fDrawString(font, text.c_str());
+  
+  if (usedDepth) glEnable(GL_DEPTH_TEST);
+}
+
 /* ***************** *
  * base Widget class *
  * ***************** */
@@ -216,13 +241,17 @@ void Label::setAlignment(float x, float y)
 void Label::paint() const
 {
   // If we don't have a font or aren't visible, don't draw anything
+  if (!visible)
+    return;
+  
+  c.apply();
+  wDrawText(x, y, width, height, 0.5f, 0.5f, label, font);
+  /*
   if (font == NULL)
   {
     printf("Runtime warning: Label::paint(): No font is selected, aborting paint() method.\n");
     return;
   }
-  if (!visible)
-    return;
   
   glPushMatrix();
   if (x < 0) glTranslatef(getWidth(), 0, 0);
@@ -235,12 +264,11 @@ void Label::paint() const
   glDisable(GL_DEPTH_TEST);
   
   glRasterPos2f(px, py);
-  c.apply();
   
   fDrawString(font, label.c_str());
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
-  glPopMatrix();
+  glPopMatrix();*/
 }
 
 void Label::timerTick(float dTime) { }
@@ -327,7 +355,7 @@ void Button::paint() const
   }
   
   glPopMatrix();
-  Label::paint();
+  wDrawText(x, y, width, height, 0.5f, 0.5f, label, font);
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
 }
@@ -549,7 +577,9 @@ void FloatyLabel::paint() const
   if (!visible)
     return;
   
-  glPushMatrix();
+  c.apply(1.0f - (curTime/totalTime));
+  wDrawText(x, y + vertSpeed*curTime, width, height, 0.5f, 0.5f, label, font);
+/*  glPushMatrix();
 //  if (x < 0) glTranslatef(getWidth(), 0, 0);
 //  if (y < 0) glTranslatef(0, getHeight(), 0);
   
@@ -561,12 +591,11 @@ void FloatyLabel::paint() const
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   
-  c.apply(1.0f - (curTime/totalTime));
   glRasterPos2f(px, py);
   fDrawString(font, label.c_str());
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
-  glPopMatrix();
+  glPopMatrix();*/
 }
 
 void FloatyLabel::timerTick(float dTime)

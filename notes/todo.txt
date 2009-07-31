@@ -11,7 +11,8 @@ Minor stuff:
 - Add levels of difficulty
 - Add highscore list
 	- And ability to clear said list
-- 
+- Tweak large font to improve looks
+- Tweak or rewrite font engine to add multiple lightness levels
 
 Major stuff:
 - Animate EVERYTHING
