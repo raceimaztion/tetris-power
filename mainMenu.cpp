@@ -15,7 +15,7 @@ const Colour MENU_BUTTON_COLOUR(0.5f, 0.65f, 0.5f),
 
 MainMenu::MainMenu(int screenID) : Screen(screenID),
                                    panel(0, 0, getWidth(), getHeight(), Colour(0)),
-                                   title(5, 40, getWidth()-10, 20, TITLE_LABEL_COLOUR, "Power-Tetris", largeFont),
+                                   title(5, 40, getWidth()-10, 20, TITLE_LABEL_COLOUR, "Tetris-Power", largeFont),
                                    start((getWidth()-BUTTON_WIDTH)/2, BUTTON_TOP,
                                          BUTTON_WIDTH, BUTTON_HEIGHT,
                                          MENU_BUTTON_COLOUR, "Start", largeFont, MENU_TAG_START),

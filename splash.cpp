@@ -16,7 +16,7 @@ SplashScreen::SplashScreen(int screenID) : Screen(screenID),
                                                   getWidth(), 15,
                                                   Colour(0.7f), "Loading...", fallbackFont),
                                            title(0, 20, getWidth(), 30,
-                                                 Colour(0.6f), "Power-Tetris", largeFont)
+                                                 Colour(0.6f), "Tetris-Power", largeFont)
 {
   // Nothing much to do here
   panel.addChild(&progress);
