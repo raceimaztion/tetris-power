@@ -35,7 +35,8 @@ void loadImage()
     }
   }
   //*/
-  tex = texMakeCheckerboard();
+//  tex = texMakeCheckerboard();
+  tex = texLoadTexture("textures/nehe.bmp");
   
   printf("Finished loading texture(s).\n");
 }
@@ -197,6 +198,10 @@ void render()
   gluLookAt(2, -5, 3,   // Eye location
             0, 0, 0,     // Target
             2, -5, 4);  // Up
+  
+  glMatrixMode(GL_TEXTURE);
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
   
 //  light.apply(GL_LIGHT0);
 //  CUBE_COLOUR.applyMaterial();

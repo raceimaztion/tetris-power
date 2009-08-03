@@ -635,14 +635,13 @@ void comDrawBlock(float x, float y, float scale, float rotation)
 
 void comDrawTexturedCube(float x, float y, float scale, float rotation)
 {
+  cubeTex.applyTexture();
   glPushMatrix();
   
   glTranslatef(x + 0.5f, 0.0f, y + 0.5f);
   glScalef(scale, scale, scale);
   glRotatef(rotation, 0, 1, 0);
   
-  glEnable(GL_TEXTURE_2D);
-  cubeTex.applyTexture();
   cube.render(true);
   
   glPopMatrix();
@@ -811,7 +810,8 @@ void comInit()
 //  static Loadable cload("Common files", comLoader);
 //  loaderAddLoader(&cload);
   
-  cubeTex = texMakeCheckerboard();
+//  cubeTex = texMakeCheckerboard();
+  cubeTex = texLoadTexture("textures/block-normals.png");
   comLoader();
 }
 

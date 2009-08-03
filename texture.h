@@ -18,4 +18,5 @@ class Texture {
 };
 
 Texture texMakeCheckerboard();
+Texture texLoadTexture(const string& fileName);
 
