@@ -246,29 +246,6 @@ void Label::paint() const
   
   c.apply();
   wDrawText(x, y, width, height, 0.5f, 0.5f, label, font);
-  /*
-  if (font == NULL)
-  {
-    printf("Runtime warning: Label::paint(): No font is selected, aborting paint() method.\n");
-    return;
-  }
-  
-  glPushMatrix();
-  if (x < 0) glTranslatef(getWidth(), 0, 0);
-  if (y < 0) glTranslatef(0, getHeight(), 0);
-  
-  int lineWidth = fStringWidth(font, label.c_str()), lineHeight = fFontHeight(font);
-  float px = x + align_x*(width - lineWidth), py = y + height - align_y*(height - lineHeight);
-  
-  bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
-  glDisable(GL_DEPTH_TEST);
-  
-  glRasterPos2f(px, py);
-  
-  fDrawString(font, label.c_str());
-  
-  if (usedDepth) glEnable(GL_DEPTH_TEST);
-  glPopMatrix();*/
 }
 
 void Label::timerTick(float dTime) { }
@@ -579,23 +556,6 @@ void FloatyLabel::paint() const
   
   c.apply(1.0f - (curTime/totalTime));
   wDrawText(x, y + vertSpeed*curTime, width, height, 0.5f, 0.5f, label, font);
-/*  glPushMatrix();
-//  if (x < 0) glTranslatef(getWidth(), 0, 0);
-//  if (y < 0) glTranslatef(0, getHeight(), 0);
-  
-  int lineWidth = fStringWidth(font, label.c_str()), lineHeight = fFontHeight(font);
-  float px = x + align_x*(width - lineWidth),
-        py = y + height - align_y*(height - lineHeight) + vertSpeed*curTime;
-  
-  bool usedDepth = glIsEnabled(GL_DEPTH_TEST);
-  glDisable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  
-  glRasterPos2f(px, py);
-  fDrawString(font, label.c_str());
-  
-  if (usedDepth) glEnable(GL_DEPTH_TEST);
-  glPopMatrix();*/
 }
 
 void FloatyLabel::timerTick(float dTime)
@@ -629,5 +589,57 @@ bool FloatyLabel::operator==(const FloatyLabel& fl)
   return (x == fl.x) && (y == fl.y) &&
          (width == fl.width) && (height == fl.height) &&
          (getLabel() == fl.getLabel()) && (curTime == fl.curTime);
+}
+
+/* ********************* *
+ * ComboBox widget class *
+ * ********************* */
+ComboBox::ComboBox(int x, int y, int width, int height, Colour c, Font* font, int id) : Label(x, y, width, height, c, "-", font)
+{
+  this->id = id;
+  curOption = -1;
+}
+
+ComboBox::ComboBox(const ComboBox& cb) : Label(cb), options(cb.options), listeners(cb.listeners)
+{
+  curOption = cb.curOption;
+  id = cb.id;
+}
+
+void ComboBox::mouse(const SDL_MouseButtonEvent& mouse)
+{
+}
+
+void ComboBox::mouse(const SDL_MouseMotionEvent& mouse)
+{
+}
+
+void ComboBox::paint() const
+{
+}
+
+void ComboBox::addOption(string option)
+{
+  options.push_back(option);
+  if (curOption < 0)
+    curOption = 0;
+}
+
+void ComboBox::removeOption(string option)
+{
+  options.remove(option);
+  if (curOption >= (int)options.size())
+    curOption = options.size() - 1;
+  if (curOption < 0)
+    label = "-";
+  triggerRepaint();
+}
+
+string ComboBox::getSelectedOption() const
+{
+  if (curOption < 0)
+    return "";
+  else
+    return "something is selected"; // TODO: Fix this
 }
 

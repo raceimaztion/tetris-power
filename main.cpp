@@ -161,13 +161,13 @@ void timerTick()
   screenTimerTick(dTime);
   
   // Check to see if we need to load anything
-  if (!loaderDoneLoading())
+/*  if (!loaderDoneLoading())
   {
 #ifdef DEBUG
     printf("main.cpp: timerHandler: Running loader.\n");
 #endif
     loaderRunLoader();
-  }
+  }*/
   
   lastTime = curTime;
 }
@@ -227,6 +227,10 @@ int main(int argc, char **argv)
   // Create the play screen
   PlayScreen playScreen(PLAY_SCREEN);
   screenAddNew(playScreen, PLAY_SCREEN);
+  
+  // TEMP: Run the loader:
+  while (!loaderDoneLoading())
+    loaderRunLoader();
   
   bool running = true;
   SDL_Event event;

@@ -1,7 +1,7 @@
 OPTIONS = -Wall -c -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT# -DDEBUG
-HEADERS = common.h grid.h shapes.h mesh.h fonts.h widgets.h play.h texture.h shaders.h screen.h score.h
+HEADERS = common.h grid.h shapes.h mesh.h fonts.h widgets.h play.h texture.h screen.h score.h
 MAIN_ONLY_HEADERS = splash.h mainMenu.h
-MODULES = main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o texture.o shaders.o screen.o score.o
+MODULES = main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o texture.o screen.o score.o
 
 all: tetris
 
@@ -43,9 +43,6 @@ play.o: play.cpp $(HEADERS)
 
 texture.o: texture.cpp $(HEADERS)
 	g++ $(OPTIONS) texture.cpp
-
-shaders.o: shaders.cpp common.h
-	g++ $(OPTIONS) shaders.cpp
 
 screen.o: screen.cpp $(HEADERS)
 	g++ $(OPTIONS) screen.cpp

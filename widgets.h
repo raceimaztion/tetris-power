@@ -145,3 +145,35 @@ class FloatyLabel : public Label {
     bool operator==(const FloatyLabel& fl);
 };
 
+class ComboBoxCallback;
+class ComboBox : public Label {
+  protected:
+    list<string> options;
+    int curOption;
+    list<ComboBoxCallback*> listeners;
+    int id;
+  
+  public:
+    ComboBox(int x, int y, int width, int height, Colour c, Font* font, int id);
+    ComboBox(const ComboBox& cb);
+    
+    void mouse(const SDL_MouseButtonEvent& mouse);
+    void mouse(const SDL_MouseMotionEvent& mouse);
+    void paint() const;
+    
+    void addOption(string option);
+    void removeOption(string option);
+    bool hasOption(string option);
+    string getSelectedOption() const;
+    
+    void addListener(ComboBoxCallback* listener);
+    void removeListener(ComboBoxCallback* listener);
+    
+    int getID();
+};
+
+class ComboBoxCallback
+{
+  virtual void comboBoxOptionChanged(int comboID, string option);
+};
+
