@@ -8,6 +8,7 @@ class Texture {
     Texture();
     Texture(int texNum);
     Texture(SDL_Surface* surface);
+    Texture(SDL_Surface* surface, GLenum format);
     Texture(const Texture& t);
     ~Texture();
     
@@ -18,5 +19,7 @@ class Texture {
 };
 
 Texture texMakeCheckerboard();
+Texture texMakeCurveBorder(int width, int height, bool alpha=true);
 Texture texLoadTexture(const string& fileName);
+Texture texLoadCustomTexture(const string& fileName, GLenum format);
 

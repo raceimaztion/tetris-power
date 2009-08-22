@@ -49,7 +49,7 @@ class Controls {
 
 enum PlayState { PLAYING, DROPPING_BLOCK, WAITING };
 
-class PlayScreen : public Screen, public ButtonCallback, public Loadable, public GridListener {
+class PlayScreen : public Screen, public ButtonCallback, public GridListener {
   private:
     // Widgets
     Panel panel, floatables;
@@ -88,7 +88,7 @@ class PlayScreen : public Screen, public ButtonCallback, public Loadable, public
     void rowRemoved(int row);
     void gridEmpty();
     
-    void load();
+//    void load();
     
     void buttonCallback(const Button& b);
 };

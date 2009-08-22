@@ -187,11 +187,6 @@ void _screenRecursivePaint(int cur)
   screenStack.at(cur)->screenPaint();
 }
 
-void screenPaint()
-{
-  screenPaint(false);
-}
-
 void screenPaint(bool force)
 {
   if (screenStack.empty())

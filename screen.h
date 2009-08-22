@@ -66,11 +66,8 @@ void screenPop();
 */
 bool screenTimerTick(float dTime);
 
-// Send a repaint command to the screen stack if we need a repaint
-void screenPaint();
-
 // Send a repaint command to the screen stack, and force repaint if required
-void screenPaint(bool force);
+void screenPaint(bool force=false);
 
 // Check to see if we need to repaint the screen
 bool screenNeedsRepaint();

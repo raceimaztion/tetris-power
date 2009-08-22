@@ -9,19 +9,17 @@
 
 SplashScreen::SplashScreen(int screenID) : Screen(screenID),
                                            panel(0, 0, getWidth(), getHeight(), Colour(0)),
-                                           progress(getWidth()/4, getHeight() - 2*PROGRESS_HEIGHT,
-                                                    getWidth()/2, PROGRESS_HEIGHT,
-                                                    Colour(0.2f, 0.6f, 0.2f)),
                                            status(0, getHeight() - 2*PROGRESS_HEIGHT - 20,
                                                   getWidth(), 15,
-                                                  Colour(0.7f), "Loading...", fallbackFont),
+                                                  Colour(0.7f), "Click anywhere to continue.", fallbackFont),
                                            title(0, 20, getWidth(), 30,
                                                  Colour(0.6f), "Tetris-Power", largeFont)
 {
   // Nothing much to do here
-  panel.addChild(&progress);
   panel.addChild(&status);
   panel.addChild(&title);
+  
+  timerTick(0.0f);
 }
 
 SplashScreen::~SplashScreen()
@@ -31,24 +29,7 @@ SplashScreen::~SplashScreen()
 
 void SplashScreen::timerTick(float dTime)
 {
-  static bool done = false;
   // Nothing much to do here
-  if (!loaderDoneLoading() || (progress.getPercentage() < 1.0f))
-  {
-    progress.setPercentage(loaderGetProgress());
-    markRepaint();
-  }
-  else if (!done)
-  {
-    done = true;
-    status.setLabel("Click anywhere to continue.");
-    markRepaint();
-  }
-/*  else // TEMP:
-  {
-    if (!replaceWith(MAIN_MENU_SCREEN))
-      end();
-  }*/
   panel.timerTick(dTime);
 }
 
@@ -56,6 +37,7 @@ void SplashScreen::prepareForShow()
 {
   // Nothing much to do here
   glDisable(GL_DEPTH_TEST);
+  glClearColor(0.5f, 0.4f, 0.2f, 1.0f);
 }
 
 void SplashScreen::prepareForHide()
@@ -65,49 +47,22 @@ void SplashScreen::prepareForHide()
 
 void SplashScreen::screenPaint() const
 {
-  // Draw some fancy background
-  glColor3f(0.5f, 0.4f, 0.2f);
-  glBegin(GL_QUADS);
-    glVertex2f(0, 0);
-    glVertex2f(0, getHeight());
-    glVertex2f(getWidth(), getHeight());
-    glVertex2f(getWidth(), 0);
-  glEnd();
+  // TODO: Draw some fancy background
   
   panel.paint();
+  
+  comDrawRoundRect(20, 20, 100, 100, 10.0f, Colour(0.7f));
 }
 
 void SplashScreen::keyboard(const SDL_KeyboardEvent &key)
 {
   if (key.keysym.scancode && !replaceWith(MAIN_MENU_SCREEN))
     end();
-  
-#ifdef DEBUG
-  printf("Splash debug: Keyboard event:\n");
-  if (key.type == SDL_KEYDOWN)
-    printf("Event type: Key down.\n");
-  else if (key.type == SDL_KEYUP)
-    printf("Event type: Key up.\n");
-  else
-    printf("Event type: Unknown.\n");
-  printf("Key scancode: %d\n", key.keysym.scancode);
-#endif
 }
 
 void SplashScreen::mouseButton(const SDL_MouseButtonEvent &mouse)
 {
-#ifdef DEBUG
-  printf("Splash debug: Mouse button event:\n");
-  if (mouse.type == SDL_MOUSEBUTTONDOWN)
-    printf("Event type: Mouse button down.\n");
-  else if (mouse.type == SDL_MOUSEBUTTONUP)
-    printf("Event type: Mouse button up.\n");
-  else
-    printf("Event type: Unknown.\n");
-  printf("Mouse position: %d, %d\n", mouse.x, mouse.y);
-#endif
-  
-  if (mouse.type == SDL_MOUSEBUTTONUP && !replaceWith(MAIN_MENU_SCREEN))
+//  if (mouse.type == SDL_MOUSEBUTTONUP && !replaceWith(MAIN_MENU_SCREEN))
     end();
 }
 

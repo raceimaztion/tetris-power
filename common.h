@@ -1,8 +1,6 @@
 #ifndef COMMON_HEADER
 #define COMMON_HEADER
 
-#define NO_SDL_GLEXT
-
 // System library includes
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,8 +23,8 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "SDL_image.h"
-#include "SDL_mixer.h"
-#include "GL/glext.h"
+//#include "SDL_mixer.h"
+//#include "GL/glext.h"
 
 using namespace std;
 
@@ -203,46 +201,6 @@ class Camera {
     bool animate(float dTime);
 };
 
-/* ********************** *
- * Loading-system related *
- * ********************** */
-class Loadable {
-  private:
-    string name;
-    void (*loadingFunction)();
-    bool done;
-    
-    virtual void load();
-    
-  public:
-    Loadable(string name);
-    Loadable(string name, void (*loadingFunction)());
-    unsigned int getNumItems() const;
-    
-    string getName() const;
-    bool isDone() const;
-    
-    void loadItems();
-};
-
-// Add a loader to the list
-void loaderAddLoader(Loadable* loader);
-
-/*
-  Start loading stuff
-  Note: This must be called multiple times until loaderDoneLoading() returns true
-*/
-void loaderRunLoader();
-
-// Find out how done we are
-float loaderGetProgress();
-
-// If we're done loading everything
-bool loaderDoneLoading();
-
-// Find out how many things we're loading
-int loaderLoaderCount();
-
 /* ******************************* *
  * Some generally useful functions *
  * ******************************* */
@@ -259,7 +217,6 @@ Position operator/(const Position& p, float s);
 
 // Drawing-related
 void comDrawCube(float x, float y, float size, float rotation);
-void comDrawSphere(float x, float y, float size, float rotation);
 void comDrawBlock(float x, float y, float size, float rotation);
 void comDrawTexturedCube(float x, float y, float size, float rotation);
 
@@ -283,6 +240,8 @@ void triggerRepaint();
 // Drawing-related
 void comDrawRect(int x, int y, int width, int height);
 void comFillRect(int x, int y, int width, int height);
+void comDrawRoundRect(int x, int y, int width, int height, float thickness, Colour c);
+//void comFillRoundRect(int x, int y, int width, int height);
 
 void comInit();
 
@@ -327,7 +286,6 @@ template<class T> inline T minMag(T a, T b)
     return b;
 }
 
-
 /*
   Screen ID codes:
 */
@@ -367,6 +325,10 @@ template<class T> inline T minMag(T a, T b)
 
 GLOBAL Font *fallbackFont;
 GLOBAL Font *largeFont;
+
+#ifndef GL_VERSION_1_1
+#define glBindTexture(A,B) glBindTextureEXT(A,B)
+#endif
 
 #endif
 

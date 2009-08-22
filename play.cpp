@@ -16,7 +16,6 @@ const Colour BLOCK_COLOUR(0.5f, 0.4f, 0.3f),
 
 // Main PlayScreen:
 PlayScreen::PlayScreen(int screenID) : Screen(screenID),
-                                       Loadable("Backdrop"),
                                        panel(0, 0, getWidth(), getHeight(), Colour(0)),
                                        floatables(0, 0, getWidth(), getHeight(), Colour(0)),
                                        menu(getWidth()-MENU_BUTTON_WIDTH-2, getHeight()-MENU_BUTTON_HEIGHT-2,
@@ -32,7 +31,6 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                        controls(0.25f)
 {
   // Need to load a bunch of stuff here
-  loaderAddLoader(this);
   state = PLAYING;
   dropTime = ROW_DROP_TIME;
   
@@ -44,6 +42,10 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
   menu.addCallback(this);
   grid.addListener(this);
   
+  // Load the backdrop
+  Mesh::loadWavefrontObjectFile(&backdrop, "objects/backdrop.obj");
+  
+  // Set up the shapes
   shape.setGrid(&grid);
   shape.prepForUse();
   
@@ -288,12 +290,6 @@ void PlayScreen::gridEmpty()
   floatables.addChild(&floatingLabels.back());
   
   scoreAdd(150);
-}
-
-void PlayScreen::load()
-{
-  // Load the backdrop
-  Mesh::loadWavefrontObjectFile(&backdrop, "objects/backdrop.obj");
 }
 
 /*

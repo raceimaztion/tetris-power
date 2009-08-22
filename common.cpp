@@ -4,6 +4,7 @@
 // Variables private to the Common module
 Mesh cube;
 Texture cubeTex;
+Texture curveBorder, curveBackground;
 
 /* ************ *
  * Colour class *
@@ -493,76 +494,6 @@ bool Bezier3D::isFlat() const
   return x.isFlat() && y.isFlat() && z.isFlat();
 }
 
-/* ********************** *
- * Loading-system related *
- * ********************** */
-Loadable::Loadable(string name)
-{
-  this->name = name;
-  loadingFunction = NULL;
-  done = false;
-}
-
-Loadable::Loadable(string name, void (*loadingFunction)())
-{
-  this->name = name;
-  this->loadingFunction = loadingFunction;
-  done = false;
-}
-
-string Loadable::getName() const
-{
-  return name;
-}
-
-bool Loadable::isDone() const
-{
-  return done;
-}
-
-void Loadable::loadItems()
-{
-  if (loadingFunction != NULL)
-    loadingFunction();
-  load();
-}
-
-void Loadable::load() { }
-
-// Private variables fro the loader
-vector<Loadable*> _loaderList;
-unsigned int _loaderCurrentLoader = 0;
-float _loaderPercentageDone = 0.0f;
-
-// Add a loader class to the loading system
-void loaderAddLoader(Loadable* loader)
-{
-  _loaderList.push_back(loader);
-  
-}
-
-void loaderRunLoader()
-{
-  if (_loaderPercentageDone >= 1.0f)
-    return;
-  
-  if (_loaderCurrentLoader >= _loaderList.size())
-    return;
-  
-  _loaderList.at(_loaderCurrentLoader ++)->loadItems();
-  _loaderPercentageDone = (float)_loaderCurrentLoader / _loaderList.size();
-}
-
-float loaderGetProgress()
-{
-  return _loaderPercentageDone;
-}
-
-bool loaderDoneLoading()
-{
-  return _loaderCurrentLoader >= _loaderList.size();
-}
-
 /* ******************************* *
  * Some generally-useful functions *
  * ******************************* */
@@ -612,18 +543,6 @@ void comDrawCube(float x, float y, float scale, float rotation)
   glScalef(scale, scale, scale);
   glRotatef(rotation, 0, 1, 0);
   cube.render();
-  
-  glPopMatrix();
-}
-
-void comDrawSphere(float x, float y, float scale, float rotation)
-{
-  glPushMatrix();
-  
-  glTranslatef(x + 0.5f, 0.0f, y + 0.5f);
-  glScalef(scale, scale, scale);
-  
-  // TODO: Add code here to draw an appropriate sphere
   
   glPopMatrix();
 }
@@ -746,8 +665,7 @@ vector<string> comSplitString(string str, const string& delim)
   unsigned int cut;
   while ((cut = str.find_first_of(delim)) != string::npos)
   {
-//    if (cut > 0)
-      results.push_back(str.substr(0, cut));
+    results.push_back(str.substr(0, cut));
     str = str.substr(cut+1);
   }
   if (str.length() > 0)
@@ -777,42 +695,77 @@ void comFillRect(int x, int y, int width, int height)
   glEnd();
 }
 
-void comLoader()
+void comDrawRoundRect(int x, int y, int width, int height, float thickness, Colour c)
 {
-  printf("Running common module loader...\n");
+  float thick = 0.5f*thickness;
+  float x1, x2, x3, x4;
+  float y1, y2, y3, y4;
+  x1 = x - thick;
+  x2 = x + thick;
+  x3 = x + width - thick;
+  x4 = x + width + thick;
+  y1 = y - thick;
+  y2 = y + thick;
+  y3 = y + height - thick;
+  y4 = y + height + thick;
   
-  Mesh::loadWavefrontObjectFile(&cube, "objects/block8.obj");
-  /*
-  {
-//    SDL_Surface* surface = IMG_Load("textures/block-normals.png");
-//    SDL_Surface* surface = IMG_Load("textures/checkerboard.png");
-    if (surface == NULL)
-      printf("Runtime warning: Failed to load cube texture from 'textures/block-normals.png'.\n");
-    else
-    {
-      cubeTex = Texture(surface);
-      printf("Common texture number: %d\n", cubeTex.getTextureIndex());
-      SDL_FreeSurface(surface);
-    }
-  }
-  //*/
-//  cubeTex = texMakeCheckerboard();
-  if (cubeTex.isValid())
-    printf("Common texture is valid.\n");
-  else
-    printf("Common texture is invalid!\n");
-  
-  printf("Finished common module loader.\n");
-} // end comLoader()
+  c.apply();
+  curveBorder.applyTexture();
+  glBegin(GL_QUADS);
+    // Top-left quad
+    glTexCoord2f(1, 1); glVertex2f(x1, y1);
+    glTexCoord2f(1, 0); glVertex2f(x1, y2);
+    glTexCoord2f(0, 0); glVertex2f(x2, y2);
+    glTexCoord2f(0, 1); glVertex2f(x2, y1);
+    // Top-center quad
+    glTexCoord2f(0, 1); glVertex2f(x2, y1);
+    glTexCoord2f(0, 0); glVertex2f(x2, y2);
+    glTexCoord2f(0, 0); glVertex2f(x3, y2);
+    glTexCoord2f(0, 1); glVertex2f(x3, y1);
+    // Top-right quad
+    glTexCoord2f(0, 1); glVertex2f(x3, y1);
+    glTexCoord2f(0, 0); glVertex2f(x3, y2);
+    glTexCoord2f(1, 0); glVertex2f(x4, y2);
+    glTexCoord2f(1, 1); glVertex2f(x4, y1);
+    // Center-left quad
+    glTexCoord2f(1, 0); glVertex2f(x1, y2);
+    glTexCoord2f(1, 0); glVertex2f(x1, y3);
+    glTexCoord2f(0, 0); glVertex2f(x2, y3);
+    glTexCoord2f(0, 0); glVertex2f(x2, y2);
+    // Center quad (Do we need this one?)
+    // Center-right quad
+    glTexCoord2f(0, 0); glVertex2f(x3, y2);
+    glTexCoord2f(0, 0); glVertex2f(x3, y3);
+    glTexCoord2f(1, 0); glVertex2f(x4, y3);
+    glTexCoord2f(1, 0); glVertex2f(x4, y2);
+    // Bottom-left quad
+    glTexCoord2f(1, 0); glVertex2f(x1, y3);
+    glTexCoord2f(1, 1); glVertex2f(x1, y4);
+    glTexCoord2f(0, 1); glVertex2f(x2, y4);
+    glTexCoord2f(0, 0); glVertex2f(x2, y3);
+    // Bottom-center quad
+    glTexCoord2f(0, 0); glVertex2f(x2, y3);
+    glTexCoord2f(0, 1); glVertex2f(x2, y4);
+    glTexCoord2f(0, 1); glVertex2f(x3, y4);
+    glTexCoord2f(0, 0); glVertex2f(x3, y3);
+    // Bottom-right quad
+    glTexCoord2f(0, 0); glVertex2f(x3, y3);
+    glTexCoord2f(0, 1); glVertex2f(x3, y4);
+    glTexCoord2f(1, 1); glVertex2f(x4, y4);
+    glTexCoord2f(1, 0); glVertex2f(x4, y3);
+  glEnd();
+}
 
 void comInit()
 {
-//  static Loadable cload("Common files", comLoader);
-//  loaderAddLoader(&cload);
-  
-//  cubeTex = texMakeCheckerboard();
+  Mesh::loadWavefrontObjectFile(&cube, "objects/block8.obj");
   cubeTex = texLoadTexture("textures/block-normals.png");
-  comLoader();
+  if (cubeTex.isValid())
+    printf("Cube texture is valid.\n");
+  else
+    printf("Cube texture is invalid!\n");
+  curveBorder = texMakeCurveBorder(256, 256, true);
+//  curveBackground = texLoadCustomTexture("textures/curve-background.png", GL_LUMINANCE_ALPHA);
 }
 
 

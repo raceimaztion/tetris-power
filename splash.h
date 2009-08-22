@@ -6,7 +6,6 @@
 class SplashScreen : public Screen {
   private:
     Panel panel;
-    ProgressMeter progress;
     Label status, title;
     
   public:

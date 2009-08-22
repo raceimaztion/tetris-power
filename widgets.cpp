@@ -53,10 +53,11 @@ void _wDrawGradientRect(int x, int y, int width, int height, Colour c)
 // Handy rectangle-drawing functions
 void wDrawRect(int x, int y, int width, int height, Colour c)
 {
-  glBegin(GL_LINE_LOOP);
+  comDrawRoundRect(x, y, width, height, 5.0f, c);
+//  glBegin(GL_LINE_LOOP);
 //  _wDrawBeveledRect(x, y, width, height);
-  _wDrawGradientRect(x, y, width, height, c);
-  glEnd();
+//  _wDrawGradientRect(x, y, width, height, c);
+//  glEnd();
 }
 
 void wFillRect(int x, int y, int width, int height, Colour c)

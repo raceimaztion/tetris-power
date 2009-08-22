@@ -16,22 +16,21 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   }
   atexit(SDL_Quit);
   
-  // Set up pre-window OpenGL parameters
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-  
+  // Set up pre-window OpenGL parameters:
   //8-bits for each Red, Green, Blue, and Alpha plane
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
   
-  //24-bits for the depth buffer and enable double-buffering
+  // 24-bits for the depth buffer and enable double-buffering
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   
   // Try to enable multisampling (anti-aliasing)
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+  int samples = 4;
   
   // Now set the video mode
   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
@@ -39,6 +38,7 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   {
     // If we don't get 4 samples, try 2
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+    samples = 2;
     screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
     
     if (screen == NULL)
@@ -46,6 +46,7 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
       printf("Warning: Failed to create screen with anti-aliasing, falling back to regular rendering.\n");
       SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
       SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+      samples = 0;
     
       screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
       if (screen == NULL)
@@ -58,31 +59,25 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   
   // Set up post-window OpenGL parameters
   // enable multisampling
-//  glEnable(GL_MULTISAMPLE);
+  if (samples > 0)
+    glEnable(GL_MULTISAMPLE);
   // set the background colour
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-  // set the viewport to fill the window
-  glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-  // clear the screen
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // enable alpha blending
   glEnable(GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  // set things up for our font engine
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
-  glPixelStorei(GL_UNPACK_LSB_FIRST, GL_TRUE);
   // Cull backfaces
 //  glCullFace(GL_BACK);
 //  glEnable(GL_CULL_FACE);
   // Make sure our specular highlights are visible
 //  glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
-//  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_TEXTURE_2D);
 //  glEnable(GL_DEPTH_TEST);
   
   return true;
 } // end initVideo()
 
+/*
 bool initAudio()
 {
   if (SDL_Init(SDL_INIT_AUDIO) < 0)
@@ -99,6 +94,7 @@ bool initAudio()
   
   return true;
 }
+*/
 
 void toggleFullscreen()
 {
@@ -160,16 +156,17 @@ void timerTick()
   // Process stuff here
   screenTimerTick(dTime);
   
-  // Check to see if we need to load anything
-/*  if (!loaderDoneLoading())
-  {
-#ifdef DEBUG
-    printf("main.cpp: timerHandler: Running loader.\n");
-#endif
-    loaderRunLoader();
-  }*/
-  
   lastTime = curTime;
+}
+
+void doRepaint()
+{
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+//  glOrtho(0, window->w, window->h, 0, -1, 1);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
 }
 
 /* *************** *
@@ -195,6 +192,14 @@ int main(int argc, char **argv)
   if (!initVideo())
     exit(1);
   
+  {
+    const char* version = (const char*)glGetString(GL_VERSION);
+    if (version != NULL)
+      printf("Using OpenGL version %s.\n", version);
+    else
+      printf("OpenGL version number not avaiable.\n");
+  }
+  
 /*  if (SDL_Init(SDL_INIT_TIMER) < 0)
   {
     fprintf(stderr, "Error: Failed to initialize SDL timer system.\nError was: %s.\n", SDL_GetError());
@@ -210,10 +215,14 @@ int main(int argc, char **argv)
   SDL_WM_SetCaption("Tetris Power", "Tetris Power");
   
   // Start the internal loaders
-  loadFonts();
   comInit();
   if (!shInit())
     exit(1);
+  // Set things up for our font engine
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
+  glPixelStorei(GL_UNPACK_LSB_FIRST, GL_TRUE);
+  loadFonts();
   
   // Create the splash screen
   SplashScreen splash(SPLASH_SCREEN);
@@ -227,10 +236,6 @@ int main(int argc, char **argv)
   // Create the play screen
   PlayScreen playScreen(PLAY_SCREEN);
   screenAddNew(playScreen, PLAY_SCREEN);
-  
-  // TEMP: Run the loader:
-  while (!loaderDoneLoading())
-    loaderRunLoader();
   
   bool running = true;
   SDL_Event event;
