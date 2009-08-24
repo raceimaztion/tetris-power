@@ -50,8 +50,6 @@ void SplashScreen::screenPaint() const
   // TODO: Draw some fancy background
   
   panel.paint();
-  
-  comDrawRoundRect(20, 20, 100, 100, 10.0f, Colour(0.7f));
 }
 
 void SplashScreen::keyboard(const SDL_KeyboardEvent &key)
@@ -62,7 +60,7 @@ void SplashScreen::keyboard(const SDL_KeyboardEvent &key)
 
 void SplashScreen::mouseButton(const SDL_MouseButtonEvent &mouse)
 {
-//  if (mouse.type == SDL_MOUSEBUTTONUP && !replaceWith(MAIN_MENU_SCREEN))
+  if (mouse.type == SDL_MOUSEBUTTONUP && !replaceWith(MAIN_MENU_SCREEN))
     end();
 }
 

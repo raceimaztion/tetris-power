@@ -24,7 +24,7 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
   
   // 24-bits for the depth buffer and enable double-buffering
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+//  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   
   // Try to enable multisampling (anti-aliasing)
@@ -62,7 +62,7 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
   if (samples > 0)
     glEnable(GL_MULTISAMPLE);
   // set the background colour
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   // enable alpha blending
   glEnable(GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -71,8 +71,8 @@ bool initVideo(Uint32 flags = SDL_OPENGL)
 //  glEnable(GL_CULL_FACE);
   // Make sure our specular highlights are visible
 //  glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
-  glEnable(GL_TEXTURE_2D);
-//  glEnable(GL_DEPTH_TEST);
+//  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_DEPTH_TEST);
   
   return true;
 } // end initVideo()
@@ -159,16 +159,6 @@ void timerTick()
   lastTime = curTime;
 }
 
-void doRepaint()
-{
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-//  glOrtho(0, window->w, window->h, 0, -1, 1);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
-}
-
 /* *************** *
  * Thread function *
  * *************** */
@@ -200,29 +190,21 @@ int main(int argc, char **argv)
       printf("OpenGL version number not avaiable.\n");
   }
   
-/*  if (SDL_Init(SDL_INIT_TIMER) < 0)
-  {
-    fprintf(stderr, "Error: Failed to initialize SDL timer system.\nError was: %s.\n", SDL_GetError());
-    exit(1);
-  }*/
-  
-  for (int i=0; i < 323; i++)
-    keys_pressed[i] = 0;
-  num_keys_pressed = 0;
   win_width = SCREEN_WIDTH;
   win_height = SCREEN_HEIGHT;
   
   SDL_WM_SetCaption("Tetris Power", "Tetris Power");
   
-  // Start the internal loaders
-  comInit();
-  if (!shInit())
-    exit(1);
   // Set things up for our font engine
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
   glPixelStorei(GL_UNPACK_LSB_FIRST, GL_TRUE);
   loadFonts();
+  
+  // Start the internal loaders
+  comInit();
+  if (!shInit())
+    exit(1);
   
   // Create the splash screen
   SplashScreen splash(SPLASH_SCREEN);
@@ -239,9 +221,6 @@ int main(int argc, char **argv)
   
   bool running = true;
   SDL_Event event;
-  
-  // Set up our timer system
-//  SDL_AddTimer(TIMER_TICK, timerHandler, NULL);
   
   // The main game loop
   while (running)
@@ -271,6 +250,7 @@ int main(int argc, char **argv)
         
         case SDL_VIDEOEXPOSE:
         case SDL_VIDEORESIZE:
+//          doRepaint();
           screenPaint(true);
           break;
         
@@ -294,6 +274,7 @@ int main(int argc, char **argv)
     else
     { // Repaint things if we need it
       screenPaint(needsRepaint);
+//      doRepaint();
       needsRepaint = false;
     }
   }

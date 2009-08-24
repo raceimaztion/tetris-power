@@ -1,5 +1,7 @@
 #include "common.h"
 
+#define _CURVE_BACKGROUND_THICKNESS 0.1f
+
 Texture::Texture()
 {
   textureNumber = 0;
@@ -193,8 +195,7 @@ Texture::Texture(const Texture& t)
 
 Texture::~Texture()
 {
-  if (valid)
-    glDeleteTextures(1, &textureNumber);
+//  if (valid) glDeleteTextures(1, &textureNumber);
 }
 
 void Texture::applyTexture() const
@@ -209,8 +210,8 @@ void Texture::applyTexture() const
     printf("Applying texture number %d.\n", textureNumber);
 #endif
   
-  glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, textureNumber);
+  glEnable(GL_TEXTURE_2D);
 }
 
 void Texture::cancelTextures()
@@ -315,17 +316,64 @@ Texture texMakeCurveBorder(int width, int height, bool alpha)
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   
-  return Texture(index);
-/*  if (glIsTexture(index))
-  {
-    printf("Created texture with index %d and it seems valid.\n", index);
-    return index;
-  }
+  if (glIsTexture(index))
+    printf("Created curve-border texture with index %d and it seems valid.\n", index);
   else
+    printf("Created curve-border texture with index %d and it doesn't seem valid. Attempting to use it anyway.\n", index);
+  return Texture(index);
+}
+
+Texture texMakeCurveBackground(int width, int height, bool alpha)
+{
+  float samples[width*height], sample;
+  GLubyte image[width*height*2];
+  float fx, fy;
+  for (int x=0; x < width; x++)
   {
-    printf("Created texture with index %d and it doesn't seem valid. Attempting to use it anyway.\n", index);
-    return index;
-  }*/
+    fx = (float)x/(width-1);
+    for (int y=0; y < height; y++)
+    {
+      fy = (float)y/(height-1);
+      samples[x+y*width] = sqrtf(fx*fx + fy*fy);
+    }
+  }
+  GLubyte b;
+  for (int x=0; x < width; x++)
+    for (int y=0; y < height; y++)
+    {
+      sample = samples[x+y*width];
+      sample = _CURVE_BACKGROUND_THICKNESS*sample + 0.5f - 0.5f*_CURVE_BACKGROUND_THICKNESS;
+      b = (GLubyte)(255*max(0.0f, min(1.0f, sample)));
+      if (alpha)
+      {
+        image[2*(x+y*width)] = 255;
+        image[2*(x+y*width)+1] = b;
+      }
+      else
+        image[x+y*width] = b;
+    }
+  
+  GLuint index;
+  printf("Asking for texture.\n");
+  glGenTextures(1, &index);
+  
+  glBindTexture(GL_TEXTURE_2D, index);
+  
+  if (alpha)
+    glTexImage2D(GL_TEXTURE_2D, 0, 2, width, height, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, image);
+  else
+    glTexImage2D(GL_TEXTURE_2D, 0, 2, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, image);
+  
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  
+  if (glIsTexture(index))
+    printf("Created curve-background texture with index %d and it seems valid.\n", index);
+  else
+    printf("Created curve-background texture with index %d and it doesn't seem valid. Attempting to use it anyway.\n", index);
+  return Texture(index);
 }
 
 Texture texLoadTexture(const string& fileName)

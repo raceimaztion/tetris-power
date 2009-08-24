@@ -20,6 +20,7 @@ class Texture {
 
 Texture texMakeCheckerboard();
 Texture texMakeCurveBorder(int width, int height, bool alpha=true);
+Texture texMakeCurveBackground(int width, int height, bool alpha=true);
 Texture texLoadTexture(const string& fileName);
 Texture texLoadCustomTexture(const string& fileName, GLenum format);
 

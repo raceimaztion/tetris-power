@@ -7,6 +7,8 @@
 #define BEVEL_BOTTOM_LEFT
 #define BEVEL_MAX 20
 
+#define _BORDER_THICKNESS 2.0f
+
 void _wDrawBeveledRect(int x, int y, int width, int height)
 {
   int bevel = min(min(width, height), BEVEL_MAX) / 2;
@@ -53,7 +55,7 @@ void _wDrawGradientRect(int x, int y, int width, int height, Colour c)
 // Handy rectangle-drawing functions
 void wDrawRect(int x, int y, int width, int height, Colour c)
 {
-  comDrawRoundRect(x, y, width, height, 5.0f, c);
+  comDrawRoundRect(x, y, width, height, _BORDER_THICKNESS, c);
 //  glBegin(GL_LINE_LOOP);
 //  _wDrawBeveledRect(x, y, width, height);
 //  _wDrawGradientRect(x, y, width, height, c);
@@ -62,22 +64,18 @@ void wDrawRect(int x, int y, int width, int height, Colour c)
 
 void wFillRect(int x, int y, int width, int height, Colour c)
 {
-  glBegin(GL_POLYGON);
+  comFillRoundRect(x, y, width, height, _BORDER_THICKNESS, c);
+//  glBegin(GL_POLYGON);
 //  _wDrawBeveledRect(x, y, width, height);
-  _wDrawGradientRect(x, y, width, height, c);
-  glEnd();
-}
-
-void wDrawText(float x, float y, const string& text, Font* font)
-{
-  
+//  _wDrawGradientRect(x, y, width, height, c);
+//  glEnd();
 }
 
 void wDrawText(float x, float y, float width, float height, float align_x, float align_y, const string& text, Font* font)
 {
   if (font == NULL)
   {
-    printf("Runtime warning: Label::paint(): No font is selected, aborting paint() method.\n");
+    printf("Runtime warning: wDrawText(): No font is selected, aborting paint() method.\n");
     return;
   }
   
@@ -91,6 +89,11 @@ void wDrawText(float x, float y, float width, float height, float align_x, float
   fDrawString(font, text.c_str());
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
+}
+
+void wDrawText(float x, float y, const string& text, Font* font)
+{
+  wDrawText(x, y, 0, 0, 0.5, 0.5f, text, font);
 }
 
 /* ***************** *

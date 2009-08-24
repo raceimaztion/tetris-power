@@ -18,25 +18,9 @@ void initGL(int samples);
 void loadImage()
 {
   printf("Loading texture(s)...\n");
-  /*
-  {
-    SDL_Surface* surface = IMG_Load("textures/block-normals.png");
-//    SDL_Surface* surface = IMG_Load("textures/checkerboard.png");
-//    SDL_Surface* surface = IMG_Load("textures/nehe.bmp");
-    if (surface != NULL)
-    {
-      tex = Texture(surface);
-      SDL_FreeSurface(surface);
-    }
-    else
-    {
-      printf("Failed to load texture! Quitting...\n");
-      exit(1);
-    }
-  }
-  //*/
-//  tex = texMakeCheckerboard();
-  tex = texLoadTexture("textures/nehe.bmp");
+//  tex = texLoadTexture("textures/nehe.bmp");
+  tex = texLoadTexture("textures/block-normals.png");
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
   
   printf("Finished loading texture(s).\n");
 }
@@ -93,7 +77,7 @@ bool initVideo()
 //  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
   
   //24-bits for the depth buffer and enable double-buffering
-//  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   
   // Try to enable multisampling (anti-aliasing)
@@ -112,9 +96,9 @@ bool initVideo()
     
     if (screen == NULL)
     {
-      printf("Warning: Failed to create screen with anti-aliasing, falling back to regular rendering.\n");*/
+      printf("Warning: Failed to create screen with anti-aliasing, falling back to regular rendering.\n");
       SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
-      SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+      SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);*/
       samples = 0;
     
       screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
@@ -126,7 +110,7 @@ bool initVideo()
 /*    } // end if try 2 samples
   } // end if try 4 samples*/
   
-  loadImage();
+//  loadImage();
   
   // Set up post-window OpenGL parameters
   initGL(samples);
@@ -150,8 +134,8 @@ void initGL(int samples)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
   // enable alpha blending
-//  glEnable (GL_BLEND);
-//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
   // set things up for our font engine
 //  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -166,10 +150,9 @@ void initGL(int samples)
 //  glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
   
 //  glEnable(GL_TEXTURE_2D);
-//  glShadeModel(GL_SMOOTH);
   
   // Set up depth testing
-//  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_DEPTH_TEST);
 //  glDepthFunc(GL_LEQUAL);
 //  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 }
@@ -185,6 +168,7 @@ void toggleFullscreen()
 void render()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glColor3f(1, 1, 1);
   
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
@@ -195,21 +179,19 @@ void render()
   glPushMatrix();
   glLoadIdentity();
   
-  gluLookAt(2, -5, 3,   // Eye location
-            0, 0, 0,     // Target
-            2, -5, 4);  // Up
+  gluLookAt(0, 0, 0,   // Eye location
+            0, 1, 0,     // Target
+            0, 0, 1);  // Up
+  glTranslatef(0, 10, 0);
   
   glMatrixMode(GL_TEXTURE);
   glLoadIdentity();
   glMatrixMode(GL_MODELVIEW);
   
-//  light.apply(GL_LIGHT0);
-//  CUBE_COLOUR.applyMaterial();
   tex.applyTexture();
-//  glBindTexture(GL_TEXTURE_2D, tex.getTextureIndex());
-  
-  //mesh.render(true);
-  //*
+  mesh.render(true);
+  glDisable(GL_TEXTURE_2D);
+  /*
   glBegin(GL_QUADS);
     glNormal3f(0.0f, 0.0f, 1.0f); glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 0.0f);
     glNormal3f(0.0f, 0.0f, 1.0f); glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 0.0f);
@@ -218,7 +200,9 @@ void render()
   glEnd();
   //*/
   
-//  glFlush();
+//  comFillRoundRect(-1, -1, 2, 2, 1.0f, Colour(0.5f, 0.8f, 0.4f));
+  
+  glFlush();
   SDL_GL_SwapBuffers();
   
   glPopMatrix();
@@ -233,7 +217,7 @@ int main()
     exit(1);
   
   // *** Load textures here ***
-//  loadImage();
+  loadImage();
   
   // ****** Load all needed stuff here ******
 //  Mesh::loadWavefrontObjectFile(&mesh, "objects/plane.obj");

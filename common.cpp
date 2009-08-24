@@ -1,6 +1,8 @@
 #define COMMON_MODULE
 #include "common.h"
 
+#define _TEXTURE_SIZE 128
+
 // Variables private to the Common module
 Mesh cube;
 Texture cubeTex;
@@ -554,14 +556,15 @@ void comDrawBlock(float x, float y, float scale, float rotation)
 
 void comDrawTexturedCube(float x, float y, float scale, float rotation)
 {
-  cubeTex.applyTexture();
   glPushMatrix();
   
   glTranslatef(x + 0.5f, 0.0f, y + 0.5f);
   glScalef(scale, scale, scale);
   glRotatef(rotation, 0, 1, 0);
   
+  cubeTex.applyTexture();
   cube.render(true);
+  glDisable(GL_TEXTURE_2D);
   
   glPopMatrix();
 }
@@ -754,6 +757,74 @@ void comDrawRoundRect(int x, int y, int width, int height, float thickness, Colo
     glTexCoord2f(1, 1); glVertex2f(x4, y4);
     glTexCoord2f(1, 0); glVertex2f(x4, y3);
   glEnd();
+  glDisable(GL_TEXTURE_2D);
+}
+
+void comFillRoundRect(int x, int y, int width, int height, float thickness, Colour c)
+{
+  float thick = 0.5f*thickness;
+  float x1, x2, x3, x4;
+  float y1, y2, y3, y4;
+  x1 = x - thick;
+  x2 = x + thick;
+  x3 = x + width - thick;
+  x4 = x + width + thick;
+  y1 = y - thick;
+  y2 = y + thick;
+  y3 = y + height - thick;
+  y4 = y + height + thick;
+  
+  c.apply();
+  curveBackground.applyTexture();
+  glBegin(GL_QUADS);
+    // Top-left quad
+    glTexCoord2f(1, 1); glVertex2f(x1, y1);
+    glTexCoord2f(1, 0); glVertex2f(x1, y2);
+    glTexCoord2f(0, 0); glVertex2f(x2, y2);
+    glTexCoord2f(0, 1); glVertex2f(x2, y1);
+    // Top-center quad
+    glTexCoord2f(0, 1); glVertex2f(x2, y1);
+    glTexCoord2f(0, 0); glVertex2f(x2, y2);
+    glTexCoord2f(0, 0); glVertex2f(x3, y2);
+    glTexCoord2f(0, 1); glVertex2f(x3, y1);
+    // Top-right quad
+    glTexCoord2f(0, 1); glVertex2f(x3, y1);
+    glTexCoord2f(0, 0); glVertex2f(x3, y2);
+    glTexCoord2f(1, 0); glVertex2f(x4, y2);
+    glTexCoord2f(1, 1); glVertex2f(x4, y1);
+    // Center-left quad
+    glTexCoord2f(1, 0); glVertex2f(x1, y2);
+    glTexCoord2f(1, 0); glVertex2f(x1, y3);
+    glTexCoord2f(0, 0); glVertex2f(x2, y3);
+    glTexCoord2f(0, 0); glVertex2f(x2, y2);
+    // Center quad
+    glTexCoord2f(0, 0);
+    glVertex2f(x2, y3);
+    glVertex2f(x2, y2);
+    glVertex2f(x3, y2);
+    glVertex2f(x3, y3);
+    // Center-right quad
+    glTexCoord2f(0, 0); glVertex2f(x3, y2);
+    glTexCoord2f(0, 0); glVertex2f(x3, y3);
+    glTexCoord2f(1, 0); glVertex2f(x4, y3);
+    glTexCoord2f(1, 0); glVertex2f(x4, y2);
+    // Bottom-left quad
+    glTexCoord2f(1, 0); glVertex2f(x1, y3);
+    glTexCoord2f(1, 1); glVertex2f(x1, y4);
+    glTexCoord2f(0, 1); glVertex2f(x2, y4);
+    glTexCoord2f(0, 0); glVertex2f(x2, y3);
+    // Bottom-center quad
+    glTexCoord2f(0, 0); glVertex2f(x2, y3);
+    glTexCoord2f(0, 1); glVertex2f(x2, y4);
+    glTexCoord2f(0, 1); glVertex2f(x3, y4);
+    glTexCoord2f(0, 0); glVertex2f(x3, y3);
+    // Bottom-right quad
+    glTexCoord2f(0, 0); glVertex2f(x3, y3);
+    glTexCoord2f(0, 1); glVertex2f(x3, y4);
+    glTexCoord2f(1, 1); glVertex2f(x4, y4);
+    glTexCoord2f(1, 0); glVertex2f(x4, y3);
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
 }
 
 void comInit()
@@ -764,7 +835,8 @@ void comInit()
     printf("Cube texture is valid.\n");
   else
     printf("Cube texture is invalid!\n");
-  curveBorder = texMakeCurveBorder(256, 256, true);
+  curveBorder = texMakeCurveBorder(_TEXTURE_SIZE, _TEXTURE_SIZE, true);
+  curveBackground = texMakeCurveBackground(_TEXTURE_SIZE, _TEXTURE_SIZE, true);
 //  curveBackground = texLoadCustomTexture("textures/curve-background.png", GL_LUMINANCE_ALPHA);
 }
 
