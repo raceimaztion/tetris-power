@@ -7,7 +7,8 @@
 #define BEVEL_BOTTOM_LEFT
 #define BEVEL_MAX 20
 
-#define _BORDER_THICKNESS 2.0f
+#define _BORDER_THICKNESS 3.0f
+#define _BORDER_INSET 4
 
 void _wDrawBeveledRect(int x, int y, int width, int height)
 {
@@ -322,17 +323,19 @@ void Button::paint() const
   c.apply();
   if (state == BUTTON_PRESSED)
   {
-    wFillRect(x, y+height-1, width, -height, c);
+    wFillRect(x, y, width, height, c);
     glColor3f(0, 0, 0);
   }
   else
   {
-    wDrawRect(x, y, width, height, c);
     if (state == BUTTON_HOVERED)
     {
-      wFillRect(x+1, y+1, width-3, height-3, c);
+      wFillRect(x+_BORDER_INSET, y+_BORDER_INSET, width-2*_BORDER_INSET, height-2*_BORDER_INSET, c);
+      wDrawRect(x, y, width, height, c);
       glColor3f(0, 0, 0);
     }
+    else
+      wDrawRect(x, y, width, height, c);
   }
   
   glPopMatrix();
@@ -510,7 +513,7 @@ void ProgressMeter::paint() const
   // Draw the outline
   wDrawRect(x, y, width, height, c);
   // Draw the progress
-  wFillRect(x+1, y+1, (int)((width-3)*min(1.0f, percentage)), height-3, c);
+  wFillRect(x+_BORDER_INSET, y+_BORDER_INSET, (int)((width-2*_BORDER_INSET)*min(1.0f, percentage)), height-2*_BORDER_INSET, c);
   
   if (usedDepth) glEnable(GL_DEPTH_TEST);
 }

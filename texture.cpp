@@ -1,6 +1,6 @@
 #include "common.h"
 
-#define _CURVE_BACKGROUND_THICKNESS 0.1f
+#define _CURVE_BACKGROUND_THICKNESS 0.75f
 
 Texture::Texture()
 {
@@ -243,9 +243,6 @@ Texture texMakeCheckerboard()
     }
   }
   
-  bool texturesEnabled = glIsEnabled(GL_TEXTURE_2D);
-  glDisable(GL_TEXTURE_2D);
-  
   glGenTextures(1, &texNum);
   printf("Checkerboard texture number is %d.\n", texNum);
   
@@ -259,38 +256,24 @@ Texture texMakeCheckerboard()
   
 //  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 //  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-//  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  
-  if (texturesEnabled)
-    glEnable(GL_TEXTURE_2D);
   
   return Texture(texNum);
 }
 
 Texture texMakeCurveBorder(int width, int height, bool alpha)
 {
-  float samples[width*height], sample;
-  GLubyte image[width*height*2];
-  float fx, fy;
+  GLubyte image[width*height*2], b;
+  float fx, fy, sample;
   for (int x=0; x < width; x++)
   {
     fx = (float)x/(width-1);
     for (int y=0; y < height; y++)
     {
       fy = (float)y/(height-1);
-      samples[x+y*width] = sqrtf(fx*fx + fy*fy);
-    }
-  }
-  float center = samples[width/2];
-  GLubyte b;
-  for (int x=0; x < width; x++)
-    for (int y=0; y < height; y++)
-    {
-      sample = samples[x+y*width];
-      if (sample > center)
-        sample = 2.0f*center - sample;
-      b = (GLubyte)(255*max(0.0f, min(1.0f, sample/center)));
+      sample = sqrtf(fx*fx + fy*fy);
+      if (sample > 0.5f)
+        sample = 1.0f - sample;
+      b = (GLubyte)(255*max(0.0f, min(1.0f, 2.0f*sample)));
       if (alpha)
       {
         image[2*(x+y*width)] = 255;
@@ -299,6 +282,7 @@ Texture texMakeCurveBorder(int width, int height, bool alpha)
       else
         image[x+y*width] = b;
     }
+  }
   
   GLuint index;
   printf("Asking for texture.\n");
@@ -325,24 +309,16 @@ Texture texMakeCurveBorder(int width, int height, bool alpha)
 
 Texture texMakeCurveBackground(int width, int height, bool alpha)
 {
-  float samples[width*height], sample;
-  GLubyte image[width*height*2];
-  float fx, fy;
+  GLubyte image[width*height*2], b;
+  float fx, fy, sample;
   for (int x=0; x < width; x++)
   {
     fx = (float)x/(width-1);
     for (int y=0; y < height; y++)
     {
       fy = (float)y/(height-1);
-      samples[x+y*width] = sqrtf(fx*fx + fy*fy);
-    }
-  }
-  GLubyte b;
-  for (int x=0; x < width; x++)
-    for (int y=0; y < height; y++)
-    {
-      sample = samples[x+y*width];
-      sample = _CURVE_BACKGROUND_THICKNESS*sample + 0.5f - 0.5f*_CURVE_BACKGROUND_THICKNESS;
+      sample = sqrtf(fx*fx + fy*fy);
+      sample = 1.0f - (sample - 0.5f)/_CURVE_BACKGROUND_THICKNESS;
       b = (GLubyte)(255*max(0.0f, min(1.0f, sample)));
       if (alpha)
       {
@@ -352,6 +328,7 @@ Texture texMakeCurveBackground(int width, int height, bool alpha)
       else
         image[x+y*width] = b;
     }
+  }
   
   GLuint index;
   printf("Asking for texture.\n");

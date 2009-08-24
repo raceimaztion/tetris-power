@@ -60,7 +60,6 @@ PlayScreen::~PlayScreen()
 void PlayScreen::prepareForShow()
 {
   glEnable(GL_DEPTH_TEST);
-  glEnable(GL_TEXTURE_2D);
   
   // Sky colour
   glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
@@ -89,20 +88,6 @@ void PlayScreen::screenPaint() const
   camera.apply();
   
   lamp.apply(GL_LIGHT0);
-  
-  // TEMP:
-  /*
-  glBindTexture(GL_TEXTURE_2D, (GLuint)1);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  glColor3f(0.5f, 0.5f, 0.5f);
-  glBegin(GL_QUADS);
-    glNormal3f(0.0f, 1.0f, 0.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);
-  glEnd();
-  //*/
   
   BACKDROP_COLOUR.applyMaterial();
   backdrop.render();
