@@ -13,7 +13,12 @@ Minor stuff:
 	- And ability to clear said list
 - Tweak large font to improve looks
 - Tweak or rewrite font engine to add multiple lightness levels
+- Create Shaders module
+	- Needs to support as many graphics cards as possible, including the following:
+		- GL_ARB_fragment_program and GL_ARB_vertex_program
+	- This may mean using nVidia's shader language
 
 Major stuff:
 - Animate EVERYTHING
 - Add an introduction screen
+

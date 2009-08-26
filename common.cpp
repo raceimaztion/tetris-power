@@ -829,7 +829,7 @@ void comFillRoundRect(int x, int y, int width, int height, float thickness, Colo
 
 void comInit()
 {
-  Mesh::loadWavefrontObjectFile(&cube, "objects/block8.obj");
+  Mesh::loadWavefrontObjectFile(&cube, "objects/block.obj");
   cubeTex = texLoadTexture("textures/block-normals.png");
   if (cubeTex.isValid())
     printf("Cube texture is valid.\n");

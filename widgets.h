@@ -57,12 +57,12 @@ class Label : public Widget {
 };
 
 // Button widget class
-class ButtonCallback;
+class ButtonListener;
 class Button : public Label {
   protected:
     int tag, state;
-    list<void (*)(const Button&)> callbackFunctions;
-    list<ButtonCallback*> callbackClasses;
+    list<void (*)(const Button&)> listenerFunctions;
+    list<ButtonListener*> listenerClasses;
     void trigger();
     
   public:
@@ -71,9 +71,9 @@ class Button : public Label {
     
     int getTag() const;
     
-    void addCallback(void (*callback)(const Button&));
-    void addCallback(ButtonCallback *c);
-    void removeCallback(void (*callback)(const Button&));
+    void addListener(void (*listener)(const Button&));
+    void addListener(ButtonListener *c);
+    void removeListener(void (*listener)(const Button&));
     
     void paint() const;
     void timerTick(float dTime);
@@ -81,9 +81,9 @@ class Button : public Label {
     void mouse(const SDL_MouseMotionEvent& mouse);
 };
 
-class ButtonCallback {
+class ButtonListener {
   public:
-    virtual void buttonCallback(const Button& b);
+    virtual void buttonListener(const Button& b);
 };
 
 // Button states:
@@ -111,6 +111,7 @@ class Panel : public Widget {
     void mouse(const SDL_MouseMotionEvent& mouse);
 };
 
+// Progress bar widget class
 class ProgressMeter : public Widget {
   protected:
     float percentage;
@@ -125,6 +126,7 @@ class ProgressMeter : public Widget {
     void timerTick(float dTime);
 };
 
+// A label that floats upwards, fading out as it rises
 class FloatyLabel : public Label {
   protected:
     float curTime, totalTime, vertSpeed;
@@ -145,35 +147,20 @@ class FloatyLabel : public Label {
     bool operator==(const FloatyLabel& fl);
 };
 
-class ComboBoxCallback;
-class ComboBox : public Label {
+class SpinArrowsListener;
+class SpinArrows : public Widget {
   protected:
-    list<string> options;
-    int curOption;
-    list<ComboBoxCallback*> listeners;
-    int id;
+    list<SpinArrowsListener*> listeners;
+    int tag;
+    bool upHovered, downHovered;
   
   public:
-    ComboBox(int x, int y, int width, int height, Colour c, Font* font, int id);
-    ComboBox(const ComboBox& cb);
-    
-    void mouse(const SDL_MouseButtonEvent& mouse);
-    void mouse(const SDL_MouseMotionEvent& mouse);
-    void paint() const;
-    
-    void addOption(string option);
-    void removeOption(string option);
-    bool hasOption(string option);
-    string getSelectedOption() const;
-    
-    void addListener(ComboBoxCallback* listener);
-    void removeListener(ComboBoxCallback* listener);
-    
-    int getID();
+    SpinArrows(int x, int y, int width, int height, Colour c, int tag);
+    SpinArrows(const SpinArrows& sa);
 };
 
-class ComboBoxCallback
-{
-  virtual void comboBoxOptionChanged(int comboID, string option);
+class SpinArrowsListener {
+  public:
+    virtual void spinArrowsListener(const SpinArrows& sa, bool 
 };
 
