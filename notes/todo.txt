@@ -2,6 +2,8 @@ Minor stuff:
 - Add a background
 	- Some kind of ground with sky
 	- Use some kind of background (probably flat) in front of the sky to indicate current level
+		- Such as bushes, trees, flowers, hills...
+		- Maybe waterfalls, cliffs?
 - Add the Options screen
 - Add sound effects
 - Add background music
