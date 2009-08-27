@@ -6,7 +6,6 @@ Minor stuff:
 - Add sound effects
 - Add background music
 	- If there's more than one track available, add the option to the Options screen
-- Add a drop-down menu widget
 - Add an in-game menu and start a new game when started from the menu
 - Add levels of difficulty
 - Add highscore list
@@ -21,4 +20,8 @@ Minor stuff:
 Major stuff:
 - Animate EVERYTHING
 - Add an introduction screen
+
+Completed stuff:
+- Added a "drop-down menu" widget
+	- Actually created a spinning option widget, avoiding showing/hiding difficulties
 

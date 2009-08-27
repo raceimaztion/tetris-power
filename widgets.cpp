@@ -929,6 +929,8 @@ void OptionSpinner::spinArrowsCallback(const SpinArrows& sa, bool up)
       label.setLabel(*cur);
     }
   }
+  
+  trigger(label.getLabel(), currentOption);
   repaint();
 }
 
