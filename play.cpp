@@ -24,7 +24,7 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                        scoreView(50, 50, 200, 15,
                                                  Colour(0.8f, 0.7f, 0.5f), fallbackFont),
                                        lamp(Position(5, -5, 5), 1, Colour(0.5f)),
-                                       camera(Position(0, 50, -10), Position(0, 0, 0)),
+                                       camera(Position(0, 25, 0), Position(0, 0, 0)),
                                        grid(GRID_WIDTH, GRID_HEIGHT),
                                        shape(shRandomShape(&grid)),
                                        nextShape(shRandomShape(&grid)),
@@ -202,6 +202,11 @@ void PlayScreen::timerTick(float dTime)
       floatables.removeChild(*cur);
       floatingLabels.remove(**cur);
     }
+  }
+  if (panel.needsRepaint())
+  {
+    panel.clearRepaint();
+    markRepaint();
   }
 } // end timerTick()
 

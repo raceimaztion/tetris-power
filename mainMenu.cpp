@@ -42,8 +42,11 @@ void MainMenu::timerTick(float dTime)
 {
   panel.timerTick(dTime);
   if (quit.getFont() == NULL && fallbackFont != NULL)
-  {
     panel.setFont(fallbackFont);
+  if (panel.needsRepaint())
+  {
+    markRepaint();
+    panel.clearRepaint();
   }
 }
 void MainMenu::prepareForShow()

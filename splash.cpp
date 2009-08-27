@@ -31,6 +31,11 @@ void SplashScreen::timerTick(float dTime)
 {
   // Nothing much to do here
   panel.timerTick(dTime);
+  if (panel.needsRepaint())
+  {
+    panel.clearRepaint();
+    markRepaint();
+  }
 }
 
 void SplashScreen::prepareForShow()
@@ -60,12 +65,14 @@ void SplashScreen::keyboard(const SDL_KeyboardEvent &key)
 
 void SplashScreen::mouseButton(const SDL_MouseButtonEvent &mouse)
 {
+  panel.mouse(mouse);
   if (mouse.type == SDL_MOUSEBUTTONUP && !replaceWith(MAIN_MENU_SCREEN))
     end();
 }
 
 void SplashScreen::mouseMotion(const SDL_MouseMotionEvent &mouse)
 {
+  panel.mouse(mouse);
   // Nothing to do here
 }
 

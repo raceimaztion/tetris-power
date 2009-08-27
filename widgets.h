@@ -7,7 +7,7 @@ class Widget {
   protected:
     int x, y, width, height;
     Colour c;
-    bool visible;
+    bool visible, needRepaint;
   
   public:
     Widget(int x, int y, int width, int height, Colour c);
@@ -23,7 +23,10 @@ class Widget {
     void show();
     void hide();
     bool isIn(int x, int y) const;
+    void repaint();
     
+    virtual void clearRepaint();
+    virtual bool needsRepaint() const;
     virtual void setFont(Font* font);
     virtual void paint() const;
     virtual void timerTick(float dTime);
@@ -109,6 +112,8 @@ class Panel : public Widget {
     void timerTick(float dTime);
     void mouse(const SDL_MouseButtonEvent& mouse);
     void mouse(const SDL_MouseMotionEvent& mouse);
+    void clearRepaint();
+    bool needsRepaint() const;
 };
 
 // Progress bar widget class
@@ -147,20 +152,69 @@ class FloatyLabel : public Label {
     bool operator==(const FloatyLabel& fl);
 };
 
+// A pair of buttons that let you spin something
 class SpinArrowsListener;
 class SpinArrows : public Widget {
   protected:
     list<SpinArrowsListener*> listeners;
     int tag;
     bool upHovered, downHovered;
+    
+    void trigger(bool up);
   
   public:
     SpinArrows(int x, int y, int width, int height, Colour c, int tag);
     SpinArrows(const SpinArrows& sa);
+    
+    int getTag() const;
+    void paint() const;
+    void timerTick(float dTime);
+    void mouse(const SDL_MouseButtonEvent& mouse);
+    void mouse(const SDL_MouseMotionEvent& mouse);
+    
+    void addListener(SpinArrowsListener* listener);
+    void removeListener(SpinArrowsListener* listener);
 };
 
 class SpinArrowsListener {
   public:
-    virtual void spinArrowsListener(const SpinArrows& sa, bool up);
+    virtual void spinArrowsCallback(const SpinArrows& sa, bool up);
+};
+
+// 
+class OptionSpinnerListener;
+class OptionSpinner : public Widget, public SpinArrowsListener {
+  protected:
+    list<string> options;
+    list<OptionSpinnerListener*> listeners;
+    SpinArrows spinner;
+    Label label;
+    int tag, currentOption;
+    
+    void trigger(string option, int index);
+  
+  public:
+    OptionSpinner(int x, int y, int width, int height, Colour c, int tag);
+    OptionSpinner(const OptionSpinner& os);
+    
+    int getTag() const;
+    void paint() const;
+    void timerTick(float dTime);
+    void mouse(const SDL_MouseButtonEvent& mouse);
+    void mouse(const SDL_MouseMotionEvent& mouse);
+    void clearRepaint();
+    bool needsRepaint() const;
+    
+    void addListener(OptionSpinnerListener* listener);
+    void removeListener(OptionSpinnerListener* listener);
+    void addOption(string option);
+    void removeOption(string option);
+    
+    void spinArrowsCallback(const SpinArrows& sa, bool up);
+};
+
+class OptionSpinnerListener {
+  public:
+    virtual void optionSpinnerCallback(const OptionSpinner&os, string option, int index);
 };
 

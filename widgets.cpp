@@ -109,6 +109,7 @@ Widget::Widget(int x, int y, int width, int height, Colour c)
   this->c = c;
   
   visible = true;
+  needRepaint = false;
 }
 
 Widget::Widget(const Widget& w)
@@ -119,6 +120,7 @@ Widget::Widget(const Widget& w)
   height = w.height;
   c = w.c;
   visible = w.visible;
+  needRepaint = w.needRepaint;
 }
 
 int Widget::getX() const
@@ -171,6 +173,21 @@ bool Widget::isIn(int px, int py) const
   if (px < x || py < y) return false;
   if (px > x+width || py > y+height) return false;
   return true;
+}
+
+void Widget::repaint()
+{
+  needRepaint = true;
+}
+
+void Widget::clearRepaint()
+{
+  needRepaint = false;
+}
+
+bool Widget::needsRepaint() const
+{
+  return needRepaint;
 }
 
 void Widget::setFont(Font* font) { }
@@ -356,7 +373,7 @@ void Button::mouse(const SDL_MouseButtonEvent& mouse)
     if (isIn(mouse.x, mouse.y))
     {
       state = BUTTON_PRESSED;
-      triggerRepaint();
+      repaint();
     }
   }
   else if (mouse.type == SDL_MOUSEBUTTONUP)
@@ -366,7 +383,7 @@ void Button::mouse(const SDL_MouseButtonEvent& mouse)
     if (state != BUTTON_NORMAL)
     {
       state = BUTTON_NORMAL;
-      triggerRepaint();
+      repaint();
     }
   }
 }
@@ -478,6 +495,25 @@ void Panel::mouse(const SDL_MouseMotionEvent& mouse)
                                cur != children.end();
                                cur++)
     (*cur)->mouse(mouse);
+}
+
+void Panel::clearRepaint()
+{
+  for (list<Widget*>::iterator cur = children.begin();
+                               cur != children.end();
+                               cur++)
+    (*cur)->clearRepaint();
+}
+
+bool Panel::needsRepaint() const
+{
+  for (list<Widget*>::const_iterator cur = children.begin();
+                                     cur != children.end();
+                                     cur++)
+    if ((*cur)->needsRepaint())
+      return true;
+  
+  return needRepaint;
 }
 
 /* ************************** *
@@ -596,5 +632,308 @@ bool FloatyLabel::operator==(const FloatyLabel& fl)
   return (x == fl.x) && (y == fl.y) &&
          (width == fl.width) && (height == fl.height) &&
          (getLabel() == fl.getLabel()) && (curTime == fl.curTime);
+}
+
+/* *********************** *
+ * SpinArrows widget class *
+ * *********************** */
+SpinArrows::SpinArrows(int x, int y, int width, int height, Colour c, int tag)
+										: Widget(x, y, width, height, c)
+{
+  this->tag = tag;
+  upHovered = downHovered = false;
+}
+
+SpinArrows::SpinArrows(const SpinArrows& sa) : Widget(sa),
+                                               listeners(sa.listeners)
+{
+  tag = sa.tag;
+  upHovered = sa.upHovered;
+  downHovered = sa.downHovered;
+}
+
+void SpinArrows::trigger(bool up)
+{
+  for (list<SpinArrowsListener*>::iterator cur = listeners.begin(); cur != listeners.end(); cur++)
+    (*cur)->spinArrowsCallback(*this, up);
+}
+
+int SpinArrows::getTag() const
+{
+  return tag;
+}
+
+void SpinArrows::paint() const
+{
+  if (upHovered)
+  {
+    c.apply();
+    glBegin(GL_QUADS);
+      glVertex2i(x, y);
+      glVertex2i(x + width, y);
+      glVertex2i(x + width, y + height/2);
+      glVertex2i(x, y + height/2);
+    glEnd();
+    glColor3f(0, 0, 0);
+    glBegin(GL_QUADS);
+      glVertex2i(x, y + height/2);
+      glVertex2i(x + width/2, y);
+      glVertex2i(x + width, y + height/2);
+      glVertex2i(x + width/2, y + height/4);
+    glEnd();
+  }
+  else
+  {
+    c.apply();
+    glBegin(GL_QUADS);
+      glVertex2i(x, y + height/2);
+      glVertex2i(x + width/2, y);
+      glVertex2i(x + width, y + height/2);
+      glVertex2i(x + width/2, y + height/4);
+    glEnd();
+  }
+  
+  if (downHovered)
+  {
+    c.apply();
+    glBegin(GL_QUADS);
+      glVertex2i(x, y + height/2);
+      glVertex2i(x + width, y + height/2);
+      glVertex2i(x + width, y + height);
+      glVertex2i(x, y + height);
+    glEnd();
+    glColor3f(0, 0, 0);
+    glBegin(GL_QUADS);
+      glVertex2i(x, y + height/2);
+      glVertex2i(x + width/2, y + 3*height/4);
+      glVertex2i(x + width, y + height/2);
+      glVertex2i(x + width/2, y + height);
+    glEnd();
+  }
+  else
+  {
+    c.apply();
+    glBegin(GL_QUADS);
+      glVertex2i(x, y + height/2);
+      glVertex2i(x + width/2, y + 3*height/4);
+      glVertex2i(x + width, y + height/2);
+      glVertex2i(x + width/2, y + height);
+    glEnd();
+  }
+}
+
+void SpinArrows::timerTick(float dTime)
+{
+  // Nothing much to do here
+}
+
+void SpinArrows::mouse(const SDL_MouseButtonEvent& mouse)
+{
+  if (mouse.type != SDL_MOUSEBUTTONDOWN) return;
+  
+  if (upHovered)
+    trigger(true);
+  if (downHovered)
+    trigger(false);
+}
+
+void SpinArrows::mouse(const SDL_MouseMotionEvent& mouse)
+{
+  if (!isIn(mouse.x, mouse.y))
+  {
+    if (upHovered || downHovered)
+      repaint();
+    upHovered = downHovered = false;
+  }
+  else
+  {
+    if (2*(mouse.y - y) > height) // Down
+    {
+      if (!downHovered || upHovered)
+        repaint();
+      downHovered = true;
+      upHovered = false;
+    }
+    else // Up
+    {
+      if (!upHovered || downHovered)
+        repaint();
+      upHovered = true;
+      downHovered = false;
+    }
+  }
+} // end mouse(SDL_MouseMotionEvent)
+
+void SpinArrows::addListener(SpinArrowsListener* listener)
+{
+  listeners.push_back(listener);
+}
+
+void SpinArrows::removeListener(SpinArrowsListener* listener)
+{
+  listeners.remove(listener);
+}
+
+void SpinArrowsListener::spinArrowsCallback(const SpinArrows& sa, bool up)
+{
+ // Nothing to do here
+}
+
+/* ************************** *
+ * OptionSpinner widget class *
+ * ************************** */
+OptionSpinner::OptionSpinner(int x, int y, int width, int height, Colour c, int tag) : Widget(x, y, width, height, c),
+                                                                                       spinner(x + width - height/2, y, height/2, height, c, tag),
+                                                                                       label(x, y, width - height/2, height, c, "", fallbackFont)
+{
+  this->tag = tag;
+  currentOption = -1;
+  spinner.addListener(this);
+}
+
+OptionSpinner::OptionSpinner(const OptionSpinner& os) : Widget(os),
+                                                        options(os.options),
+                                                        listeners(os.listeners),
+                                                        spinner(os.spinner),
+                                                        label(os.label)
+{
+  tag = os.tag;
+  currentOption = os.currentOption;
+}
+
+void OptionSpinner::trigger(string option, int index)
+{
+  for (list<OptionSpinnerListener*>::iterator cur = listeners.begin();
+                                              cur != listeners.end();
+                                              cur++)
+    (*cur)->optionSpinnerCallback(*this, option, index);
+}
+
+int OptionSpinner::getTag() const
+{
+  return tag;
+}
+
+void OptionSpinner::paint() const
+{
+  label.paint();
+  spinner.paint();
+}
+
+void OptionSpinner::timerTick(float dTime)
+{
+  // Nothing much to do here
+  label.timerTick(dTime);
+  spinner.timerTick(dTime);
+}
+
+void OptionSpinner::mouse(const SDL_MouseButtonEvent& mouse)
+{
+  label.mouse(mouse);
+  spinner.mouse(mouse);
+}
+
+void OptionSpinner::mouse(const SDL_MouseMotionEvent& mouse)
+{
+  label.mouse(mouse);
+  spinner.mouse(mouse);
+}
+
+void OptionSpinner::clearRepaint()
+{
+  Widget::clearRepaint();
+  label.clearRepaint();
+  spinner.clearRepaint();
+}
+
+bool OptionSpinner::needsRepaint() const
+{
+  return needRepaint || label.needsRepaint() || spinner.needsRepaint();
+}
+
+void OptionSpinner::addListener(OptionSpinnerListener* listener)
+{
+  listeners.push_back(listener);
+}
+
+void OptionSpinner::removeListener(OptionSpinnerListener* listener)
+{
+  listeners.remove(listener);
+}
+
+void OptionSpinner::addOption(string option)
+{
+  options.push_back(option);
+  if (currentOption < 0)
+  {
+    currentOption = 0;
+    label.setLabel(options.front());
+    repaint();
+  }
+}
+
+void OptionSpinner::removeOption(string option)
+{
+  options.remove(option);
+  if (currentOption >= (int)options.size())
+  {
+    currentOption = (int)options.size() - 1;
+    if (currentOption < 0)
+      label.setLabel("");
+    else
+      label.setLabel(options.back());
+    repaint();
+  }
+}
+
+void OptionSpinner::spinArrowsCallback(const SpinArrows& sa, bool up)
+{
+  if (up)
+  {
+    if (options.empty())
+    {
+      currentOption = -1;
+      label.setLabel("");
+    }
+    else
+    {
+      currentOption --;
+      if (currentOption < 0)
+      {
+        currentOption = 0;
+        label.setLabel(options.front());
+      }
+      else
+      {
+        list<string>::iterator cur = options.begin();
+        for (int i=currentOption; i > 0; i--, cur++) ;
+        label.setLabel(*cur);
+      }
+    }
+  }
+  else // Down
+  {
+    currentOption ++;
+    if (currentOption >= (int)options.size())
+    {
+      currentOption = (int)options.size() - 1;
+      if (currentOption < 0)
+        label.setLabel("");
+      else
+        label.setLabel(options.back());
+    }
+    else
+    {
+      list<string>::iterator cur = options.begin();
+      for (int i=currentOption; i > 0; i--, cur++) ;
+      label.setLabel(*cur);
+    }
+  }
+  repaint();
+}
+
+void OptionSpinnerListener::optionSpinnerCallback(const OptionSpinner& os, string option, int index)
+{
+  // Nothing to do here
 }
 
