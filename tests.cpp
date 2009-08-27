@@ -9,6 +9,7 @@ Texture tex;
 Mesh mesh;
 const Colour CUBE_COLOUR(0.3f, 0.5f, 0.5f);
 Light light(Position(2, -5, 3), 1, Colour(0.75f));
+float rotation = 0.0f;
 
 void initGL(int samples);
 
@@ -19,7 +20,7 @@ void loadImage()
 {
   printf("Loading texture(s)...\n");
 //  tex = texLoadTexture("textures/nehe.bmp");
-//  tex = texLoadTexture("textures/block-normals.png");
+  tex = texLoadTexture("textures/block-normals.png");
 //  tex = texMakeCurveBackground(128, 128, false);
 //  tex = texMakeCurveBorder(256, 256, true);
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
@@ -159,7 +160,7 @@ void initGL(int samples)
 //  glEnable(GL_TEXTURE_2D);
   
   // Set up depth testing
-//  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_DEPTH_TEST);
 //  glDepthFunc(GL_LEQUAL);
 //  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 }
@@ -187,15 +188,15 @@ void render()
   glLoadIdentity();
   
   gluLookAt(0, 0, 0,   // Eye location
-            0, 0, 1,     // Target
-            0, 1, 0);  // Up
-  glTranslatef(0, 0, 5);
+            0, 1, 0,     // Target
+            0, 0, 1);  // Up
+  glTranslatef(0, 5, 0);
   
   glMatrixMode(GL_TEXTURE);
   glLoadIdentity();
   glMatrixMode(GL_MODELVIEW);
   
-  tex.applyTexture();
+//  tex.applyTexture();
 //  mesh.render(true);
   /*
   glBegin(GL_QUADS);
@@ -205,9 +206,10 @@ void render()
     glNormal3f(0.0f, 0.0f, 1.0f); glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 0.0f,  1.0f);
   glEnd();
   //*/
-  glDisable(GL_TEXTURE_2D);
+//  glDisable(GL_TEXTURE_2D);
   
-  comFillRoundRect(-1, -1, 2, 2, 1.0f, Colour(0.5f, 0.8f, 0.4f));
+//  comFillRoundRect(-1, -1, 2, 2, 1.0f, Colour(0.5f, 0.8f, 0.4f));
+  comDrawTexturedCube(0, 0, 0.5f, rotation);
   
   glFlush();
   SDL_GL_SwapBuffers();
@@ -261,6 +263,9 @@ int main()
     } // end while(event)
     
     SDL_Delay(10);
+    rotation += 1.0f;
+    render();
+    
   } // end while (running)
   
   return 0;

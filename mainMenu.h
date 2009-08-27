@@ -2,7 +2,7 @@
   The class definition for the main menu
 */
 
-class MainMenu : public Screen, public ButtonCallback {
+class MainMenu : public Screen, public ButtonListener {
   private:
     //Mesh cube;
     Panel panel;

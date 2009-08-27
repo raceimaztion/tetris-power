@@ -75,6 +75,7 @@ Shape::Shape(const Shape& s) : the_bits(s.the_bits)
   size = s.size;
   c = s.c;
   pos = s.pos;
+  rotated = s.rotated;
 }
 
 void Shape::init()
@@ -85,6 +86,7 @@ void Shape::init()
   grid = NULL;
   timeX = timeY = timeRot = 0.0f;
   dropping = false;
+  rotated = 0.0f;
 }
 
 void Shape::rotLeft()
@@ -184,6 +186,9 @@ bool Shape::rotateRight()
   Bezier tempRot(offsetRot.f(timeRot) - 90, 0.0f, offsetRot.df(timeRot), CURVE_END_SLOPE);
   offsetRot = tempRot;
   timeRot = 0.0f;
+  rotated += 90;
+  if (rotated >= 360)
+    rotated -= 360;
   
   return false;
 }
@@ -200,6 +205,9 @@ bool Shape::rotateLeft()
   Bezier tempRot(offsetRot.f(timeRot) + 90, 0.0f, offsetRot.df(timeRot), CURVE_END_SLOPE);
   offsetRot = tempRot;
   timeRot = 0.0f;
+  rotated -= 90;
+  if (rotated < 0)
+    rotated += 360;
   
   return false;
 }
@@ -252,8 +260,8 @@ void Shape::draw() const
   c.applyMaterial();
   for (int i=the_bits.size()-1; i >= 0; i--) 
   {
-//    comDrawCube(the_bits.at(i).pos.x, the_bits.at(i).pos.y, 0.5f, 0);
-    comDrawTexturedCube(the_bits.at(i).pos.x, the_bits.at(i).pos.y, 0.5f, 0);
+//    comDrawCube(the_bits.at(i).pos.x, the_bits.at(i).pos.y, 0.5f, rotated);
+    comDrawTexturedCube(the_bits.at(i).pos.x, the_bits.at(i).pos.y, 0.5f, rotated);
   }
   
   glPopMatrix();
@@ -281,7 +289,7 @@ void Shape::putInGrid(int distance)
   float vertSpeed = offsetY.df(timeY);
   
   for (int i=the_bits.size()-1; i >= 0; i--)
-    grid->placeBit(the_bits.at(i), c, pos.x, pos.y, vertOffset, vertSpeed);
+    grid->placeBit(the_bits.at(i), c, pos.x, pos.y, rotated, vertOffset, vertSpeed);
 }
 
 void Shape::prepForShow()
@@ -314,6 +322,11 @@ int Shape::getY() const
 int Shape::getSize() const
 {
   return size;
+}
+
+float Shape::getRotation() const
+{
+  return rotated;
 }
 
 // Init function for the Shapes module

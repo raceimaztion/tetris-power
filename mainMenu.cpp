@@ -33,9 +33,9 @@ MainMenu::MainMenu(int screenID) : Screen(screenID),
   
   panel.addChild(&title);
   
-  start.addCallback(this);
-  options.addCallback(this);
-  quit.addCallback(this);
+  start.addListener(this);
+  options.addListener(this);
+  quit.addListener(this);
 }
 
 void MainMenu::timerTick(float dTime)

@@ -6,15 +6,15 @@ class Grid;
 
 class GridBit : public ABit {
   private:
-    float offsetY, speedY;
+    float offsetY, speedY, rotation;
     Grid* grid;
     Colour c;
     bool moving, vanishing;
     float vanishTime;
   
   public:
-    GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, Grid *grid);
-    GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, float vertOffset, float vertSpeed, Grid *grid);
+    GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, float rotation, Grid *grid);
+    GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, float rotation, float vertOffset, float vertSpeed, Grid *grid);
     
     bool timerTick(float dTime);
     void render() const;
@@ -48,8 +48,8 @@ class Grid {
     int getWidth() const;
     int getHeight() const;
     bool isCellOccupied(int x, int y) const;
-    void placeBit(const ABit& bit, Colour c, int x, int y);
-    void placeBit(const ABit& bit, Colour c, int x, int y, float offsetY, float speedY);
+    void placeBit(const ABit& bit, Colour c, int x, int y, float rotation);
+    void placeBit(const ABit& bit, Colour c, int x, int y, float rotation, float offsetY, float speedY);
     bool timerTick(float dTime);
     void render() const;
     

@@ -270,8 +270,8 @@ Button::Button(const Button& b) : Label(b)
 {
   tag = b.tag;
   state = b.state;
-  callbackFunctions = b.callbackFunctions;
-  callbackClasses = b.callbackClasses;
+  listenerFunctions = b.listenerFunctions;
+  listenerClasses = b.listenerClasses;
 }
 
 int Button::getTag() const
@@ -279,29 +279,29 @@ int Button::getTag() const
   return tag;
 }
 
-void Button::addCallback(void (*callback)(const Button&))
+void Button::addListener(void (*callback)(const Button&))
 {
-  callbackFunctions.push_back(callback);
+  listenerFunctions.push_back(callback);
 }
 
-void Button::addCallback(ButtonCallback *c)
+void Button::addListener(ButtonListener *c)
 {
-  callbackClasses.push_back(c);
+  listenerClasses.push_back(c);
 }
 
-void Button::removeCallback(void (*callback)(const Button&))
+void Button::removeListener(void (*callback)(const Button&))
 {
-  callbackFunctions.remove(callback);
+  listenerFunctions.remove(callback);
 }
 
 void Button::trigger()
 {
-  for (list<void (*)(const Button& b)>::iterator cur = callbackFunctions.begin();
-                                                 cur != callbackFunctions.end();
+  for (list<void (*)(const Button& b)>::iterator cur = listenerFunctions.begin();
+                                                 cur != listenerFunctions.end();
                                                  cur++)
     (*cur)(*this);
-  for (list<ButtonCallback*>::iterator cur = callbackClasses.begin();
-                                       cur != callbackClasses.end();
+  for (list<ButtonListener*>::iterator cur = listenerClasses.begin();
+                                       cur != listenerClasses.end();
                                        cur ++)
     (*cur)->buttonCallback(*this);
 }
@@ -410,7 +410,7 @@ void Button::mouse(const SDL_MouseMotionEvent& mouse)
 }
 
 // Button callback class:
-void ButtonCallback::buttonCallback(const Button& b) { }
+void ButtonListener::buttonCallback(const Button& b) { }
 
 /* ****************** *
  * Panel widget class *

@@ -8,21 +8,23 @@
 /* ************* *
  * GridBit class *
  * ************* */
-GridBit::GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, Grid *grid)
+GridBit::GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, float rotation, Grid *grid)
                                  : ABit(bit.pos.x + offsetX, bit.pos.y + offsetY)
 {
   this->c = c;
   this->grid = grid;
+  this->rotation = rotation;
   offsetY = speedY = 0.0f;
   moving = vanishing = false;
   vanishTime = 0.0f;
 }
 
-GridBit::GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, float vertOffset, float vertSpeed, Grid *grid)
+GridBit::GridBit(const ABit& bit, Colour c, int offsetX, int offsetY, float rotation, float vertOffset, float vertSpeed, Grid *grid)
                                  : ABit(bit.pos.x + offsetX, bit.pos.y + offsetY)
 {
   this->c = c;
   this->grid = grid;
+  this->rotation = rotation;
   this->offsetY = vertOffset;
   this->speedY = vertSpeed;
   moving = true;
@@ -43,7 +45,6 @@ bool GridBit::timerTick(float dTime)
         offsetY = speedY = 0.0f;
         moving = false;
       }
-      
       return true;
     }
     else
@@ -67,14 +68,14 @@ void GridBit::render() const
   if (!vanishing)
   {
     c.applyMaterial();
-    comDrawTexturedCube(pos.x, pos.y + offsetY, 0.5f, 0);
+    comDrawTexturedCube(pos.x, pos.y + offsetY, 0.5f, rotation);
   }
   else
   {
     float alpha = 1.0f - vanishTime;
     alpha *= alpha;
     c.applyMaterialAlpha(alpha);
-    comDrawCube(pos.x, pos.y + offsetY, 0.5f*(1.0f - vanishTime), 360*vanishTime*NUM_SPINS_DURING_VANISH);
+    comDrawTexturedCube(pos.x, pos.y + offsetY, 0.5f*(1.0f - vanishTime), 360*vanishTime*NUM_SPINS_DURING_VANISH + rotation);
   }
 }
 
@@ -181,18 +182,18 @@ bool Grid::isCellOccupied(int x, int y) const
   return false;
 }
 
-void Grid::placeBit(const ABit& bit, Colour c, int blockX, int blockY)
+void Grid::placeBit(const ABit& bit, Colour c, int blockX, int blockY, float rotation)
 {
-  GridBit newBit(bit, c, blockX, blockY, this);
+  GridBit newBit(bit, c, blockX, blockY, rotation, this);
   if (newBit.pos.x < 0 || newBit.pos.x >= width)
     return;
   
   gridBits[newBit.pos.x].push_back(newBit);
 }
 
-void Grid::placeBit(const ABit& bit, Colour c, int blockX, int blockY, float offsetY, float speedY)
+void Grid::placeBit(const ABit& bit, Colour c, int blockX, int blockY, float rotation, float offsetY, float speedY)
 {
-  GridBit newBit(bit, c, blockX, blockY, offsetY, speedY, this);
+  GridBit newBit(bit, c, blockX, blockY, rotation, offsetY, speedY, this);
   if (newBit.pos.x < 0 || newBit.pos.x >= width)
     return;
   

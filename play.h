@@ -49,7 +49,7 @@ class Controls {
 
 enum PlayState { PLAYING, DROPPING_BLOCK, WAITING };
 
-class PlayScreen : public Screen, public ButtonCallback, public GridListener {
+class PlayScreen : public Screen, public ButtonListener, public GridListener {
   private:
     // Widgets
     Panel panel, floatables;

@@ -83,7 +83,7 @@ class Button : public Label {
 
 class ButtonListener {
   public:
-    virtual void buttonListener(const Button& b);
+    virtual void buttonCallback(const Button& b);
 };
 
 // Button states:
@@ -161,6 +161,6 @@ class SpinArrows : public Widget {
 
 class SpinArrowsListener {
   public:
-    virtual void spinArrowsListener(const SpinArrows& sa, bool 
+    virtual void spinArrowsListener(const SpinArrows& sa, bool up);
 };
 

@@ -38,6 +38,7 @@ class Shape {
     // Interpolation stuff
     Bezier offsetX, offsetY, offsetRot;
     float timeX, timeY, timeRot;
+    float rotated;
     bool dropping;
     // Private useful methods
     void init();
@@ -81,6 +82,7 @@ class Shape {
     int getX() const;
     int getY() const;
     int getSize() const;
+    float getRotation() const;
 };
 
 // Initialization function for the Shapes module. Returns false if setup failed
