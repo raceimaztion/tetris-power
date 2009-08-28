@@ -60,3 +60,95 @@ void ScoreView::timerTick(float dTime)
     }
   }
 }
+
+/*
+  HighscoreEntry class
+*/
+HighscoreEntry::HighscoreEntry(long score, string name, string date)
+{
+  this->score = score;
+  this->name = name;
+  this->date = date;
+}
+
+HighscoreEntry::HighscoreEntry(const HighscoreEntry& he)
+{
+  score = he.score;
+  name = he.name;
+  date = he.date;
+}
+
+long HighscoreEntry::getScore() const
+{
+  return score;
+}
+
+string HighscoreEntry::getName() const
+{
+  return name;
+}
+
+string HighscoreEntry::getDate() const
+{
+  return date;
+}
+
+bool HighscoreEntry::operator< (const HighscoreEntry& he) const
+{
+  return score < he.score;
+}
+
+bool HighscoreEntry::operator> (const HighscoreEntry& he) const
+{
+  return score > he.score;
+}
+
+bool HighscoreEntry::operator<= (const HighscoreEntry& he) const
+{
+  return score <= he.score;
+}
+
+bool HighscoreEntry::operator>= (const HighscoreEntry& he) const
+{
+  return score >= he.score;
+}
+
+bool HighscoreEntry::operator== (const HighscoreEntry& he) const
+{
+  return score == he.score && name == he.name && date == he.date;
+}
+
+/*
+  Highscore-keeping class
+*/
+Highscore::Highscore()
+{
+  // TODO: Open and load score database
+}
+
+Highscore::Highscore(const Highscore& h) : entries(h.entries)
+{
+  // Nothing much to do here (yet)
+}
+
+int Highscore::addEntry(HighscoreEntry& he)
+{
+  return -1;
+}
+
+HighscoreEntry Highscore::getEntry(int index) const
+{
+  set<HighscoreEntry>::iterator cur = entries.begin();
+  while (index > 0)
+  {
+    index--;
+    cur++;
+  }
+  return *cur;
+}
+
+void Highscore::clearEntries()
+{
+  entries.clear();
+}
+

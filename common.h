@@ -18,6 +18,7 @@
 #include <list>
 #include <sstream>
 #include <map>
+#include <set>
 #include <stack>
 // SDL includes
 #include "SDL.h"
