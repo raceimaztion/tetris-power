@@ -7,18 +7,29 @@
     150 points	When the block triggering a set of row removals is completely removed as well.
 */
 
-// Find the current score
-long scoreGetScore();
-// Add the given amount to the current score
-void scoreAdd(int amount);
+// Score-keeping class
+class Score {
+  private:
+    long score;
+  
+  public:
+    Score();
+    Score(const Score& s);
+    
+    long getScore() const;
+    void addScore(int amount);
+};
 
 /*
   The ScoreView widget
 */
 
 class ScoreView : public Label {
+  protected:
+    Score* score;
+    
   public:
-    ScoreView(int x, int y, int width, int height, Colour c, Font* font);
+    ScoreView(int x, int y, int width, int height, Colour c, Font* font, Score* score);
     ScoreView(const ScoreView& sv);
     
     void timerTick(float dTime);

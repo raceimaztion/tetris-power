@@ -7,7 +7,7 @@ class MainMenu : public Screen, public ButtonListener {
     //Mesh cube;
     Panel panel;
     Label title;
-    Button start, options, quit;
+    Button start, highscore, options, quit;
     
   public:
     MainMenu(int screenID);

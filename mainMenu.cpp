@@ -2,13 +2,14 @@
 
 // Button tags:
 #define MENU_TAG_START 0x21
-#define MENU_TAG_OPTIONS 0x22
-#define MENU_TAG_QUIT 0x23
+#define MENU_TAG_HIGHSCORE 0x22
+#define MENU_TAG_OPTIONS 0x23
+#define MENU_TAG_QUIT 0x24
 
 #define BUTTON_WIDTH 200
 #define BUTTON_HEIGHT 30
 #define BUTTON_SPACING 40
-#define BUTTON_TOP (getHeight() - 2*BUTTON_SPACING - 3*BUTTON_HEIGHT)/2
+#define BUTTON_TOP (getHeight() - 3*BUTTON_SPACING - 4*BUTTON_HEIGHT)/2
 
 const Colour MENU_BUTTON_COLOUR(0.5f, 0.65f, 0.5f),
              TITLE_LABEL_COLOUR(0.6f);
@@ -19,15 +20,19 @@ MainMenu::MainMenu(int screenID) : Screen(screenID),
                                    start((getWidth()-BUTTON_WIDTH)/2, BUTTON_TOP,
                                          BUTTON_WIDTH, BUTTON_HEIGHT,
                                          MENU_BUTTON_COLOUR, "Start", largeFont, MENU_TAG_START),
-                                   options((getWidth()-BUTTON_WIDTH)/2, BUTTON_TOP + BUTTON_SPACING + BUTTON_HEIGHT,
+                                   highscore((getWidth()-BUTTON_WIDTH)/2, BUTTON_TOP + BUTTON_SPACING + BUTTON_HEIGHT,
+                                             BUTTON_WIDTH, BUTTON_HEIGHT,
+                                             MENU_BUTTON_COLOUR, "Highscores", largeFont, MENU_TAG_HIGHSCORE),
+                                   options((getWidth()-BUTTON_WIDTH)/2, BUTTON_TOP + 2*(BUTTON_SPACING + BUTTON_HEIGHT),
                                            BUTTON_WIDTH, BUTTON_HEIGHT,
                                            MENU_BUTTON_COLOUR, "Options", largeFont, MENU_TAG_OPTIONS),
-                                   quit((getWidth()-BUTTON_WIDTH)/2, BUTTON_TOP + 2*(BUTTON_SPACING + BUTTON_HEIGHT),
+                                   quit((getWidth()-BUTTON_WIDTH)/2, BUTTON_TOP + 3*(BUTTON_SPACING + BUTTON_HEIGHT),
                                         BUTTON_WIDTH, BUTTON_HEIGHT,
                                         MENU_BUTTON_COLOUR, "Quit", largeFont, MENU_TAG_QUIT)
 {
   // Nothing much to do here
   panel.addChild(&start);
+  panel.addChild(&highscore);
   panel.addChild(&options);
   panel.addChild(&quit);
   
@@ -91,6 +96,10 @@ void MainMenu::buttonCallback(const Button& b)
       // Start the game here
       // TODO: Ask what difficulty level and game type to use
       call(PLAY_SCREEN);
+      break;
+    
+    case MENU_TAG_HIGHSCORE:
+      // Show the highscore list
       break;
     
     case MENU_TAG_OPTIONS:

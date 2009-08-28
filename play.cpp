@@ -12,7 +12,7 @@
 #define ROW_FASTER_FACTOR 2.0f
 
 const Colour BLOCK_COLOUR(0.5f, 0.4f, 0.3f),
-             BACKDROP_COLOUR(0.3f, 0.3f, 0.3f);
+             GRID_BORDER_COLOUR(0.3f, 0.3f, 0.3f);
 
 // Main PlayScreen:
 PlayScreen::PlayScreen(int screenID) : Screen(screenID),
@@ -22,7 +22,7 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
                                             MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT,
                                             Colour(0.5f, 0.5f, 0.7f), "Menu", fallbackFont, MENU_BUTTON_TAG),
                                        scoreView(50, 50, 200, 15,
-                                                 Colour(0.8f, 0.7f, 0.5f), fallbackFont),
+                                                 Colour(0.8f, 0.7f, 0.5f), fallbackFont, &score),
                                        lamp(Position(5, -5, 5), 1, Colour(0.5f)),
                                        camera(Position(0, 25, 0), Position(0, 0, 0)),
                                        grid(GRID_WIDTH, GRID_HEIGHT),
@@ -43,7 +43,7 @@ PlayScreen::PlayScreen(int screenID) : Screen(screenID),
   grid.addListener(this);
   
   // Load the backdrop
-  Mesh::loadWavefrontObjectFile(&backdrop, "objects/backdrop.obj");
+  Mesh::loadWavefrontObjectFile(&gridBorder, "objects/backdrop.obj");
   
   // Set up the shapes
   shape.setGrid(&grid);
@@ -89,8 +89,8 @@ void PlayScreen::screenPaint() const
   
   lamp.apply(GL_LIGHT0);
   
-  BACKDROP_COLOUR.applyMaterial();
-  backdrop.render();
+  GRID_BORDER_COLOUR.applyMaterial();
+  gridBorder.render();
   
   // Move to the right place
   glTranslatef(-0.5f*grid.getWidth(), 0.0f, -0.5f*grid.getHeight());
@@ -269,7 +269,7 @@ void PlayScreen::rowRemoved(int row)
                                      2.0f, -20.0f));
   floatables.addChild(&floatingLabels.back());
   
-  scoreAdd(100);
+  score.addScore(100);
 }
 
 void PlayScreen::gridEmpty()
@@ -279,7 +279,7 @@ void PlayScreen::gridEmpty()
                                      2.0f, -20.0f));
   floatables.addChild(&floatingLabels.back());
   
-  scoreAdd(150);
+  score.addScore(150);
 }
 
 /*

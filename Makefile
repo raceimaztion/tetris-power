@@ -8,7 +8,7 @@ all: tetris
 linecount:
 	wc -l *.h *.cpp
 
-tetris: $(MODULES) screen.o $(HEADERS)
+tetris: $(MODULES) $(HEADERS)
 	g++ -o tetris $(MODULES) -L/usr/lib -lm -lSDL -lGL -lSDL_mixer -lSDL_image -lGLU
 
 main.o: main.cpp $(HEADERS) $(MAIN_ONLY_HEADERS)

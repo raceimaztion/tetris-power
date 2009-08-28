@@ -292,6 +292,7 @@ template<class T> inline T minMag(T a, T b)
 #define OPTIONS_SCREEN 103
 #define HELP_SCREEN 104
 #define PLAY_SCREEN 105
+#define HIGHSCORE_SCREEN 106
 
 /* ********************* *
  * User-defined includes *

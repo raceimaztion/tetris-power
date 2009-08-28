@@ -51,6 +51,7 @@ enum PlayState { PLAYING, DROPPING_BLOCK, WAITING };
 
 class PlayScreen : public Screen, public ButtonListener, public GridListener {
   private:
+    Score score;
     // Widgets
     Panel panel, floatables;
     list<FloatyLabel> floatingLabels;
@@ -60,7 +61,7 @@ class PlayScreen : public Screen, public ButtonListener, public GridListener {
     Light lamp;
     Camera camera;
     // Playing-area related
-    Mesh backdrop;
+    Mesh gridBorder;
     Grid grid;
     // Block-related:
     Shape shape, nextShape;

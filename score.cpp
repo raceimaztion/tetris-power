@@ -1,25 +1,36 @@
 #define SCORE_MODULE
 #include "common.h"
 
-// Private score amount
-long _currentScore = 0;
-
-long scoreGetScore()
+/*
+  Score class
+*/
+Score::Score()
 {
-  return _currentScore;
+  score = 0L;
 }
 
-void scoreAdd(int amount)
+Score::Score(const Score& s)
 {
-  _currentScore += amount;
+  score = s.score;
+}
+
+long Score::getScore() const
+{
+  return score;
+}
+
+void Score::addScore(int amount)
+{
+  score += amount;
 }
 
 /*
   ScoreView widget
 */
-ScoreView::ScoreView(int x, int y, int width, int height, Colour c, Font* font) : Label(x, y, width, height, c, "", font)
+ScoreView::ScoreView(int x, int y, int width, int height, Colour c, Font* font, Score* score) : Label(x, y, width, height, c, "", font)
 {
-  // Nothing to do here
+  // Nothing much to do here
+  this->score = score;
 }
 
 ScoreView::ScoreView(const ScoreView& sv) : Label(sv)
@@ -29,12 +40,23 @@ ScoreView::ScoreView(const ScoreView& sv) : Label(sv)
 
 void ScoreView::timerTick(float dTime)
 {
-  stringstream sout;
-  sout << "Score: " << _currentScore;
-  string score = sout.str();
-  if (score != label)
+  if (score == NULL)
   {
-    label = score;
-    triggerRepaint();
+    if (label == "0")
+      return;
+    
+    label = "0";
+    repaint();
+  }
+  else
+  {
+    stringstream sout;
+    sout << "Score: " << score->getScore();
+    string score = sout.str();
+    if (score != label)
+    {
+      label = score;
+      repaint();
+    }
   }
 }
