@@ -7,8 +7,6 @@
     150 points	When the block triggering a set of row removals is completely removed as well.
 */
 
-#define NUM_HIGHSCORE_ENTRIES 10
-
 // Score-keeping class
 class Score {
   private:
@@ -52,16 +50,21 @@ class HighscoreEntry {
     bool operator<= (const HighscoreEntry& he) const;
     bool operator>= (const HighscoreEntry& he) const;
     bool operator== (const HighscoreEntry& he) const;
+    bool operator!= (const HighscoreEntry& he) const;
 };
 
 // The Highscore-keeping class
 class Highscore {
   private:
     set<HighscoreEntry> entries;
+    sqlite3 *db;
+    
+    int insertEntry(HighscoreEntry& he);
   
   public:
     Highscore();
     Highscore(const Highscore& h);
+    ~Highscore();
     
     // Returns -1 if entry didn't make it, otherwise the index of the new entry
     int addEntry(HighscoreEntry& he);

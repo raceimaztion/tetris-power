@@ -26,6 +26,8 @@
 #include "SDL_image.h"
 //#include "SDL_mixer.h"
 //#include "GL/glext.h"
+// Sqlite3 includes
+#include "sqlite3.h"
 
 using namespace std;
 

@@ -9,7 +9,7 @@ linecount:
 	wc -l *.h *.cpp
 
 tetris: $(MODULES) $(HEADERS)
-	g++ -o tetris $(MODULES) -L/usr/lib -lm -lSDL -lGL -lSDL_mixer -lSDL_image -lGLU
+	g++ -o tetris $(MODULES) -L/usr/lib -lm -lSDL -lGL -lSDL_mixer -lSDL_image -lGLU -lsqlite3
 
 main.o: main.cpp $(HEADERS) $(MAIN_ONLY_HEADERS)
 	g++ $(OPTIONS) main.cpp

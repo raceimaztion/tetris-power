@@ -4,3 +4,16 @@ Tetris Power: Do you have the power?
 Written from scratch by Daryl Van Humbeck.
 
 To compile and run, you'll need G++, the main SDL development headers, and the SDL Image development headers.
+
+To compile Tetris Power:
+========================
+Type the following on the command-line:
+
+$ make
+
+To run Tetris Power:
+====================
+Type the following on the command-line:
+
+$ make run
+
