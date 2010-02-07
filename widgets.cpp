@@ -7,7 +7,7 @@
 #define BEVEL_BOTTOM_LEFT
 #define BEVEL_MAX 20
 
-#define _BORDER_THICKNESS 3.0f
+#define _BORDER_THICKNESS 5.0f
 #define _BORDER_INSET 4
 
 void _wDrawBeveledRect(int x, int y, int width, int height)
