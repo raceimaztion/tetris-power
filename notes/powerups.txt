@@ -13,6 +13,12 @@ Official Powerups:
 	Emits static discharges through the game's display, blocking out the Next Block and some static for three blocks.
 - Ghost
 	Fades the current block to a barely-distinguishable transparent white. (maybe 50% alpha)
+- Bronze Block
+	Doubles your scores for the next 30 seconds. Stacks on other score multipliers.
+- Silver Block
+	Triples your scores for the next 30 seconds. Stacks on other score multipliers.
+- Gold Block
+	Quadruples your scores for the next 30 seconds. Stacks on other score multipliers.
 
 Basic Block Types:
 - Normal
@@ -29,5 +35,5 @@ Basic Block Types:
 Suggested Powerups:
 - Hollow
 	a) Either prevents a row from being removed until being removed by bombs or lightning,
-	b) Or grabs any piece it gets 
+	b) Or grabs any piece that tries to occupy the same space.
 
