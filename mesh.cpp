@@ -230,57 +230,34 @@ void Mesh::addPolygon(vector<int>& vertices,
 void Mesh::render(bool use_textures) const
 {
   bool smooth;
-#ifdef DEBUG
-  int numNormals = 0;
-#endif
   
   for (unsigned int i=0; i < polygons.size(); i++)
   {
-#ifdef DEBUG
-    printf("Mesh::render(): Rendering polygon number %d\n", i);
-#endif
     switch(polygons.at(i).vertices.size())
     {
       case 1:
         glBegin(GL_POINTS);
-#ifdef DEBUG
-        printf("  Mesh::render(): Drawing a single point.\n");
-#endif
         break;
       case 2:
         glBegin(GL_LINES);
-#ifdef DEBUG
-        printf("  Mesh::render(): Drawing a line.\n");
-#endif
         break;
       case 3:
         glBegin(GL_TRIANGLES);
-#ifdef DEBUG
-        printf("Mesh::render(): Drawing a triangle.\n");
-#endif
         break;
       case 4:
         glBegin(GL_QUADS);
-#ifdef DEBUG
-        printf("  Mesh::render(): Drawing a quad.\n");
-#endif
         break;
       default:
         //continue;
         printf("  Mesh::render(): Runtime warning: Polygons with %d vertices not supported.\n", polygons.at(i).vertices.size());
-        goto again;
+        continue;
+        //goto again;
     }
     
     smooth = polygons.at(i).smooth;
-    if (!smooth)
+    if (!smooth && polygons.at(i).normals.at(0) >= 0)
     {
-      if (polygons.at(i).normals.at(0) >= 0)
-      {
-        normals.at(polygons.at(i).normals.at(0)).applyNormal();
-#ifdef DEBUG
-        numNormals ++;
-#endif
-      }
+      normals.at(polygons.at(i).normals.at(0)).applyNormal();
     }
     
     for (unsigned int j=0; j < polygons.at(i).vertices.size(); j++)
@@ -288,9 +265,6 @@ void Mesh::render(bool use_textures) const
       if (smooth && polygons.at(i).normals.at(j) >= 0)
       {
         normals.at(polygons.at(i).normals.at(j)).applyNormal();
-#ifdef DEBUG
-        numNormals ++;
-#endif
       }
       
       if (use_textures && polygons.at(i).textures.at(j) >= 0)
@@ -301,11 +275,8 @@ void Mesh::render(bool use_textures) const
     
     glEnd();
     
-again: ;
+//again: ;
   } // end for each polygon
-#ifdef DEBUG
-  printf("Applied %d vertex normals.\n", numNormals);
-#endif
 } // end Mesh::render()
 
 void Mesh::translate(const Position& p)

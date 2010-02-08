@@ -1,0 +1,33 @@
+Powerups:
+
+Official Powerups:
+- Lightning Storm
+	Lighting bolts randomly removes single blocks from the field.
+- Lighting Bolt
+	A single bolt of lightning takes out an entire column of blocks.
+- Bomb
+	Removes a radius of blocks, possibly leaving some blocks fractured.
+- Upside-Down
+	Rotates the view around for 20 seconds.
+- EMP
+	Emits static discharges through the game's display, blocking out the Next Block and some static for three blocks.
+- Ghost
+	Fades the current block to a barely-distinguishable transparent white. (maybe 50% alpha)
+
+Basic Block Types:
+- Normal
+	Acts like classic Tetris blocks.
+- Soft/Jelly
+	Each piece slides down on landing to fit the surface. If a space opens up below, it will continue to slide down.
+- Brittle/Cracked
+	Can be crushed by at least four blocks landing on top of it, causing them to fall down.
+	Can be "brushed" off the falling piece by pushing it past a landed block.
+- Sticky
+	Causes any blocks nearby to get stuck on it, removing them from their current location.
+	(ie, pieces get removed from the falling block if they touch any unused side of the block, and vice versa)
+
+Suggested Powerups:
+- Hollow
+	a) Either prevents a row from being removed until being removed by bombs or lightning,
+	b) Or grabs any piece it gets 
+
