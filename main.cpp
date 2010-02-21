@@ -185,9 +185,9 @@ int main(int argc, char **argv)
   {
     const char* version = (const char*)glGetString(GL_VERSION);
     if (version != NULL)
-      printf("Using OpenGL version %s.\n", version);
+      printf("Information: Using OpenGL version %s.\n", version);
     else
-      printf("OpenGL version number not avaiable.\n");
+      printf("Information: OpenGL version number not avaiable.\n");
   }
   
   win_width = SCREEN_WIDTH;
@@ -268,7 +268,7 @@ int main(int argc, char **argv)
     // If we're out of screens, quit
     if (screenNumStackedScreens() < 1)
     {
-      fprintf(stderr, "Runtime warning: No screens left in stack, quitting...\n");
+      fprintf(stderr, "Warning: No screens left in stack, quitting...\n");
       running = false;
     }
     else

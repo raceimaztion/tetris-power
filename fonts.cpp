@@ -53,7 +53,7 @@ Font *fParseFont(SDL_Surface* origin)
   if (origin == NULL)
     return NULL;
   
-  printf("Starting to parse font with %d bytes per pixel...", origin->format->BytesPerPixel);
+  printf("Information: Starting to parse font with %d bytes per pixel...", origin->format->BytesPerPixel);
   fflush(stdout);
   
   for (unsigned int i=0; i < NUM_FONT_CHARACTERS; i++)
@@ -92,7 +92,7 @@ Font *fParseFont(SDL_Surface* origin)
     if (font->bitmaps[cur_char] == NULL)
     {
       fFreeFont(font);
-      printf("Failed to init font!\n");
+      printf(" Error: Failed to init font!\n");
       return NULL;
     }
     font->widths[cur_char] = width;
@@ -160,7 +160,7 @@ void fDrawString(Font* font, const char* c)
 {
   if (font == NULL)
   {
-    printf("No font to draw any text!\n");
+    printf("Warning: No font to draw any text! Not doing anything\n");
     return;
   }
   
@@ -201,14 +201,14 @@ Font *fLoadFont(const string& fileName)
   SDL_Surface *fontSurface = IMG_Load(fileName.c_str());
   if (fontSurface == NULL)
   {
-    fprintf(stderr, "Runtime warning: Failed to load font from file '%s', you might not get some text in-game!\n", fileName.c_str());
+    fprintf(stderr, "Warning: Failed to load font from file '%s', you might not get some text in-game!\n", fileName.c_str());
     return NULL;
   }
   Font *font = fParseFont(fontSurface);
   SDL_FreeSurface(fontSurface);
   if (font == NULL)
   {
-    fprintf(stderr, "Runtime warning: Failed to parse font from file '%s', you might not get some text in-game!\n", fileName.c_str());
+    fprintf(stderr, "Warning: Failed to parse font from file '%s', you might not get some text in-game!\n", fileName.c_str());
     return NULL;
   }
   return font;

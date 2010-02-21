@@ -173,7 +173,7 @@ void Position::applyVertex() const
 void Position::applyTexCoords() const
 {
 #ifdef DEBUG
-  printf("Position::applyTexCoords(): Applying 2D texture coordinate (%.2f,%.2f)\n", x, y);
+  printf("Information: Position::applyTexCoords(): Applying 2D texture coordinate (%.2f,%.2f)\n", x, y);
 #endif
   glTexCoord2f(x, y);
 }
@@ -583,7 +583,7 @@ float comRandomFloat(float min, float max)
 Colour comRandomColour()
 {
 #ifdef DEBUG
-  printf("Creating random colour.\n");
+  printf("Information: Creating random colour.\n");
 #endif
   
   float r = comRandomFloat(0.125f, 0.875f),
@@ -832,9 +832,9 @@ void comInit()
   Mesh::loadWavefrontObjectFile(&cube, "objects/block.obj");
   cubeTex = texLoadTexture("textures/block-normals.png");
   if (cubeTex.isValid())
-    printf("Cube texture is valid.\n");
+    printf("Information: Cube texture is valid.\n");
   else
-    printf("Cube texture is invalid!\n");
+    printf("Warning: Cube texture is invalid!\n");
   curveBorder = texMakeCurveBorder(_TEXTURE_SIZE, _TEXTURE_SIZE, true);
   curveBackground = texMakeCurveBackground(_TEXTURE_SIZE, _TEXTURE_SIZE, true);
 //  curveBackground = texLoadCustomTexture("textures/curve-background.png", GL_LUMINANCE_ALPHA);

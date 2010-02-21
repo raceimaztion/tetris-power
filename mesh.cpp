@@ -61,7 +61,7 @@ Mesh Mesh::loadWavefrontObjectFile(string filename)
 {
   FILE* in = fopen(filename.c_str(), "r");
   if (in == NULL)
-    fprintf(stderr, "Failed to open wavefront object file '%s'.\n", filename.c_str());
+    fprintf(stderr, "Warning: Failed to open wavefront object file '%s'.\n", filename.c_str());
   
   Mesh result;
   
@@ -165,7 +165,7 @@ void Mesh::loadWavefrontObjectFile(Mesh *mesh, FILE *in)
     line = comReadLine(in);
   }
   
-  printf("Mesh::loadWavefrontObjectFile(): Finished loading mesh data, parsed %d vertices, %d texture coordinates, %d normals, %d polygons, and %d smooth faces.\n",
+  printf("Information: Mesh::loadWavefrontObjectFile(): Finished loading mesh data, parsed %d vertices, %d texture coordinates, %d normals, %d polygons, and %d smooth faces.\n",
          mesh->vertices.size(), mesh->textures.size(), mesh->normals.size(), mesh->polygons.size(), numSmooth);
 }
 
@@ -173,7 +173,7 @@ void Mesh::loadWavefrontObjectFile(Mesh* mesh, string filename)
 {
   FILE* in = fopen(filename.c_str(), "r");
   if (in == NULL)
-    fprintf(stderr, "Failed to open wavefront object file '%s'.\n", filename.c_str());
+    fprintf(stderr, "Error: Failed to open wavefront object file '%s'.\n", filename.c_str());
   else
     loadWavefrontObjectFile(mesh, in);
 }
@@ -249,7 +249,7 @@ void Mesh::render(bool use_textures) const
         break;
       default:
         //continue;
-        printf("  Mesh::render(): Runtime warning: Polygons with %d vertices not supported.\n", polygons.at(i).vertices.size());
+        printf("  Warning: Mesh::render(): Polygons with %d vertices not supported.\n", polygons.at(i).vertices.size());
         continue;
         //goto again;
     }

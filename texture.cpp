@@ -1,6 +1,6 @@
 #include "common.h"
 
-#define _CURVE_BACKGROUND_THICKNESS 0.75f
+#define _CURVE_BACKGROUND_THICKNESS 0.5f
 
 Texture::Texture()
 {
@@ -14,36 +14,36 @@ Texture::Texture(int texNum)
   valid = glIsTexture(textureNumber);
   
   if (valid)
-    printf("Texture::Texture(int): OpenGL texture seems valid.\n");
+    printf("Information: Texture::Texture(int): OpenGL texture seems valid.\n");
   else
-    printf("Texture::Texture(int): OpenGL texture seems invalid.\n");
+    printf("Information: Texture::Texture(int): OpenGL texture seems invalid.\n");
 }
 
 Texture::Texture(SDL_Surface* surface)
 {
   if (surface == NULL)
   {
-    printf("Runtime warning: SDL Surface passed is NULL!\n");
+    printf("Warning: SDL Surface passed is NULL!\n");
     textureNumber = 0;
     valid = false;
     return;
   }
   
-  printf("Loading image...\n");
+  printf("Information: Loading image...\n");
   
   GLenum textureFormat;
   GLint numColours;
   
   // Check if the texture is a power of 2 wide:
   if ((surface->w & (surface->w-1)) != 0)
-    printf("Runtime warning: Image is not a power of 2 wide. This may cause some rendering issues.\n");
+    printf("Warning: Image is not a power of 2 wide. This may cause some rendering issues.\n");
   // Check if the texture is a power of 2 high:
   if ((surface->h & (surface->h-1)) != 0)
-    printf("Runtime warning: Image is not a power of 2 high. This may cause some rendering issues.\n");
+    printf("Warning: Image is not a power of 2 high. This may cause some rendering issues.\n");
   
   // Find the number of channels
   numColours = surface->format->BytesPerPixel;
-  printf("Image has %d colour channels.\n", numColours);
+  printf("Information: Image has %d colour channels.\n", numColours);
   if (numColours == 4) // Has an Alpha channel
   {
     if (surface->format->Rmask == 0x000000ff)
@@ -60,17 +60,17 @@ Texture::Texture(SDL_Surface* surface)
   }
   else
   {
-    printf("Runtime warning: Image is not true-colour! Colour-mapped images not supported!\n");
+    printf("Warning: Image is not true-colour! Colour-mapped images not supported!\n");
     throw "Image not true-colour. Colour-mapped images not supported.";
   }
   
   // Get a texture handle
   GLuint index = 0;
   textureNumber = 0;
-  printf("Asking for texture number...\n");
+  printf("Information: Asking for texture number...\n");
   glGenTextures(1, &index);
   textureNumber = index;
-  printf("Texture index: %d.\n", textureNumber);
+  printf("Information: Texture index: %d.\n", textureNumber);
   
   // Bind the texture object
   glBindTexture(GL_TEXTURE_2D, textureNumber);
@@ -90,13 +90,13 @@ Texture::Texture(SDL_Surface* surface)
                textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
   
   if (glGetError() != GL_NO_ERROR)
-    printf("Texture::Texture(SDL_Surface*): An OpenGL error has occurred!\n");
+    printf("Warning: Texture::Texture(SDL_Surface*): An OpenGL error has occurred!\n");
   
 #ifdef DEBUG
   if (glIsTexture(textureNumber))
-    printf("Texture::Texture(SDL_Surface*): OpenGL texture seems valid.\n");
+    printf("Information: Texture::Texture(SDL_Surface*): OpenGL texture seems valid.\n");
   else
-    printf("Texture::Texture(SDL_Surface*): OpenGL texture seems invalid.\n");
+    printf("Warning: Texture::Texture(SDL_Surface*): OpenGL texture seems invalid.\n");
 #endif
   
   valid = true;
@@ -106,27 +106,27 @@ Texture::Texture(SDL_Surface* surface, GLenum format)
 {
   if (surface == NULL)
   {
-    printf("Runtime warning: SDL Surface passed is NULL!\n");
+    printf("Warning: SDL Surface passed is NULL!\n");
     textureNumber = 0;
     valid = false;
     return;
   }
   
-  printf("Loading image...\n");
+  printf("Information: Loading image...\n");
   
   GLenum textureFormat;
   GLint numColours;
   
   // Check if the texture is a power of 2 wide:
   if ((surface->w & (surface->w-1)) != 0)
-    printf("Runtime warning: Image is not a power of 2 wide. This may cause some rendering issues.\n");
+    printf("Warning: Image is not a power of 2 wide. This may cause some rendering issues.\n");
   // Check if the texture is a power of 2 high:
   if ((surface->h & (surface->h-1)) != 0)
-    printf("Runtime warning: Image is not a power of 2 high. This may cause some rendering issues.\n");
+    printf("Warning: Image is not a power of 2 high. This may cause some rendering issues.\n");
   
   // Find the number of channels
   numColours = surface->format->BytesPerPixel;
-  printf("Image has %d colour channels.\n", numColours);
+  printf("Information: Image has %d colour channels.\n", numColours);
   if (numColours == 4) // Has an Alpha channel
   {
     if (surface->format->Rmask == 0x000000ff)
@@ -145,17 +145,17 @@ Texture::Texture(SDL_Surface* surface, GLenum format)
     textureFormat = GL_LUMINANCE_ALPHA;
   else
   {
-    printf("Runtime warning: Image is not true-colour! Colour-mapped images not supported!\n");
+    printf("Warning: Image is not true-colour! Colour-mapped images not supported!\n");
     throw "Image not true-colour. Colour-mapped images not supported.";
   }
   
   // Get a texture handle
   GLuint index = 0;
   textureNumber = 0;
-  printf("Asking for texture number...\n");
+  printf("Information: Asking for texture number...\n");
   glGenTextures(1, &index);
   textureNumber = index;
-  printf("Texture index: %d.\n", textureNumber);
+  printf("Information: Texture index: %d.\n", textureNumber);
   
   // Bind the texture object
   glBindTexture(GL_TEXTURE_2D, textureNumber);
@@ -175,13 +175,13 @@ Texture::Texture(SDL_Surface* surface, GLenum format)
                format, GL_UNSIGNED_BYTE, surface->pixels);
   
   if (glGetError() != GL_NO_ERROR)
-    printf("Texture::Texture(SDL_Surface*): An OpenGL error has occurred!\n");
+    printf("Warning: Texture::Texture(SDL_Surface*): An OpenGL error has occurred!\n");
   
 //#ifdef DEBUG
   if (glIsTexture(textureNumber))
-    printf("Texture::Texture(SDL_Surface*): OpenGL texture seems valid.\n");
+    printf("Information: Texture::Texture(SDL_Surface*): OpenGL texture seems valid.\n");
   else
-    printf("Texture::Texture(SDL_Surface*): OpenGL texture seems invalid.\n");
+    printf("Warning: Texture::Texture(SDL_Surface*): OpenGL texture seems invalid.\n");
 //#endif
   
   valid = true;
@@ -202,12 +202,12 @@ void Texture::applyTexture() const
 {
   if (!valid)
   {
-    printf("Runtime warning: Texture::applyTexture(): Trying to apply an invalid texture.\n\t\tNot doing anything.\n");
+    printf("Warning: Texture::applyTexture(): Trying to apply an invalid texture.\n\t\tNot doing anything.\n");
     return;
   }
 #ifdef DEBUG
   else
-    printf("Applying texture number %d.\n", textureNumber);
+    printf("Information: Applying texture number %d.\n", textureNumber);
 #endif
   
   glBindTexture(GL_TEXTURE_2D, textureNumber);
@@ -244,7 +244,7 @@ Texture texMakeCheckerboard()
   }
   
   glGenTextures(1, &texNum);
-  printf("Checkerboard texture number is %d.\n", texNum);
+  printf("Information: Checkerboard texture number is %d.\n", texNum);
   
   glBindTexture(GL_TEXTURE_2D, texNum);
   
@@ -273,7 +273,8 @@ Texture texMakeCurveBorder(int width, int height, bool alpha)
       sample = sqrtf(fx*fx + fy*fy);
       if (sample > 0.5f)
         sample = 1.0f - sample;
-      b = (GLubyte)(255*max(0.0f, min(1.0f, 2.0f*sample)));
+      sample *= 2.0f;
+      b = (GLubyte)(255*max(0.0f, min(1.0f, 5.0f*sample - 2)));
       if (alpha)
       {
         image[2*(x+y*width)] = 255;
@@ -285,7 +286,7 @@ Texture texMakeCurveBorder(int width, int height, bool alpha)
   }
   
   GLuint index;
-  printf("Asking for texture.\n");
+  printf("Information: Asking for texture.\n");
   glGenTextures(1, &index);
   
   glBindTexture(GL_TEXTURE_2D, index);
@@ -301,9 +302,9 @@ Texture texMakeCurveBorder(int width, int height, bool alpha)
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   
   if (glIsTexture(index))
-    printf("Created curve-border texture with index %d and it seems valid.\n", index);
+    printf("Information: Created curve-border texture with index %d and it seems valid.\n", index);
   else
-    printf("Created curve-border texture with index %d and it doesn't seem valid. Attempting to use it anyway.\n", index);
+    printf("Warning: Created curve-border texture with index %d and it doesn't seem valid. Attempting to use it anyway.\n", index);
   return Texture(index);
 }
 
@@ -317,9 +318,9 @@ Texture texMakeCurveBackground(int width, int height, bool alpha)
     for (int y=0; y < height; y++)
     {
       fy = (float)y/(height-1);
-      sample = sqrtf(fx*fx + fy*fy);
-      sample = 1.0f - (sample - 0.5f)/_CURVE_BACKGROUND_THICKNESS;
-      b = (GLubyte)(255*max(0.0f, min(1.0f, sample)));
+      sample = 1.0f - sqrtf(fx*fx + fy*fy);
+//      sample = 1.0f - (sample - 0.5f)/_CURVE_BACKGROUND_THICKNESS;
+      b = (GLubyte)(255*max(0.0f, min(1.0f, 5.0f*sample)));
       if (alpha)
       {
         image[2*(x+y*width)] = 255;
@@ -331,7 +332,7 @@ Texture texMakeCurveBackground(int width, int height, bool alpha)
   }
   
   GLuint index;
-  printf("Asking for texture.\n");
+  printf("Information: Asking for texture.\n");
   glGenTextures(1, &index);
   
   glBindTexture(GL_TEXTURE_2D, index);
@@ -347,9 +348,9 @@ Texture texMakeCurveBackground(int width, int height, bool alpha)
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   
   if (glIsTexture(index))
-    printf("Created curve-background texture with index %d and it seems valid.\n", index);
+    printf("Information: Created curve-background texture with index %d and it seems valid.\n", index);
   else
-    printf("Created curve-background texture with index %d and it doesn't seem valid. Attempting to use it anyway.\n", index);
+    printf("Warning: Created curve-background texture with index %d and it doesn't seem valid. Attempting to use it anyway.\n", index);
   return Texture(index);
 }
 
@@ -358,7 +359,7 @@ Texture texLoadTexture(const string& fileName)
   SDL_Surface *surface = IMG_Load(fileName.c_str());
   if (surface == NULL)
   {
-    printf("Runtime warning: Failed to load texture from file '%s'\n", fileName.c_str());
+    printf("Warning: Failed to load texture from file '%s'\n", fileName.c_str());
     return Texture();
   }
   Texture tex(surface);
@@ -371,7 +372,7 @@ Texture texLoadCustomTexture(const string& fileName, GLenum format)
   SDL_Surface *surface = IMG_Load(fileName.c_str());
   if (surface == NULL)
   {
-    printf("Runtime warning: Failed to load texture from file '%s'\n", fileName.c_str());
+    printf("Warning: Failed to load texture from file '%s'\n", fileName.c_str());
     return Texture();
   }
   Texture tex(surface, format);
