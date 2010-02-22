@@ -248,6 +248,9 @@ bool Shape::animate(float dTime, float curTime)
 
 void Shape::draw() const
 {
+#ifdef DEBUG
+  printf("Information: Shape::draw(): Drawing shape at location (%.2f, %.2f)\n", pos.x, pos.y);
+#endif
   glPushMatrix();
   
   glTranslatef(pos.x, 0, pos.y);
@@ -285,9 +288,15 @@ void Shape::putInGrid(int distance)
     return;
   }
   
+  printf("Information: Shape::putInGrid(): Distance to move is %d.\n", distance);
+  
+  // Get the current animation position and speed
   float vertOffset = offsetY.f(timeY);
   float vertSpeed = offsetY.df(timeY);
   
+  printf("Information: Shape::putInGrid(): vertOffset=%.2f, vertSpeed=%.2f\n", vertOffset, vertSpeed);
+  
+  // Put all the bits into the Grid
   for (int i=the_bits.size()-1; i >= 0; i--)
     grid->placeBit(the_bits.at(i), c, pos.x, pos.y, rotated, vertOffset, vertSpeed);
 }

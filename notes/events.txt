@@ -10,4 +10,7 @@ Examples of events I could use:
 - Row-removed:
 	When a row has been removed
 	Could be used to trigger the blocks above to fall
-- 
+- Key-event:
+	When a key is pressed or released
+	Could be used to trigger block-motion events.
+

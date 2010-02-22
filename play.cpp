@@ -72,6 +72,7 @@ void PlayScreen::screenPaint() const
 {
 #ifdef DEBUG
   printf("PlayScreen::paint(): Painting playing-area.\n");
+  printf("Information: PlayScreen::paint(): In-play block is at (%d, %d)\n", shape.getX(), shape.getY());
 #endif
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
