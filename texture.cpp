@@ -195,6 +195,7 @@ Texture::Texture(const Texture& t)
 
 Texture::~Texture()
 {
+  // This was causing some errors:
 //  if (valid) glDeleteTextures(1, &textureNumber);
 }
 
