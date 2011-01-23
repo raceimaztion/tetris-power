@@ -1,4 +1,4 @@
-OPTIONS = -Wall -c -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT# -DDEBUG
+OPTIONS = -Wall -c -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT -DDEBUG
 HEADERS = common.h grid.h shapes.h mesh.h fonts.h widgets.h play.h texture.h screen.h score.h
 MAIN_ONLY_HEADERS = splash.h mainMenu.h
 MODULES = main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o texture.o screen.o score.o

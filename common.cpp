@@ -158,7 +158,7 @@ void Position::applyTranslation() const
 void Position::applyTranslation(float amount) const
 {
 #ifdef DEBUG
-  printf("Information: Applying translation (%.2f, %.2f, %.2f)x%.2f\n");
+  printf("Information: Applying translation (%.2f, %.2f, %.2f)x%.2f\n", x, y, z, amount);
 #endif
   glTranslatef(amount*x, amount*y, amount*z);
 }

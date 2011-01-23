@@ -133,12 +133,14 @@ void loadFonts()
   if (fallbackFont == NULL)
   {
     fallbackFont = fLoadFont("fonts/main_font.png");
+    printf("Information: Loaded 'main_font.png'\n.");
   }
   
   // Try to load the large font
   if (largeFont == NULL)
   {
     largeFont = fLoadFont("fonts/large_font.png");
+    printf("Information: Loaded 'large_font.png'.\n");
   }
 }
 

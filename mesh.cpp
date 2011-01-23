@@ -94,7 +94,7 @@ void Mesh::loadWavefrontObjectFile(Mesh *mesh, FILE *in)
       
       mesh->addVertex(x, y, z);
 #ifdef DEBUG
-      printf("v"); fflush(stdout);
+//      printf("v"); fflush(stdout);
 #endif
     }
     else if (line.find("vn ") == 0)
@@ -104,7 +104,7 @@ void Mesh::loadWavefrontObjectFile(Mesh *mesh, FILE *in)
       
       mesh->addNormal(x, y, z);
 #ifdef DEBUG
-      printf("n"); fflush(stdout);
+//      printf("n"); fflush(stdout);
 #endif
     }
     else if (line.find("vt ") == 0)
@@ -114,7 +114,7 @@ void Mesh::loadWavefrontObjectFile(Mesh *mesh, FILE *in)
       
       mesh->addTexture(u, v, w);
 #ifdef DEBUG
-      printf("t"); fflush(stdout);
+//      printf("t"); fflush(stdout);
 #endif
     }
     else if (line.find("s ") == 0)
