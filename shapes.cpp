@@ -249,7 +249,7 @@ bool Shape::animate(float dTime, float curTime)
 void Shape::draw() const
 {
 #ifdef DEBUG
-  printf("Information: Shape::draw(): Drawing shape at location (%.2f, %.2f)\n", pos.x, pos.y);
+  printf("Information: Shape::draw(): Drawing shape at location (%d, %d)\n", pos.x, pos.y);
 #endif
   glPushMatrix();
   

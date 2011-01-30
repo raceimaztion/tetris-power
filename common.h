@@ -57,60 +57,60 @@ volatile MOD int win_width, win_height;
  * Globally-defined classes *
  * ************************ */
 class Colour {
-  public:
-    float r, g, b, a;
-    Colour();
-    Colour(float shade);
-    Colour(float shade, float alpha);
-    Colour(float red, float green, float blue);
-    Colour(float red, float green, float blue, float alpha);
-    
-    void fillArray(float a[]) const;
-    
-    void apply() const;
-    void apply(float alpha) const;
-    void applyMaterial() const;
-    void applyMaterial(int attribute) const;
-    void applyMaterialShiny(float shininess) const;
-    void applyMaterialAlpha(float alpha) const;
-    void applyLightAttribute(int number, int attribute) const;
-    void applyLightAttribute(int number, int attribute, float power) const;
-    
-    float brightness() const;
-    Colour brighter(float v) const;
-    Colour darker(float v) const;
-    string toString() const;
+	public:
+		float r, g, b, a;
+		Colour();
+		Colour(float shade);
+		Colour(float shade, float alpha);
+		Colour(float red, float green, float blue);
+		Colour(float red, float green, float blue, float alpha);
+		
+		void fillArray(float a[]) const;
+		
+		void apply() const;
+		void apply(float alpha) const;
+		void applyMaterial() const;
+		void applyMaterial(int attribute) const;
+		void applyMaterialShiny(float shininess) const;
+		void applyMaterialAlpha(float alpha) const;
+		void applyLightAttribute(int number, int attribute) const;
+		void applyLightAttribute(int number, int attribute, float power) const;
+		
+		float brightness() const;
+		Colour brighter(float v) const;
+		Colour darker(float v) const;
+		string toString() const;
 };
 
 class Position {
-  public:
-    float x, y, z;
-    
-    Position();
-    Position(const Position& p);
-    Position(float x, float y, float z);
-    
-    void applyTranslation() const;
-    void applyTranslation(float amount) const;
-    void applyNormal() const;
-    void applyVertex() const;
-    void applyTexCoords() const;
-    
-    Position operator+=(const Position& p);
-    Position operator-=(const Position& p);
+	public:
+		float x, y, z;
+		
+		Position();
+		Position(const Position& p);
+		Position(float x, float y, float z);
+		
+		void applyTranslation() const;
+		void applyTranslation(float amount) const;
+		void applyNormal() const;
+		void applyVertex() const;
+		void applyTexCoords() const;
+		
+		Position operator+=(const Position& p);
+		Position operator-=(const Position& p);
 };
 
 class Light {
-  private:
-    Position pos;
-    float w;
-    Colour c;
-  
-  public:
-    Light(const Position& p, float w, const Colour& c);
-    
-    void apply(int number) const;
-    void disable(int number) const;
+	private:
+		Position pos;
+		float w;
+		Colour c;
+	
+	public:
+		Light(const Position& p, float w, const Colour& c);
+		
+		void apply(int number) const;
+		void disable(int number) const;
 };
 
 /* *************************** *
@@ -118,88 +118,88 @@ class Light {
  * *************************** */
 
 class Bezier {
-  private:
-    float a, b, c, d;
-    int type;
-  
-  public:
-    Bezier(); // Creates a default equation that stays at zero
-    Bezier(const Bezier& curve); // Copy constructor
-    Bezier(float startV, float endV,  // The starting and ending values (f(0) = startV, f(1) = endV)
-           float dStart, float dEnd); // The derivatives at the start and end (df(0) = dStart, df(1) = dEnd)
-    
-    float f(float t) const; // Evaluate the function at a point
-    float df(float t) const; // Find the derivative at a point
-    bool isFlat() const; // Returns true if this is a "flat" curve (one that always remains at zero)
-    float getA() const;
-    float getB() const;
-    float getC() const;
-    float getD() const;
-    
-    void changeCurve(float startV, float endV, float dStart, float dEnd);
-    Bezier& operator=(const Bezier& curve);
+	private:
+		float a, b, c, d;
+		int type;
+	
+	public:
+		Bezier(); // Creates a default equation that stays at zero
+		Bezier(const Bezier& curve); // Copy constructor
+		Bezier(float startV, float endV,	// The starting and ending values (f(0) = startV, f(1) = endV)
+					 float dStart, float dEnd); // The derivatives at the start and end (df(0) = dStart, df(1) = dEnd)
+		
+		float f(float t) const; // Evaluate the function at a point
+		float df(float t) const; // Find the derivative at a point
+		bool isFlat() const; // Returns true if this is a "flat" curve (one that always remains at zero)
+		float getA() const;
+		float getB() const;
+		float getC() const;
+		float getD() const;
+		
+		void changeCurve(float startV, float endV, float dStart, float dEnd);
+		Bezier& operator=(const Bezier& curve);
 };
 
 /* **************************** *
  * Two-dimensional Bezier curve *
  * **************************** */
 class Bezier2D {
-  private:
-    Bezier x, y;
-  
-  public:
-    Bezier2D(); // Creates a default set of equations that stay at (0,0)
-    Bezier2D(const Bezier2D& curve);
-    Bezier2D(Bezier x, Bezier y);
-    Bezier2D(float startX, float startY, float endX, float endY,
-             float dStartX, float dStartY, float dEndX, float dEndY);
-    
-    float fx(float t) const;
-    float dfx(float t) const;
-    float fy(float t) const;
-    float dfy(float t) const;
-    bool isFlat() const;
+	private:
+		Bezier x, y;
+	
+	public:
+		Bezier2D(); // Creates a default set of equations that stay at (0,0)
+		Bezier2D(const Bezier2D& curve);
+		Bezier2D(Bezier x, Bezier y);
+		Bezier2D(float startX, float startY, float endX, float endY,
+						 float dStartX, float dStartY, float dEndX, float dEndY);
+		
+		float fx(float t) const;
+		float dfx(float t) const;
+		float fy(float t) const;
+		float dfy(float t) const;
+		bool isFlat() const;
 };
 
 /* ****************************** *
  * Three-dimensional Bezier curve *
  * ****************************** */
 class Bezier3D {
-  private:
-    Bezier x, y, z;
-  
-  public:
-    Bezier3D(); // Creates a default set of equations that stay at (0,0,0)
-    Bezier3D(const Bezier3D& curve);
-    Bezier3D(Bezier x, Bezier y, Bezier z);
-    Bezier3D(Position start, Position end, Position speedStart, Position speedEnd);
-    
-    Position f(float t) const;
-    Position df(float t) const;
-    bool isFlat() const;
+	private:
+		Bezier x, y, z;
+	
+	public:
+		Bezier3D(); // Creates a default set of equations that stay at (0,0,0)
+		Bezier3D(const Bezier3D& curve);
+		Bezier3D(Bezier x, Bezier y, Bezier z);
+		Bezier3D(Position start, Position end, Position speedStart, Position speedEnd);
+		
+		Position f(float t) const;
+		Position df(float t) const;
+		bool isFlat() const;
 };
 
 /* ************ *
  * Camera class *
  * ************ */
 class Camera {
-  private:
-    Position pos, rotation;
-    Bezier3D posOffset, rotOffset;
-    float posTime, rotTime;
-  
-  public:
-    Camera();
-    Camera(Position pos);
-    Camera(Position pos, Position rot);
-    Camera(const Camera& c);
-    
-    void apply() const;
-    void move(float dx, float dy, float dz);
-    void move(const Position dp);
-    void rotate(float rx, float ry, float rz);
-    void rotate(const Position dr);
-    bool animate(float dTime);
+	private:
+		Position pos, rotation;
+		Bezier3D posOffset, rotOffset;
+		float posTime, rotTime;
+	
+	public:
+		Camera();
+		Camera(Position pos);
+		Camera(Position pos, Position rot);
+		Camera(const Camera& c);
+		
+		void apply() const;
+		void move(float dx, float dy, float dz);
+		void move(const Position dp);
+		void rotate(float rx, float ry, float rz);
+		void rotate(const Position dr);
+		bool animate(float dTime);
 };
 
 /* ******************************* *
@@ -249,46 +249,46 @@ void comInit();
 // Math-related
 /*template<class T> inline T max(T a, T b)
 {
-  if (a > b)
-    return a;
-  else
-    return b;
+	if (a > b)
+		return a;
+	else
+		return b;
 }
 
 template<class T> inline T min(T a, T b)
 {
-  if (b > a)
-    return a;
-  else
-    return b;
+	if (b > a)
+		return a;
+	else
+		return b;
 }*/
 
 template<class T> inline T abs(T a)
 {
-  if (a > 0)
-    return a;
-  else
-    return -a;
+	if (a > 0)
+		return a;
+	else
+		return -a;
 }
 
 template<class T> inline T maxMag(T a, T b)
 {
-  if (abs(a) > abs(b))
-    return a;
-  else
-    return b;
+	if (abs(a) > abs(b))
+		return a;
+	else
+		return b;
 }
 
 template<class T> inline T minMag(T a, T b)
 {
-  if (abs(b) > abs(a))
-    return a;
-  else
-    return b;
+	if (abs(b) > abs(a))
+		return a;
+	else
+		return b;
 }
 
 /*
-  Screen ID codes:
+	Screen ID codes:
 */
 #define SPLASH_SCREEN 101
 #define MAIN_MENU_SCREEN 102
@@ -322,7 +322,7 @@ template<class T> inline T minMag(T a, T b)
 #endif
 
 /*
-  Global variables
+	Global variables
 */
 
 GLOBAL Font *fallbackFont;

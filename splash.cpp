@@ -7,6 +7,16 @@
 
 #define PROGRESS_HEIGHT 30
 
+#ifdef DEBUG
+Label lines[4] =
+	{
+		Label(0, 40, SCREEN_WIDTH, 20, Colour(0.5f), "!\"#$%&'()*+,-./01234567", largeFont),
+		Label(0, 60, SCREEN_WIDTH, 20, Colour(0.5f), "89:;<=>?@ABCDEFGHIJKLMN", largeFont),
+		Label(0, 80, SCREEN_WIDTH, 20, Colour(0.5f), "OPQRSTUVWXYZ[\\]^_`abcdef", largeFont),
+		Label(0, 100, SCREEN_WIDTH, 20, Colour(0.5f), "ghijklmnopqrstuvwxyz{|}~", largeFont)
+	};
+#endif
+
 SplashScreen::SplashScreen(int screenID) : Screen(screenID),
                                            panel(0, 0, getWidth(), getHeight(), Colour(0)),
                                            status(0, getHeight() - 2*PROGRESS_HEIGHT - 20,
@@ -15,6 +25,13 @@ SplashScreen::SplashScreen(int screenID) : Screen(screenID),
                                            title(0, 20, getWidth(), 30,
                                                  Colour(0.6f), "Tetris-Power", largeFont)
 {
+#ifdef DEBUG
+	for (unsigned int i=0; i < 4; i++)
+	{
+		lines[i].setFont(largeFont);
+		panel.addChild(&lines[i]);
+	}
+#endif
   // Nothing much to do here
   panel.addChild(&status);
   panel.addChild(&title);
