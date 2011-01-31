@@ -304,9 +304,9 @@ Bezier::Bezier(float startV, float endV, float dStart, float dEnd)
 	d = 2*(startV - endV) + (dStart + dEnd);
 	
 	type = (a == 0.0f ? 0 : 0x01) |
-				 (b == 0.0f ? 0 : 0x02) |
-				 (c == 0.0f ? 0 : 0x04) |
-				 (d == 0.0f ? 0 : 0x08);
+		   (b == 0.0f ? 0 : 0x02) |
+		   (c == 0.0f ? 0 : 0x04) |
+		   (d == 0.0f ? 0 : 0x08);
 }
 
 float Bezier::f(float t) const
