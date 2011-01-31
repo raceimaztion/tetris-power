@@ -116,6 +116,9 @@ void Shape::addBit(ABit bit)
 
 void Shape::prepForUse()
 {
+	offsetX = Bezier();
+	offsetY = Bezier();
+	
 	if (grid == NULL)
 	{
 		pos.x = (GRID_WIDTH - size) / 2;
@@ -310,7 +313,11 @@ void Shape::prepForShow()
 {
 	c = comRandomColour();
 	for (int i=comRandomInt(4); i > 0; i--) rotateLeft();
+	
 	offsetRot = Bezier();
+	offsetX = Bezier();
+	offsetY = Bezier();
+	timeX = timeY = timeRot = 0.0f;
 }
 
 bool Shape::isDropping() const
