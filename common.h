@@ -302,9 +302,9 @@ template<class T> inline T minMag(T a, T b)
  * ********************* */
 // Universal headers
 #include "mesh.h"
+#include "texture.h"
 #include "fonts.h"
 #include "widgets.h"
-#include "texture.h"
 #include "screen.h"
 #include "score.h"
 // Order-dependent headers

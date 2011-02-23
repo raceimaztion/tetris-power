@@ -291,18 +291,17 @@ void Shape::putInGrid(int distance)
 		return;
 	}
 	
-	printf("Information: Shape::putInGrid(): Distance to move is %d.\n", distance);
-	
-#ifdef DEBUG
-	printf("Information: Shape::putInGrid(): Vertical Bezier information: (abcd): (%.2f, %.2f, %.2f, %.2f)\n",
-			offsetY.getA(), offsetY.getB(), offsetY.getC(), offsetY.getD());
-#endif
 	
 	// Get the current animation position and speed
 	float vertOffset = offsetY.f(timeY);
 	float vertSpeed = offsetY.df(timeY);
 	
+#ifdef DEBUG
+	printf("Information: Shape::putInGrid(): Distance to move is %d.\n", distance);
+	printf("Information: Shape::putInGrid(): Vertical Bezier information: (abcd): (%.2f, %.2f, %.2f, %.2f)\n",
+			offsetY.getA(), offsetY.getB(), offsetY.getC(), offsetY.getD());
 	printf("Information: Shape::putInGrid(): vertOffset=%.2f, vertSpeed=%.2f\n", vertOffset, vertSpeed);
+#endif
 	
 	// Put all the bits into the Grid
 	for (int i=the_bits.size()-1; i >= 0; i--)
