@@ -3,8 +3,9 @@
 
 #define SHADE_THRESHOLD 10
 
-// TEMP:
-//#define DEBUG
+/* **************** *
+ * Old Font system: *
+ * **************** */
 
 // Private method to find the shade of a particular pixel
 int getPixelShade(SDL_Surface *surface, int x, int y)
@@ -233,3 +234,44 @@ Font *fLoadFont(const string& fileName)
 	}
 	return font;
 }
+
+/* **************** *
+ * New Font system: *
+ * **************** */
+FontRef::FontRef()
+{
+	// TODO: Fill this in!
+}
+
+float FontRef::getCharacterWidth(const char &c, const float &lineHeight) const
+{
+	return lineHeight*(char_uvs[(int)c].right - char_uvs[(int)c].left)/(char_uvs[(int)c].bottom - char_uvs[(int)c].top);
+}
+
+float FontRef::drawCharacter(const char &c, const float &lineHeight,
+							 const float &x, const float &y) const
+{
+	return getCharacterWidth(c, lineHeight);
+}
+
+void FontRef::drawCenteredString(const string &s, const float &lineHeight,
+								 const float &x, const float &y,
+								 const float &width, const float &height,
+								 const FontAlignment &align) const
+{
+	
+}
+
+float FontRef::getStringWidth(const string &s, const float &lineHeight) const
+{
+	float totalWidth = 0.0f;
+	for (unsigned int i=0; i < s.size(); i++)
+		totalWidth += getCharacterWidth(s.at(i), lineHeight);
+	return totalWidth;
+}
+
+float FontRef::getStringHeight(const string &s, const float &lineHeight) const
+{
+	return lineHeight;
+}
+

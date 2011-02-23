@@ -15,13 +15,13 @@
 // The maximum number of rows we support
 #define NUM_FONT_ROWS 16
 
-/*typedef struct {
+typedef struct {
 	float left, right, top, bottom; // The UV coordinates for each side of the character
 } CharacterExtents;
 
 enum FontAlignment { LEFT, RIGHT, CENTER };
 
-class Font {
+class FontRef {
 	private:
 		CharacterExtents char_uvs[NUM_FONT_CHARACTERS]; // THe UV coordinates for all characters
 		unsigned char max_char_available;					 // The maximum character available
@@ -29,21 +29,22 @@ class Font {
 		Texture font_texture;
 		
 	public:
-		Font(); // TODO: Fill this in
+		FontRef(); // TODO: Fill this in
 		
-		/ **
+		/**
 		 * Returns the width of a character given the character code and the desired height.
 		 * Returns zero if the character is unprintable.
-		 * /
+		 */
 		float getCharacterWidth(const char &c, const float &lineHeight) const;
 		
-		/ **
+		/**
 		 * Draws a character with the top left corner at the specified coordinates.
 		 * Returns the width of the given character.
-		 * /
-		float drawCharacter(const char &c, const float &lineHeight, const float &x, const float &y) const;
+		 */
+		float drawCharacter(const char &c, const float &lineHeight,
+							const float &x, const float &y) const;
 		
-		/ **
+		/**
 		 * Draws a string (correctly interpreting linebreaks) with the given lineHeight, boxed into the box
 		 *	 specified by x,y,width,height.
 		 * s: The string to draw.
@@ -51,17 +52,20 @@ class Font {
 		 * x,y: The coordinate of the top-left corner of the bounding box.
 		 * width,height: The width and height of the bounding box.
 		 *							 (note that if not specified or zero, the box will be centered on x,y)
-		 * /
-		void drawCenteredString(const string &s, const float &lineHeight, const float &x, const float &y, const float &width=0.0f, const float &height=0.0f, const FontAlignment &align=LEFT) const;
+		 */
+		void drawCenteredString(const string &s, const float &lineHeight,
+								const float &x, const float &y,
+								const float &width=0.0f, const float &height=0.0f,
+								const FontAlignment &align=LEFT) const;
 		
-		/ **
+		/**
 		 * Returns the width of the given string in units.
-		 * /
+		 */
 		float getStringWidth(const string &s, const float &lineHeight) const;
 		
-		/ **
+		/**
 		 * Returns the height of the given string in units.
-		 * /
+		 */
 		float getStringHeight(const string &s, const float &lineHeight) const;
 };//*/
 
