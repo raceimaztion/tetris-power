@@ -64,6 +64,8 @@ Texture::Texture(SDL_Surface* surface)
     throw "Image not true-colour. Colour-mapped images not supported.";
   }
   
+  this->textureFormat = textureFormat;
+  
   // Get a texture handle
   GLuint index = 0;
   textureNumber = 0;
@@ -102,7 +104,7 @@ Texture::Texture(SDL_Surface* surface)
   valid = true;
 }
 
-Texture::Texture(SDL_Surface* surface, GLenum format)
+/* Texture::Texture(SDL_Surface* surface, GLenum format)
 {
   if (surface == NULL)
   {
@@ -185,7 +187,7 @@ Texture::Texture(SDL_Surface* surface, GLenum format)
 //#endif
   
   valid = true;
-}
+}*/
 
 Texture::Texture(const Texture& t)
 {
@@ -225,9 +227,14 @@ bool Texture::isValid() const
   return valid;
 }
 
-GLuint Texture::getTextureIndex()
+GLuint Texture::getTextureIndex() const
 {
   return textureNumber;
+}
+
+GLenum Texture::getTextureFormat() const
+{
+	return textureFormat;
 }
 
 Texture texMakeCheckerboard()
@@ -368,7 +375,7 @@ Texture texLoadTexture(const string& fileName)
   return tex;
 }
 
-Texture texLoadCustomTexture(const string& fileName, GLenum format)
+/*Texture texLoadCustomTexture(const string& fileName, GLenum format)
 {
   SDL_Surface *surface = IMG_Load(fileName.c_str());
   if (surface == NULL)
@@ -379,5 +386,5 @@ Texture texLoadCustomTexture(const string& fileName, GLenum format)
   Texture tex(surface, format);
   SDL_FreeSurface(surface);
   return tex;
-}
+}*/
 

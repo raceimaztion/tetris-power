@@ -23,10 +23,10 @@ enum FontAlignment { LEFT, RIGHT, CENTER };
 
 class FontRef {
 	private:
-		CharacterExtents char_uvs[NUM_FONT_CHARACTERS]; // THe UV coordinates for all characters
-		unsigned char max_char_available;					 // The maximum character available
+		CharacterExtents char_uvs[NUM_FONT_CHARACTERS]; // The UV coordinates for all characters
+		unsigned char max_char_available;				// The maximum character available
 		
-		Texture font_texture;
+		Texture font_texture;		// The Texture object that holds the font information
 		
 	public:
 		FontRef(); // TODO: Fill this in
@@ -51,12 +51,12 @@ class FontRef {
 		 * lineHeight: The height of each line, in unscaled units.
 		 * x,y: The coordinate of the top-left corner of the bounding box.
 		 * width,height: The width and height of the bounding box.
-		 *							 (note that if not specified or zero, the box will be centered on x,y)
+		 *					(note that if not specified or zero, the box will be centered on x,y)
 		 */
-		void drawCenteredString(const string &s, const float &lineHeight,
-								const float &x, const float &y,
-								const float &width=0.0f, const float &height=0.0f,
-								const FontAlignment &align=LEFT) const;
+		void drawString(const string &s, const float &lineHeight,
+						const float &x, const float &y,
+						const float &width=0.0f, const float &height=0.0f,
+						const FontAlignment &align=LEFT) const;
 		
 		/**
 		 * Returns the width of the given string in units.

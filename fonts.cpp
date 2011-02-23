@@ -245,19 +245,21 @@ FontRef::FontRef()
 
 float FontRef::getCharacterWidth(const char &c, const float &lineHeight) const
 {
-	return lineHeight*(char_uvs[(int)c].right - char_uvs[(int)c].left)/(char_uvs[(int)c].bottom - char_uvs[(int)c].top);
+	return lineHeight*(char_uvs[(int)c].right - char_uvs[(int)c].left) /
+			(char_uvs[(int)c].bottom - char_uvs[(int)c].top);
 }
 
 float FontRef::drawCharacter(const char &c, const float &lineHeight,
 							 const float &x, const float &y) const
 {
+	// TODO: Actually draw the character
 	return getCharacterWidth(c, lineHeight);
 }
 
-void FontRef::drawCenteredString(const string &s, const float &lineHeight,
-								 const float &x, const float &y,
-								 const float &width, const float &height,
-								 const FontAlignment &align) const
+void FontRef::drawString(const string &s, const float &lineHeight,
+						 const float &x, const float &y,
+						 const float &width, const float &height,
+						 const FontAlignment &align) const
 {
 	
 }
