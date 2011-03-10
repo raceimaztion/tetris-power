@@ -2,15 +2,44 @@ An events system might be a good idea, it could simplify many problems that I'm 
 
 Examples of events I could use:
 - Block-land:
-	When a block lands on the grid
-	Could be used to get a new block
+	Triggered:	When a block lands on the grid.
+	Parameters:
+		- Shape:	The ID of the block-shape that just landed.
+		- Land-X:	The x-coordinate of the leftmost column of the block.
+		- Land-Y:	The y-coordinate of the topmost row of the block.
+	Uses:
+		- Could be used to get a new block.
+		- Can trigger Row-Full events.
 - Row-full
-	When a row is full and should start vanishing
-	Could be used to trigger the vanishing animations as well as updating the score
+	Triggered:	When a row is full and should start vanishing.
+	Parameters:
+		- Row-Num:	The index of the row that is now starting to disappear.
+	Uses:
+		- Could be used to trigger the vanishing animations as well as updating the score.
 - Row-removed:
-	When a row has been removed
-	Could be used to trigger the blocks above to fall
-- Key-event:
-	When a key is pressed or released
-	Could be used to trigger block-motion events.
-
+	Triggered:	When a row has finished vanishing.
+	Parameters:
+		- Row-Num:	The index of the row that is now gone.
+	Uses:
+		- Could be used to trigger the blocks above to fall.
+- Key-down:
+	Triggered:	When a key is pressed.
+	Parameters:
+		- Key-ID:	The ID of the key that was just pressed.
+	Uses:
+		- Could be used to trigger block-motion events.
+- Key-up:
+	Triggered:	When a key is released.
+	Parameters:
+		- Key-ID:	The ID of the key that was just released.
+	Uses:
+		- Could be used to trigger block-motion events.
+- Block-motion:
+	Triggered:	When the block moves.
+	Parameters:
+		- deltaX:	The offset in the horizontal direction.
+		- deltaY:	The offset in the vertical direction.
+		- newX: 	The new position of the leftmost column.
+		- newY: 	The new position of the topmost row.
+	Uses:
+		- Could update the rendering system's knowledge of the grid's status.
