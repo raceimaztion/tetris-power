@@ -30,6 +30,7 @@ class FontRef {
 		
 	public:
 		FontRef(); // TODO: Fill this in
+		~FontRef(); // The destructor
 		
 		/**
 		 * Returns the width of a character given the character code and the desired height.
@@ -67,7 +68,11 @@ class FontRef {
 		 * Returns the height of the given string in units.
 		 */
 		float getStringHeight(const string &s, const float &lineHeight) const;
-};//*/
+};
+
+//FontRef*
+
+//*/
 
 // *******************************
 // Old Fonts module:

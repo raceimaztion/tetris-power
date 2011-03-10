@@ -243,6 +243,11 @@ FontRef::FontRef()
 	// TODO: Fill this in!
 }
 
+FontRef::~FontRef()
+{
+	
+}
+
 float FontRef::getCharacterWidth(const char &c, const float &lineHeight) const
 {
 	return lineHeight*(char_uvs[(int)c].right - char_uvs[(int)c].left) /
