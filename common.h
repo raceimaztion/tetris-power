@@ -308,6 +308,7 @@ template<class T> inline T minMag(T a, T b)
 #include "screen.h"
 #include "score.h"
 // Order-dependent headers
+#include "powerups.h"
 #include "shapes.h"
 #include "grid.h"
 // Screen headers

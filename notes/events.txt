@@ -1,5 +1,44 @@
 An events system might be a good idea, it could simplify many problems that I'm having.
 
+Suggested events:
+- key_down:
+	Triggered:	When a key is pressed.
+	Parameters:
+		- keycode:	The code of the key pressed. (the SDL code)
+
+- key_up:
+	Triggered:	When a key is released.
+	Parameters:
+		- keycode:	The code of the key released. (the SDL code)
+
+- mouse_pressed:
+	Triggered:	When a mouse button is pressed.
+	Parameters:
+		- m_button:	The number of the mouse button that was pressed.
+
+- mouse_released:
+	Triggered:	When a mouse button is released.
+	Parameters:
+		- m_button:	The number of the mouse button that was released.
+
+- row_removed: (or row_full)
+	Triggered:	When a row of the grid is full and starts to get removed.
+	Parameters:
+		- row:		The index of the row that needs to start disappearing.
+		- column:	The index of the triggering column, so we know where to
+					move blocks away from.
+
+- score_add: (or score_up)
+	Triggered:	When the player gains points.
+	Parameters:
+		- point:	The x,y coordinates where the action ocurred to gain the
+					extra points. If null, will not add a floating score
+					indicator to the screen.
+		- gain:		The number of points to add.
+		- colour:	(optional) The colour to give this floating score.
+
+- 
+
 Examples of events I could use:
 - Block-land:
 	Triggered:	When a block lands on the grid.
