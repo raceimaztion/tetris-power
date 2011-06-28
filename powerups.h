@@ -37,4 +37,9 @@ typedef unsigned int powerup_t;
 #define POWERUP_GOLD 0x109
 
 // Generates a random powerup to give a block
-Powerup p_getPowerup();
+powerup_t p_getPowerup();
+
+// Activate a powerup
+// TODO: Add a position to this so we know where to start this
+void p_activatePowerup(const powerup_t &powerup);
+

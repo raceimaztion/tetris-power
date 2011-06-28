@@ -2,7 +2,7 @@
  * This module hands out powerups to the block-creation functions and triggers powerup effects.
  */
 
-#include <common.h>
+#include "common.h"
 
 #define ENABLE_LIGHTNING_STORM
 #define ENABLE_LIGHTNING_BOLT
