@@ -37,3 +37,7 @@ Suggested Powerups:
 	a) Either prevents a row from being removed until being removed by bombs or lightning,
 	b) Or grabs any piece that tries to occupy the same space.
 
+Powerups are triggered:
+- By rows getting removed or blocks getting exploded by Lightning or Bombs.
+	In both cases, the 'bit' is at rest in the grid already, so integer coordinates will
+	work fine.

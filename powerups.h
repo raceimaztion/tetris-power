@@ -9,10 +9,10 @@ typedef unsigned int powerup_t;
 #define POWERUP_NONE 0x100
 
 // Lighting bolts randomly remove indivudual blocks from the grid
-#define POWERUP_LIGHTING_STORM 0x101
+#define POWERUP_LIGHTNING_STORM 0x101
 
 // A single bolt of lighting takes out an entire column of blocks
-#define POWERUP_LIGHTING_BOLT 0x102
+#define POWERUP_LIGHTNING_BOLT 0x102
 
 // A bomb that explodes, removing a radius of blocks
 #define POWERUP_BOMB 0x103
@@ -40,6 +40,6 @@ typedef unsigned int powerup_t;
 powerup_t p_getPowerup();
 
 // Activate a powerup
-// TODO: Add a position to this so we know where to start this
-void p_activatePowerup(const powerup_t &powerup);
+// TODO: Choose a position type for this.
+void p_activatePowerup(const powerup_t &powerup, const Point &position);
 
