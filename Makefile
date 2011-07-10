@@ -3,7 +3,7 @@ HEADERS = common.h grid.h shapes.h mesh.h fonts.h widgets.h play.h texture.h scr
 MAIN_ONLY_HEADERS = splash.h mainMenu.h
 MODULES = main.o common.o grid.o shapes.o mesh.o fonts.o splash.o mainMenu.o widgets.o play.o texture.o screen.o score.o powerups.o
 
-GPP = $(GPP)
+GPP = g++
 
 all: tetris
 
